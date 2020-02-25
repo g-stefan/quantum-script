@@ -1,0 +1,10 @@
+--exe quantum-script
+--use-path=util/quantum-script
+--inc=include
+--inc=util/quantum-script-extension-console/include
+--use-lib=:quantum-script
+--use-lib=:qse-console
+--use-project=xyo
+--install-project=quantum-script
+--install-version-file=source/quantum-script.version.ini
+--install-dev

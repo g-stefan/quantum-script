@@ -1,0 +1,13 @@
+--dll qse-console
+--include-path=util/quantum-script-extension-console/include
+--source-path=util/quantum-script-extension-console/source
+--project-base=quantum-script-extension-console
+--inc=include
+--dll-no-version
+--use-lib=:quantum-script
+--use-project=xyo
+--install-project=quantum-script
+--install-version-file=source/quantum-script.version.ini
+--install-dev
+--install-inc=quantum-script-extension
+--no-version
