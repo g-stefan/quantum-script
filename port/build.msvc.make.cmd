@@ -24,10 +24,10 @@ call :cmdX file-to-cs --touch=source/quantum-script-libstdfunction.cpp --file-in
 call :cmdX file-to-cs --touch=source/quantum-script-libstdobject.cpp --file-in=source/quantum-script-libstdobject.js --file-out=source/quantum-script-libstdobject.src --is-string --name=libStdObjectSource
 call :cmdX file-to-cs --touch=source/quantum-script-libstdscript.cpp --file-in=source/quantum-script-libstdscript.js --file-out=source/quantum-script-libstdscript.src --is-string --name=libStdScriptSource
 
-call :cmdX xyo-cc --mode=%ACTION% @util/quantum-script.static.compile.info
-call :cmdX xyo-cc --mode=%ACTION% @util/quantum-script.dynamic.compile.info
+call :cmdX xyo-cc --mode=%ACTION% @util/quantum-script.static.compile
+call :cmdX xyo-cc --mode=%ACTION% @util/quantum-script.dynamic.compile
 
-call :cmdX xyo-cc --mode=%ACTION% @util/quantum-script-extension-console.static.compile.info
-call :cmdX xyo-cc --mode=%ACTION% @util/quantum-script-extension-console.dynamic.compile.info
+call :cmdX xyo-cc --mode=%ACTION% @util/quantum-script-extension-console.static.compile
+call :cmdX xyo-cc --mode=%ACTION% @util/quantum-script-extension-console.dynamic.compile
 
-call :cmdX xyo-cc --mode=%ACTION% @util/quantum-script.compile.info
+call :cmdX xyo-cc --mode=%ACTION% @util/quantum-script.compile

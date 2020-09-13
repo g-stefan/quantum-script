@@ -23,10 +23,10 @@ cmdX file-to-cs --touch=source/quantum-script-libstdfunction.cpp --file-in=sourc
 cmdX file-to-cs --touch=source/quantum-script-libstdobject.cpp --file-in=source/quantum-script-libstdobject.js --file-out=source/quantum-script-libstdobject.src --is-string --name=libStdObjectSource
 cmdX file-to-cs --touch=source/quantum-script-libstdscript.cpp --file-in=source/quantum-script-libstdscript.js --file-out=source/quantum-script-libstdscript.src --is-string --name=libStdScriptSource
 
-cmdX xyo-cc --mode=$ACTION @util/quantum-script.static.compile.info
-cmdX xyo-cc --mode=$ACTION @util/quantum-script.dynamic.compile.info
+cmdX xyo-cc --mode=$ACTION @util/quantum-script.static.compile
+cmdX xyo-cc --mode=$ACTION @util/quantum-script.dynamic.compile
 
-cmdX xyo-cc --mode=$ACTION @util/quantum-script-extension-console.static.compile.info
-cmdX xyo-cc --mode=$ACTION @util/quantum-script-extension-console.dynamic.compile.info
+cmdX xyo-cc --mode=$ACTION @util/quantum-script-extension-console.static.compile
+cmdX xyo-cc --mode=$ACTION @util/quantum-script-extension-console.dynamic.compile
 
-cmdX xyo-cc --mode=$ACTION @util/quantum-script.compile.info
+cmdX xyo-cc --mode=$ACTION @util/quantum-script.compile
