@@ -4,7 +4,7 @@
 # Created by Grigore Stefan <g_stefan@yahoo.com>
 
 # On WSL we must build on home folder to keep executable bits on files
-WSL_BUILD_PROCESS_PATH=$HOME/SDK/xyo
+WSL_BUILD_PROCESS_PATH=$HOME/SDK/quantum-script
 export XYO_PATH_REPOSITORY=$HOME/SDK/Repository
 export XYO_PATH_RELEASE=$HOME/SDK/Release
 
