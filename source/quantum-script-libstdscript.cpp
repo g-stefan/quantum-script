@@ -259,7 +259,7 @@ namespace Quantum {
 							if (retV == VmParserError::None) {
 								return;
 							} else if (retV == VmParserError::Compile) {
-								sprintf( buf, "Compile error in %s line %d\n",
+								sprintf( buf, "Compile error in %s line %u\n",
 									executive->errorInfo.compileFileName,
 									executive->errorInfo.compileLineNumber
 								);
@@ -282,7 +282,7 @@ namespace Quantum {
 							if (retV == VmParserError::None) {
 								return;
 							} else if (retV == VmParserError::Compile) {
-								sprintf( buf, "Compile error in %s line %d\n",
+								sprintf( buf, "Compile error in %s line %u\n",
 									executive->errorInfo.compileFileName,
 									executive->errorInfo.compileLineNumber
 								);
@@ -378,7 +378,7 @@ namespace Quantum {
 								if (retV == VmParserError::None) {
 									return;
 								} else if (retV == VmParserError::Compile) {
-									sprintf( buf, "Compile error in %s line %d\n",
+									sprintf( buf, "Compile error in %s line %u\n",
 										executive->errorInfo.compileFileName,
 										executive->errorInfo.compileLineNumber
 									);
@@ -403,7 +403,7 @@ namespace Quantum {
 							if (retV == VmParserError::None) {
 								return;
 							} else if (retV == VmParserError::Compile) {
-								sprintf( buf, "Compile error in %s line %d\n",
+								sprintf( buf, "Compile error in %s line %u\n",
 									executive->errorInfo.compileFileName,
 									executive->errorInfo.compileLineNumber
 								);
@@ -490,7 +490,7 @@ namespace Quantum {
 							if (retV == VmParserError::None) {
 								return;
 							} else if (retV == VmParserError::Compile) {
-								sprintf( buf, "Compile error in %s line %d\n",
+								sprintf( buf, "Compile error in %s line %u\n",
 									executive->errorInfo.compileFileName,
 									executive->errorInfo.compileLineNumber
 								);
@@ -513,7 +513,7 @@ namespace Quantum {
 							if (retV == VmParserError::None) {
 								return;
 							} else if (retV == VmParserError::Compile) {
-								sprintf( buf, "Compile error in %s line %d\n",
+								sprintf( buf, "Compile error in %s line %u\n",
 									executive->errorInfo.compileFileName,
 									executive->errorInfo.compileLineNumber
 								);
@@ -571,7 +571,7 @@ namespace Quantum {
 						if (retV == VmParserError::None) {
 							return;
 						} else if (retV == VmParserError::Compile) {
-							sprintf( buf, "Compile error in %s line %d\n",
+							sprintf( buf, "Compile error in %s line %u\n",
 								executive->errorInfo.compileFileName,
 								executive->errorInfo.compileLineNumber
 							);
@@ -617,7 +617,7 @@ namespace Quantum {
 						if (retV == VmParserError::None) {
 							return;
 						} else if (retV == VmParserError::Compile) {
-							sprintf( buf, "Compile error in %s line %d\n",
+							sprintf( buf, "Compile error in %s line %u\n",
 								executive->errorInfo.compileFileName,
 								executive->errorInfo.compileLineNumber
 							);
@@ -967,7 +967,7 @@ namespace Quantum {
 									if (retV == VmParserError::None) {
 										return;
 									} else if (retV == VmParserError::Compile) {
-										sprintf( buf, "Compile error in %s line %d\n",
+										sprintf( buf, "Compile error in %s line %u\n",
 											executive->errorInfo.compileFileName,
 											executive->errorInfo.compileLineNumber
 										);
@@ -1030,7 +1030,7 @@ namespace Quantum {
 								if (retV == VmParserError::None) {
 									return;
 								} else if (retV == VmParserError::Compile) {
-									sprintf( buf, "Compile error in %s line %d\n",
+									sprintf( buf, "Compile error in %s line %u\n",
 										executive->errorInfo.compileFileName,
 										executive->errorInfo.compileLineNumber
 									);

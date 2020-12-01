@@ -56,7 +56,7 @@ namespace Quantum {
 			fflush(stdout);
 #else
 			String symbolName = Context::getSymbolMirror(((VariableSymbol *) operand)->value);
-			printf(">%p    push-symbol %d : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
+			printf(">%p    push-symbol %u : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
 			fflush(stdout);
 #endif
 #endif
@@ -66,7 +66,7 @@ namespace Quantum {
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmPushBoolean) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    push-boolean %d\n", context->currentProgramCounter, ((VariableBoolean *) operand)->value);
+			printf(">%p    push-boolean %u\n", context->currentProgramCounter, (uint16_t)((VariableBoolean *) operand)->value);
 			fflush(stdout);
 #endif
 			context->push(operand);
@@ -822,7 +822,7 @@ namespace Quantum {
 #else
 			String symbolName = Context::getSymbolMirror(((VariableSymbol *) operand)->value);
 
-			printf(">%p    reference %d : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
+			printf(">%p    reference %u : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
 			fflush(stdout);
 #endif
 #endif
@@ -1284,7 +1284,7 @@ namespace Quantum {
 #else
 			String symbolName = Context::getSymbolMirror(((VariableSymbol *) operand)->value);
 
-			printf(">%p    push-object-reference %d : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
+			printf(">%p    push-object-reference %u : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
 			fflush(stdout);
 #endif
 #endif
@@ -1299,7 +1299,7 @@ namespace Quantum {
 #else
 			String symbolName = Context::getSymbolMirror(((VariableSymbol *) operand)->value);
 
-			printf(">%p    reference-object-reference %d : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
+			printf(">%p    reference-object-reference %u : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
 			fflush(stdout);
 #endif
 #endif
@@ -1525,7 +1525,7 @@ namespace Quantum {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 			String symbolName = Context::getSymbolMirror(((VariableSymbol *) operand)->value);
 
-			printf(">%p    x-call-symbol %d : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
+			printf(">%p    x-call-symbol %u : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
 			fflush(stdout);
 #endif
 			Variable *operand1;
@@ -1830,7 +1830,7 @@ namespace Quantum {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 			String symbolName = Context::getSymbolMirror(((VariableSymbol *) operand)->value);
 
-			printf(">%p    x-call-with-this-reference %d : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
+			printf(">%p    x-call-with-this-reference %u : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
 			fflush(stdout);
 #endif
 			TPointer<Variable> operand1;
@@ -2517,7 +2517,7 @@ namespace Quantum {
 #else
 			String symbolName = Context::getSymbolMirror(((VariableSymbol *) operand)->value);
 
-			printf(">%p    operator-reference-delete-reference %d : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
+			printf(">%p    operator-reference-delete-reference %u : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
 			fflush(stdout);
 #endif
 #endif
@@ -2623,7 +2623,7 @@ namespace Quantum {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 			String symbolName = Context::getSymbolMirror(((VariableSymbol *) operand)->value);
 
-			printf(">%p    x-tail-call-symbol %d : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
+			printf(">%p    x-tail-call-symbol %u : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
 			fflush(stdout);
 #endif
 			Variable *operand1;
@@ -2881,7 +2881,7 @@ namespace Quantum {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 			String symbolName = Context::getSymbolMirror(((VariableSymbol *) operand)->value);
 
-			printf(">%p    x-tail-call-with-this-reference %d : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
+			printf(">%p    x-tail-call-with-this-reference %u : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
 			fflush(stdout);
 #endif
 			TPointer<Variable> operand1;

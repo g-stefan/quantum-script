@@ -269,7 +269,9 @@ namespace Quantum {
 				} else if (localToken.type == TokenType::NumberHexadecimal) {
 					char buf[60];
 					unsigned int tmp_ = 0;
-					sscanf((char *) & (localToken.value.value())[2], "%x", &tmp_);
+					if(sscanf((char *) & (localToken.value.value())[2], "%x", &tmp_)!=1) {
+						tmp_ = 0;
+					};
 					sprintf(buf, "%u", tmp_);
 					assemble1(ParserAsm::PushNumber, buf);
 				} else {

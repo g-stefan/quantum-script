@@ -50,7 +50,7 @@ namespace Quantum {
 						String symbol = Context::getSymbolMirror(scan->value.sourceSymbol);
 						if (symbol[0] == '#') {
 							out << "- file " << symbol.index(1) << " ";
-							sprintf(buffer, "line %d\n", scan->value.sourceLineNumber);
+							sprintf(buffer, "line %u\n", scan->value.sourceLineNumber);
 							out << buffer;
 						};
 						if (symbol[0] == '@') {
@@ -59,7 +59,7 @@ namespace Quantum {
 #else
 							out << "- memory ";
 #endif
-							sprintf(buffer, "line %d\n", scan->value.sourceLineNumber);
+							sprintf(buffer, "line %u\n", scan->value.sourceLineNumber);
 							out << buffer;
 						};
 					};

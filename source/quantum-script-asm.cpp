@@ -133,7 +133,7 @@ namespace Quantum {
 						Symbol symbolId = Context::getSymbol(name_);
 						QUANTUM_SCRIPT_ASM_INSTRUCTION(PushSymbol, VariableSymbol::newVariable(symbolId));
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-						printf("%p    push-symbol %s : %d\n", pc, name_, symbolId);
+						printf("%p    push-symbol %s : %u\n", pc, name_, symbolId);
 #endif
 						return pc;
 					};
@@ -148,7 +148,9 @@ namespace Quantum {
 					break;
 				case ParserAsm::PushNumber: {
 						Number valueNumber;
-						sscanf(name_, QUANTUM_SCRIPT_FORMAT_NUMBER_INPUT, &valueNumber);
+						if(sscanf(name_, QUANTUM_SCRIPT_FORMAT_NUMBER_INPUT, &valueNumber)!=1) {
+							valueNumber = 0;
+						};
 						QUANTUM_SCRIPT_ASM_INSTRUCTION(PushNumber, VariableNumber::newVariable(valueNumber));
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
 						printf("%p    push-number %s\n", pc, name_);
@@ -480,7 +482,7 @@ namespace Quantum {
 						Symbol symbolId = Context::getSymbol(name_);
 						QUANTUM_SCRIPT_ASM_INSTRUCTION(Reference, VariableSymbol::newVariable(symbolId));
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-						printf("%p    reference %s : %d\n", pc, name_, symbolId);
+						printf("%p    reference %s : %u\n", pc, name_, symbolId);
 #endif
 						return pc;
 					};
@@ -651,7 +653,7 @@ namespace Quantum {
 						Symbol symbolId = Context::getSymbol(name_);
 						QUANTUM_SCRIPT_ASM_INSTRUCTION(PushObjectReference, VariableSymbol::newVariable(symbolId));
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-						printf("%p    push-object-reference %s : %d\n", pc, name_, symbolId);
+						printf("%p    push-object-reference %s : %u\n", pc, name_, symbolId);
 #endif
 						return pc;
 					};
@@ -660,7 +662,7 @@ namespace Quantum {
 						Symbol symbolId = Context::getSymbol(name_);
 						QUANTUM_SCRIPT_ASM_INSTRUCTION(ReferenceObjectReference, VariableSymbol::newVariable(symbolId));
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-						printf("%p    reference-object-reference %s : %d\n", pc, name_, symbolId);
+						printf("%p    reference-object-reference %s : %u\n", pc, name_, symbolId);
 #endif
 						return pc;
 					};
@@ -763,7 +765,7 @@ namespace Quantum {
 						Symbol symbolId = Context::getSymbol(name_);
 						QUANTUM_SCRIPT_ASM_INSTRUCTION(XCallWithThisReference, VariableSymbol::newVariable(symbolId));
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-						printf("%p    x-call-with-this-reference %s : %d\n", pc, name_, symbolId);
+						printf("%p    x-call-with-this-reference %s : %u\n", pc, name_, symbolId);
 #endif
 						return pc;
 					};
@@ -771,7 +773,7 @@ namespace Quantum {
 						Symbol symbolId = Context::getSymbol(name_);
 						QUANTUM_SCRIPT_ASM_INSTRUCTION(XCallSymbol, VariableSymbol::newVariable(symbolId));
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-						printf("%p    x-call-symbol %s : %d\n", pc, name_, symbolId);
+						printf("%p    x-call-symbol %s : %u\n", pc, name_, symbolId);
 #endif
 						return pc;
 					};
@@ -806,7 +808,9 @@ namespace Quantum {
 
 				case ParserAsm::ArgumentsPushObjectReference: {
 						uint32_t symbolId;
-						sscanf(name_, QUANTUM_SCRIPT_FORMAT_DWORD, &symbolId);
+						if(sscanf(name_, QUANTUM_SCRIPT_FORMAT_DWORD, &symbolId)!=1) {
+							symbolId = 0;
+						};
 						QUANTUM_SCRIPT_ASM_INSTRUCTION(ArgumentsPushObjectReference, VariableSymbol::newVariable(symbolId));
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
 						printf("%p    arguments-push-object-reference %s\n", pc, name_);
@@ -816,7 +820,9 @@ namespace Quantum {
 
 				case ParserAsm::ArgumentsPushSymbol: {
 						uint32_t symbolId;
-						sscanf( name_, QUANTUM_SCRIPT_FORMAT_DWORD, &symbolId);
+						if(sscanf( name_, QUANTUM_SCRIPT_FORMAT_DWORD, &symbolId)!=1) {
+							symbolId = 0;
+						};
 						QUANTUM_SCRIPT_ASM_INSTRUCTION(ArgumentsPushSymbol, VariableSymbol::newVariable(symbolId));
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
 						printf("%p    arguments-push-symbol %s\n", pc, name_);
@@ -842,7 +848,9 @@ namespace Quantum {
 
 				case ParserAsm::LocalVariablesPushObjectReference: {
 						uint32_t symbolId;
-						sscanf( name_, QUANTUM_SCRIPT_FORMAT_DWORD, &symbolId);
+						if(sscanf( name_, QUANTUM_SCRIPT_FORMAT_DWORD, &symbolId)!=1) {
+							symbolId=0;
+						};
 						QUANTUM_SCRIPT_ASM_INSTRUCTION(LocalVariablesPushObjectReference, VariableSymbol::newVariable(symbolId));
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
 						printf("%p    local-variables-push-object-reference %s\n", pc, name_);
@@ -852,7 +860,9 @@ namespace Quantum {
 
 				case ParserAsm::LocalVariablesPushSymbol: {
 						uint32_t symbolId;
-						sscanf( name_, QUANTUM_SCRIPT_FORMAT_DWORD, &symbolId);
+						if(sscanf( name_, QUANTUM_SCRIPT_FORMAT_DWORD, &symbolId)!=1) {
+							symbolId = 0;
+						};
 						QUANTUM_SCRIPT_ASM_INSTRUCTION(LocalVariablesPushSymbol, VariableSymbol::newVariable(symbolId));
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
 						printf("%p    local-variables-push-symbol %s\n", pc, name_);
@@ -974,7 +984,7 @@ namespace Quantum {
 						Symbol symbolId = Context::getSymbol(name_);
 						QUANTUM_SCRIPT_ASM_INSTRUCTION(OperatorReferenceDeleteReference, VariableSymbol::newVariable(symbolId));
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-						printf("%p    operator-reference-delete-reference %s : %d\n", pc, name_, symbolId);
+						printf("%p    operator-reference-delete-reference %s : %u\n", pc, name_, symbolId);
 #endif
 						return pc;
 					};
@@ -1034,8 +1044,12 @@ namespace Quantum {
 				case ParserAsm::ArgumentsLevelPushObjectReference: {
 						int value;
 						int level;
-						sscanf( name_, "%d", &value);
-						sscanf( nameX_, "%d", &level);
+						if(sscanf( name_, "%d", &value)!=1) {
+							value = 0;
+						};
+						if(sscanf( nameX_, "%d", &level)!=1) {
+							level = 0;
+						};
 
 						QUANTUM_SCRIPT_ASM_INSTRUCTION(ArgumentsLevelPushObjectReference, VariableArgumentLevel::newVariable(value, level));
 
@@ -1047,8 +1061,12 @@ namespace Quantum {
 				case ParserAsm::ArgumentsLevelPushSymbol: {
 						int value;
 						int level;
-						sscanf( name_, "%d", &value);
-						sscanf( nameX_, "%d", &level);
+						if(sscanf( name_, "%d", &value)!=1) {
+							value = 0;
+						};
+						if(sscanf( nameX_, "%d", &level)!=1) {
+							level = 0;
+						};
 
 						QUANTUM_SCRIPT_ASM_INSTRUCTION(ArgumentsLevelPushSymbol, VariableArgumentLevel::newVariable(value, level));
 
@@ -1061,8 +1079,12 @@ namespace Quantum {
 				case ParserAsm::LocalVariablesLevelPushObjectReference: {
 						int value;
 						int level;
-						sscanf( name_, "%d", &value);
-						sscanf( nameX_, "%d", &level);
+						if(sscanf( name_, "%d", &value)!=1) {
+							value = 0;
+						};
+						if(sscanf( nameX_, "%d", &level)!=1) {
+							level = 0;
+						};
 
 						QUANTUM_SCRIPT_ASM_INSTRUCTION(LocalVariablesLevelPushObjectReference, VariableArgumentLevel::newVariable(value, level));
 
@@ -1074,8 +1096,12 @@ namespace Quantum {
 				case ParserAsm::LocalVariablesLevelPushSymbol: {
 						int value;
 						int level;
-						sscanf( name_, "%d", &value);
-						sscanf( nameX_, "%d", &level);
+						if(sscanf( name_, "%d", &value)!=1) {
+							value = 0;
+						};
+						if(sscanf( nameX_, "%d", &level)!=1) {
+							level = 0;
+						};
 
 						QUANTUM_SCRIPT_ASM_INSTRUCTION(LocalVariablesLevelPushSymbol, VariableArgumentLevel::newVariable(value, level));
 
@@ -1089,8 +1115,12 @@ namespace Quantum {
 				case ParserAsm::FunctionHint: {
 						ProgramCounter *fn_;
 						int hint;
-						sscanf(name_, "%p", &fn_);
-						sscanf(nameX_, "%d", &hint);
+						if(sscanf(name_, "%p", &fn_)!=1) {
+							return nullptr;
+						};
+						if(sscanf(nameX_, "%d", &hint)!=1) {
+							hint = 0;
+						};
 
 						((VariableVmFunction *)((reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (fn_))->value.operand.value()))->functionHint = hint;
 						lastIsMark_ = true;
@@ -1290,7 +1320,7 @@ namespace Quantum {
 
 		void Asm::linkProgramCounterSource(ProgramCounter *pc_, uint32_t sourceSymbol, uint32_t sourceLineNumber) {
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-			printf("%p -- link-source %p - %d:%d\n", nullptr, pc_, sourceSymbol, sourceLineNumber);
+			printf("%p -- link-source %p - %u:%u\n", nullptr, pc_, sourceSymbol, sourceLineNumber);
 #endif
 			(reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (pc_))->value.sourceSymbol = sourceSymbol;
 			(reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (pc_))->value.sourceLineNumber = sourceLineNumber;
@@ -1345,7 +1375,7 @@ namespace Quantum {
 								instructionList->popFromTail();
 
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-								printf("%p    [2] operator-minus-arguments-symbol-x-number %d %g\n", pc, operatorX->symbol, operatorX->value);
+								printf("%p    [2] operator-minus-arguments-symbol-x-number %u %g\n", pc, operatorX->symbol, operatorX->value);
 #endif
 
 								return pc;
@@ -1382,7 +1412,7 @@ namespace Quantum {
 
 
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-								printf("%p    [2] operator-minus-local-variables-symbol-2 %d %d\n", pc, operatorX->symbol1, operatorX->symbol2);
+								printf("%p    [2] operator-minus-local-variables-symbol-2 %u %u\n", pc, operatorX->symbol1, operatorX->symbol2);
 #endif
 
 								return pc;
@@ -1421,7 +1451,7 @@ namespace Quantum {
 
 
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-								printf("%p    [2] operator-plus-local-variables-symbol-2 %d %d\n", pc, operatorX->symbol1, operatorX->symbol2);
+								printf("%p    [2] operator-plus-local-variables-symbol-2 %u %u\n", pc, operatorX->symbol1, operatorX->symbol2);
 #endif
 
 								return pc;
@@ -1495,7 +1525,7 @@ namespace Quantum {
 								instructionList->popFromTail();
 
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-								printf("%p    [2] symbol-plus-plus %d\n", pc, symbol_);
+								printf("%p    [2] symbol-plus-plus %u\n", pc, symbol_);
 #endif
 
 								return pc;
@@ -1530,7 +1560,7 @@ namespace Quantum {
 								instructionList->popFromTail();
 
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-								printf("%p    [2] symbol-plus-plus %d\n", pc, symbol_);
+								printf("%p    [2] symbol-plus-plus %u\n", pc, symbol_);
 #endif
 
 								return pc;
@@ -1626,7 +1656,7 @@ namespace Quantum {
 										instructionList->popFromTail();
 
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-										printf("%p    [3] if-arguments-symbol-not-equal-number-goto %d %g %p\n", pc, operatorX->symbol, operatorX->value, operatorX->pc);
+										printf("%p    [3] if-arguments-symbol-not-equal-number-goto %u %g %p\n", pc, operatorX->symbol, operatorX->value, operatorX->pc);
 #endif
 
 										return pc;
@@ -1670,7 +1700,7 @@ namespace Quantum {
 										instructionList->popFromTail();
 
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-										printf("%p    [3] if-symbol-not-less-number-goto %d %g %p\n", pc, operatorX->symbol, operatorX->value, operatorX->pc);
+										printf("%p    [3] if-symbol-not-less-number-goto %u %g %p\n", pc, operatorX->symbol, operatorX->value, operatorX->pc);
 #endif
 
 										return pc;
@@ -1714,7 +1744,7 @@ namespace Quantum {
 										instructionList->popFromTail();
 
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-										printf("%p    [3] if-arguments-symbol-not-less-number-goto %d %g %p\n", pc, operatorX->symbol, operatorX->value, operatorX->pc);
+										printf("%p    [3] if-arguments-symbol-not-less-number-goto %u %g %p\n", pc, operatorX->symbol, operatorX->value, operatorX->pc);
 #endif
 
 										return pc;
@@ -1757,7 +1787,7 @@ namespace Quantum {
 
 
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-									printf("%p    [2] operator-pow2-local-variables-symbol-2 %d\n", pc, ((VariableSymbol *)((reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(pc))->value.operand.value()))->value);
+									printf("%p    [2] operator-pow2-local-variables-symbol-2 %u\n", pc, ((VariableSymbol *)((reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(pc))->value.operand.value()))->value);
 #endif
 									return pc;
 
@@ -1779,7 +1809,7 @@ namespace Quantum {
 
 
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-								printf("%p    [2] operator-mul-local-variables-symbol-2 %d %d\n", pc, operatorX->symbol1, operatorX->symbol2);
+								printf("%p    [2] operator-mul-local-variables-symbol-2 %u %u\n", pc, operatorX->symbol1, operatorX->symbol2);
 #endif
 								return pc;
 							};
@@ -1941,7 +1971,7 @@ namespace Quantum {
 						instructionList->popFromTail();
 
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-						printf("%p    [1] x-tail-call-with-this-reference %d\n", pc, ((VariableSymbol *)((reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(pc))->value.operand.value()))->value);
+						printf("%p    [1] x-tail-call-with-this-reference %u\n", pc, ((VariableSymbol *)((reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(pc))->value.operand.value()))->value);
 #endif
 
 						return pc;
@@ -1967,7 +1997,7 @@ namespace Quantum {
 						instructionList->popFromTail();
 
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-						printf("%p    [1] x-tail-call-symbol %d\n", pc, ((VariableSymbol *)((reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(pc))->value.operand.value()))->value);
+						printf("%p    [1] x-tail-call-symbol %u\n", pc, ((VariableSymbol *)((reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(pc))->value.operand.value()))->value);
 #endif
 
 						return pc;
@@ -2002,7 +2032,7 @@ namespace Quantum {
 								instructionList->popFromTail();
 
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-								printf("%p    [2] assign-local-variables-object-reference-pow2-local-variables-symbol %d %d\n", pc,
+								printf("%p    [2] assign-local-variables-object-reference-pow2-local-variables-symbol %u %u\n", pc,
 									((VariableOperator22 *)((reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(pc))->value.operand.value()))->symbol1,
 									((VariableOperator22 *)((reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(pc))->value.operand.value()))->symbol2
 								);
@@ -2040,7 +2070,7 @@ namespace Quantum {
 								instructionList->popFromTail();
 
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
-								printf("%p    [2] local-variables-plus-plus %d\n", pc, symbol_);
+								printf("%p    [2] local-variables-plus-plus %u\n", pc, symbol_);
 #endif
 
 								return pc;
