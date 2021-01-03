@@ -13,10 +13,10 @@ namespace Quantum {
 	namespace Script {
 		namespace Version {
 
-			static const char *version_ = "1.2.0";
-			static const char *build_ = "6";
-			static const char *versionWithBuild_ = "1.2.0.6";
-			static const char *datetime_ = "2020-12-01 04:52:40";
+			static const char *version_ = "1.3.0";
+			static const char *build_ = "7";
+			static const char *versionWithBuild_ = "1.3.0.7";
+			static const char *datetime_ = "2021-01-03 02:30:48";
 
 			const char *version() {
 				return version_;
