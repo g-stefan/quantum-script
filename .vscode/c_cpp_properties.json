@@ -6,7 +6,9 @@
             "intelliSenseMode": "msvc-x64",
             "includePath": [
                 "${workspaceRoot}/include",
-                "${workspaceRoot}/source",
+		"${workspaceRoot}/source",
+		"${workspaceRoot}/util/quantum-script-extension-console/include",
+                "${env:HOMEDRIVE}${env:HOMEPATH}/SDK/include/xyo",
                 "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.26.28801/ATLMFC/include",
                 "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.26.28801/include",
                 "C:/Program Files (x86)/Windows Kits/NETFXSDK/4.8/include/um",

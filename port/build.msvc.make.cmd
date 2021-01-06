@@ -31,3 +31,4 @@ call :cmdX xyo-cc --mode=%ACTION% @util/quantum-script-extension-console.static.
 call :cmdX xyo-cc --mode=%ACTION% @util/quantum-script-extension-console.dynamic.compile
 
 call :cmdX xyo-cc --mode=%ACTION% @util/quantum-script.compile
+call :cmdX xyo-cc --mode=%ACTION% @util/quantum-scriptw.compile

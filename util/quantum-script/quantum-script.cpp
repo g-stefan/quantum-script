@@ -11,6 +11,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef BUILD_WINDOWS_GUI
+#include <windows.h>
+#endif
+
 #include "quantum-script.hpp"
 #include "quantum-script-extension-console.hpp"
 
@@ -51,9 +55,12 @@ namespace Main {
 
 		printf("%s",
 			"options:\n"
-			"    --license           show license\n"
-			"    --cmd script        execute script, skip first 2 lines\n"
-			"    script.js           execute script\n"
+			"    --license               show license\n"
+			"    --cmd script            execute script, skip first 2 lines\n"
+			"    script.js               execute script\n"
+			"    --run \"code\"          run code\n"
+			"    --execution-time        show execution time\n"
+			"    --execution-time-cmd    --execution-time + --cmd\n"
 		);
 		printf("\n");
 	};
@@ -72,6 +79,8 @@ namespace Main {
 		uint64_t intervalTimestampInMilliseconds;
 		fileIn = nullptr;
 		bool isCmd = false;
+		bool runCode = false;
+		String code;
 
 		for (i = 1; i < cmdN; ++i) {
 			if (strncmp(cmdS[i], "--", 2) == 0) {
@@ -95,6 +104,15 @@ namespace Main {
 					isCmd = true;
 					continue;
 				};
+				if (strcmp(opt, "run") == 0) {
+					runCode = true;
+					++i;
+					if(i < cmdN) {
+						code=cmdS[i];
+						continue;
+					};
+					break;
+				};
 				continue;
 			};
 			if (!fileIn) {
@@ -102,9 +120,16 @@ namespace Main {
 			};
 		};
 
-		if(fileIn == nullptr) {
-			showUsage();
-			return 0;
+		if(!runCode) {
+			if(fileIn == nullptr) {
+				showUsage();
+				return 0;
+			};
+		} else {
+			if(code.length()==0) {
+				printf("Error: No code specified!");
+				return 1;
+			};
 		};
 
 		if(executionTime) {
@@ -112,9 +137,8 @@ namespace Main {
 		};
 
 		if(ExecutiveX::initExecutive(cmdN, cmdS, initExecutive)) {
-			ExecutiveX::includePath(Shell::getFilePath(fileIn));
-			if(isCmd) {
-				if(ExecutiveX::executeFileSkipLines(fileIn, 2)) {
+			if(runCode) {
+				if(ExecutiveX::executeString(code)) {
 					ExecutiveX::endProcessing();
 					if(executionTime) {
 						endTimestampInMilliseconds = DateTime::timestampInMilliseconds();
@@ -123,24 +147,37 @@ namespace Main {
 					};
 					return 0;
 				};
+			} else {
+				ExecutiveX::includePath(Shell::getFilePath(fileIn));
+				if(isCmd) {
+					if(ExecutiveX::executeFileSkipLines(fileIn, 2)) {
+						ExecutiveX::endProcessing();
+						if(executionTime) {
+							endTimestampInMilliseconds = DateTime::timestampInMilliseconds();
+							intervalTimestampInMilliseconds = endTimestampInMilliseconds - beginTimestampInMilliseconds;
+							printf("Execution time: " XYO_FORMAT_SIZET " ms\n", (size_t)intervalTimestampInMilliseconds);
+						};
+						return 0;
+					};
 
-				fflush(stdout);
-				printf("%s\n", (ExecutiveX::getError()).value());
-				printf("%s", (ExecutiveX::getStackTrace()).value());
-				fflush(stdout);
+					fflush(stdout);
+					printf("%s\n", (ExecutiveX::getError()).value());
+					printf("%s", (ExecutiveX::getStackTrace()).value());
+					fflush(stdout);
 
-				ExecutiveX::endProcessing();
-				return 1;
-			};
-
-			if(ExecutiveX::executeFile(fileIn)) {
-				ExecutiveX::endProcessing();
-				if(executionTime) {
-					endTimestampInMilliseconds = DateTime::timestampInMilliseconds();
-					intervalTimestampInMilliseconds = endTimestampInMilliseconds - beginTimestampInMilliseconds;
-					printf("Execution time: " XYO_FORMAT_SIZET " ms\n", (size_t)intervalTimestampInMilliseconds);
+					ExecutiveX::endProcessing();
+					return 1;
 				};
-				return 0;
+
+				if(ExecutiveX::executeFile(fileIn)) {
+					ExecutiveX::endProcessing();
+					if(executionTime) {
+						endTimestampInMilliseconds = DateTime::timestampInMilliseconds();
+						intervalTimestampInMilliseconds = endTimestampInMilliseconds - beginTimestampInMilliseconds;
+						printf("Execution time: " XYO_FORMAT_SIZET " ms\n", (size_t)intervalTimestampInMilliseconds);
+					};
+					return 0;
+				};
 			};
 		};
 
@@ -155,5 +192,8 @@ namespace Main {
 
 };
 
-XYO_APPLICATION_MAIN_STD(Main::Application);
-
+#ifdef BUILD_WINDOWS_GUI
+	XYO_APPLICATION_WINMAIN_STD(Main::Application);
+#else
+	XYO_APPLICATION_MAIN_STD(Main::Application);
+#endif
