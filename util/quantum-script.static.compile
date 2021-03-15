@@ -1,4 +1,0 @@
---lib quantum-script
---source-is-separate
---use-project=xyo.static
---dependency-set=inc=quantum-script-extension

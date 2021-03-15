@@ -1,5 +1,0 @@
---dll quantum-script
---source-is-separate
---use-project=xyo
---no-version
---dependency-set=inc=quantum-script-extension

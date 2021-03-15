@@ -1,0 +1,7 @@
+--lib quantum-script
+--build-include
+--use-project=xyo.static
+--dependency-set=inc=quantum-script-extension
+--source-path=source/quantum-script.lib
+--output-include-path-source=quantum-script
+--install-include-direct

@@ -1,0 +1,13 @@
+--exe quantum-scriptw
+--project-base=quantum-script
+--use-lib=:quantum-script
+--use-lib=:qse-console
+--use-project=xyo
+--install-project=quantum-script
+--install-version-file=version.ini
+--install-dev
+--def=BUILD_WINDOWS_GUI
+--for-platform=win*
+--source-path=source/quantum-script.exe
+--inc=output/include/quantum-script
+--inc=output/include/quantum-script-extension
