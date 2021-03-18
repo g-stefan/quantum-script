@@ -1,4 +1,4 @@
-# Quantum Script Library
+# Quantum Script
 
 C++ prototype-based script engine.
 
