@@ -193,7 +193,7 @@ namespace Main {
 };
 
 #ifdef BUILD_WINDOWS_GUI
-	XYO_APPLICATION_WINMAIN_STD(Main::Application);
+XYO_APPLICATION_WINMAIN_STD(Main::Application);
 #else
-	XYO_APPLICATION_MAIN_STD(Main::Application);
+XYO_APPLICATION_MAIN_STD(Main::Application);
 #endif

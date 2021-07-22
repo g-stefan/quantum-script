@@ -152,17 +152,17 @@ namespace Quantum {
 				};
 				if(String::indexOf(src, sig, 0, index)) {
 					ln = 1;
-					(retV->operatorIndex(0))=VariableString::newVariable(String::substring(src, 0, index));
+					retV->setPropertyByIndex(0, VariableString::newVariable(String::substring(src, 0, index)));
 					pos = index + 1;
 					while(String::indexOf(src, sig, pos, index)) {
-						(retV->operatorIndex(ln))=VariableString::newVariable(String::substring(src, pos, index - pos));
+						retV->setPropertyByIndex(ln, VariableString::newVariable(String::substring(src, pos, index - pos)));
 						pos = index + 1;
 						++ln;
 					};
-					(retV->operatorIndex(ln))=VariableString::newVariable(String::substring(src, pos));
+					retV->setPropertyByIndex(ln, VariableString::newVariable(String::substring(src, pos)));
 					return retV;
 				};
-				(retV->operatorIndex(0))=VariableString::newVariable(src);
+				retV->setPropertyByIndex(0, VariableString::newVariable(src));
 				return retV;
 			};
 

@@ -94,21 +94,16 @@ namespace Quantum {
 #endif
 
 		class Variable :
-			public Object {
+			public DynamicObject {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(Variable);
+				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, Variable);
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeUndefined;
-				QUANTUM_SCRIPT_EXPORT static const char *typeUndefinedKey;
-				QUANTUM_SCRIPT_EXPORT static const void *typeUndefined;
 			public:
-				const void *variableType;
 				//
 				// Constructor/Destructor
 				//
-
-				inline Variable() {
-					variableType = registerType(typeUndefined, typeUndefinedKey);
-				};
+				QUANTUM_SCRIPT_EXPORT Variable();
 
 				inline static Variable *newVariable() {
 					return TMemory<Variable>::newMemory();
@@ -126,9 +121,23 @@ namespace Quantum {
 				//
 				// Member access operators
 				//
-				QUANTUM_SCRIPT_EXPORT virtual TPointerX<Variable> &operatorIndex(uint32_t index);
-				QUANTUM_SCRIPT_EXPORT virtual TPointerX<Variable> &operatorReferenceOwnProperty(Symbol symbolId);
-				QUANTUM_SCRIPT_EXPORT virtual Variable &operatorReference(Symbol symbolId);
+				QUANTUM_SCRIPT_EXPORT virtual TPointer<Variable> getPropertyBySymbol(Symbol symbolId); // x.y
+				QUANTUM_SCRIPT_EXPORT virtual TPointer<Variable> getPropertyByIndex(size_t index); // x[y]
+				QUANTUM_SCRIPT_EXPORT virtual TPointer<Variable> getPropertyByVariable(Variable *index); // x[y]
+				QUANTUM_SCRIPT_EXPORT virtual void setPropertyBySymbol(Symbol symbolId, Variable *value); // x.y = ...
+				QUANTUM_SCRIPT_EXPORT virtual void setPropertyByIndex(size_t index, Variable *value); // x[y] = ...
+				QUANTUM_SCRIPT_EXPORT virtual void setPropertyByVariable(Variable *index, Variable *value); // x[y] = ...
+				QUANTUM_SCRIPT_EXPORT virtual bool deletePropertyBySymbol(Symbol symbolId); // delete x.y
+				QUANTUM_SCRIPT_EXPORT virtual bool deletePropertyByIndex(size_t index); // delete x[y]
+				QUANTUM_SCRIPT_EXPORT virtual bool deletePropertyByVariable(Variable *index); // delete x[y]
+				QUANTUM_SCRIPT_EXPORT virtual bool hasPropertyByVariable(Variable *variable); // y in x
+				//
+				QUANTUM_SCRIPT_EXPORT virtual TPointer<Variable> referenceSet(Variable *value);
+				QUANTUM_SCRIPT_EXPORT virtual TPointer<Variable> referenceGet();
+				QUANTUM_SCRIPT_EXPORT virtual Number referenceToNumber();
+				QUANTUM_SCRIPT_EXPORT virtual String referenceToString();
+				QUANTUM_SCRIPT_EXPORT virtual TPointer<Variable> referenceOperatorPlus(Variable *b);
+				QUANTUM_SCRIPT_EXPORT virtual void referenceSetA1(Variable *value); // Accelerator
 
 				//
 				// Function call
@@ -141,23 +150,14 @@ namespace Quantum {
 				QUANTUM_SCRIPT_EXPORT virtual Variable *instancePrototype();
 				QUANTUM_SCRIPT_EXPORT bool instanceOf(Variable *value);
 				QUANTUM_SCRIPT_EXPORT virtual bool instanceOfPrototype(Prototype *&out);
-				QUANTUM_SCRIPT_EXPORT virtual bool findOwnProperty(Symbol symbolId, Variable *&out);
-
-				QUANTUM_SCRIPT_EXPORT static Variable &operatorReferenceX(Symbol symbolId, Variable *prototype);
-				QUANTUM_SCRIPT_EXPORT virtual bool operatorDeleteIndex(Variable *variable);
-				QUANTUM_SCRIPT_EXPORT virtual bool operatorDeleteOwnProperty(Symbol symbolId);
-				QUANTUM_SCRIPT_EXPORT virtual Variable &operatorIndex2(Variable *variable);
-				QUANTUM_SCRIPT_EXPORT virtual TPointerX<Variable> &operatorReferenceIndex(Variable *variable);
 
 				QUANTUM_SCRIPT_EXPORT virtual TPointer<Iterator> getIteratorKey();
 				QUANTUM_SCRIPT_EXPORT virtual TPointer<Iterator> getIteratorValue();
 
-				QUANTUM_SCRIPT_EXPORT virtual bool hasProperty(Variable *variable);
-
 				//
 				//
 				//
-				QUANTUM_SCRIPT_EXPORT virtual String getType();
+				QUANTUM_SCRIPT_EXPORT virtual String getVariableType();
 				QUANTUM_SCRIPT_EXPORT static void initMemory();
 
 				//
@@ -179,19 +179,6 @@ namespace Quantum {
 				QUANTUM_SCRIPT_EXPORT int compare(Variable *b);
 
 				QUANTUM_SCRIPT_EXPORT TPointer<Variable> operatorPlus(Variable *b);
-
-				//
-				QUANTUM_SCRIPT_EXPORT static const void *registerType(const void *&type, const char *key);
-				QUANTUM_SCRIPT_EXPORT const char *getVariableType();
-
-				//
-				inline static bool isVariableUndefined(const Variable *value) {
-					if(typeUndefined == nullptr) {
-						typeUndefined = registerType(typeUndefined, typeUndefinedKey);
-					};
-					return (value->variableType == typeUndefined);
-				};
-				//
 		};
 
 

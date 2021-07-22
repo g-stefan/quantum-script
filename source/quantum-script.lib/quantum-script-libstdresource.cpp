@@ -26,7 +26,7 @@ namespace Quantum {
 				printf("- resource-drop\n");
 #endif
 
-				if(!VariableResource::isVariableResource(this_)) {
+				if(!TIsType<VariableResource>(this_)) {
 					throw(Error("invalid parameter"));
 				};
 
@@ -39,7 +39,7 @@ namespace Quantum {
 				printf("- resource-close\n");
 #endif
 
-				if(!VariableResource::isVariableResource(this_)) {
+				if(!TIsType<VariableResource>(this_)) {
 					throw(Error("invalid parameter"));
 				};
 

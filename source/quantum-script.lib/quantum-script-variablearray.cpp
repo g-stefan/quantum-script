@@ -26,19 +26,31 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		const char *VariableArray::typeArrayKey = "{BCC18B65-1BA1-4943-859C-82F791ED62AD}";
-		const void *VariableArray::typeArray;
+		XYO_DYNAMIC_TYPE_IMPLEMENT(VariableArray, "{BCC18B65-1BA1-4943-859C-82F791ED62AD}");
 		const char *VariableArray::strTypeArray = "Array";
+
+		VariableArray::VariableArray() {
+			XYO_DYNAMIC_TYPE_PUSH(VariableArray);
+			value.pointerLink(this);
+			value.newMemory();
+		};
 
 		Variable *VariableArray::newVariable() {
 			return (Variable *) TMemory<VariableArray>::newMemory();
 		};
 
-		String VariableArray::getType() {
+		String VariableArray::getVariableType() {
 			return strTypeArray;
 		};
 
-		TPointerX<Variable> &VariableArray::operatorIndex(uint32_t index) {
+		TPointer<Variable> VariableArray::getPropertyBySymbol(Symbol symbolId) {
+			if(symbolId == Context::getSymbolLength()) {
+				return VariableNumber::newVariable((Number)value->length());
+			};
+			return Variable::getPropertyBySymbol(symbolId);
+		};
+
+		TPointer<Variable> VariableArray::getPropertyByIndex(size_t index) {
 			TPointerX<Variable> &retV = (*value)[index];
 			if(!retV) {
 				retV=VariableUndefined::newVariable();
@@ -46,59 +58,38 @@ namespace Quantum {
 			return retV;
 		};
 
-		Variable &VariableArray::operatorReference(Symbol symbolId) {
-			if(symbolId == Context::getSymbolLength()) {
-				if(vLength) {
-					if(vLength->hasOneReference()) {
-						((VariableNumber *)vLength.value())->value = (Number)value->length();
-					} else {
-						vLength=VariableNumber::newVariable((Number)value->length());
-					};
-				} else {
-					vLength=VariableNumber::newVariable((Number)value->length());
+		TPointer<Variable> VariableArray::getPropertyByVariable(Variable *index) {
+			if(TIsType<VariableNumber>(index)) {
+				return getPropertyByIndex(index->toIndex());
+			};
+			if(TIsType<VariableSymbol>(index)) {
+				if((static_cast<VariableSymbol *>(index))->value == Context::getSymbolLength()) {
+					return VariableNumber::newVariable((Number)value->length());
 				};
-				return *vLength;
 			};
-
-			return operatorReferenceX(symbolId, (Context::getPrototypeArray())->prototype);
+			return Variable::getPropertyByVariable(index);
 		};
 
-
-		Variable *VariableArray::instancePrototype() {
-			return (Context::getPrototypeArray())->prototype;
+		void VariableArray::setPropertyByIndex(size_t index, Variable *valueToSet) {
+			(*value)[index] = valueToSet;
 		};
 
-		bool VariableArray::operatorDeleteIndex(Variable *variable) {
-			Number index = variable->toNumber();
-			if(isnan(index) || isinf(index) || signbit(index)) {
-				return false;
-			};
-			value->remove((Integer)(index));
+		void VariableArray::setPropertyByVariable(Variable *index, Variable *valueToSet) {
+			(*value)[index->toIndex()] = valueToSet;
+		};
+
+		bool VariableArray::deletePropertyByIndex(size_t index) {
+			value->remove(index);
 			return true;
 		};
 
-		Variable &VariableArray::operatorIndex2(Variable *variable) {
-			Number index = variable->toNumber();
-			if(isnan(index) || isinf(index) || signbit(index)) {
-				throw(Error("invalid index"));
-			};
-			TPointerX<Variable> &retV = (*value)[(Integer)(index)];
-			if(!retV) {
-				retV=VariableUndefined::newVariable();
-			};
-			return *retV;
+		bool VariableArray::deletePropertyByVariable(Variable *index) {
+			value->remove(index->toIndex());
+			return true;
 		};
 
-		TPointerX<Variable> &VariableArray::operatorReferenceIndex(Variable *variable) {
-			Number index = variable->toNumber();
-			if(isnan(index) || isinf(index) || signbit(index)) {
-				throw(Error("invalid index"));
-			};
-			TPointerX<Variable> &retV = (*value)[(Integer)variable->toNumber()];
-			if(!retV) {
-				retV=VariableUndefined::newVariable();
-			};
-			return retV;
+		Variable *VariableArray::instancePrototype() {
+			return (Context::getPrototypeArray())->prototype;
 		};
 
 		TPointer<Iterator> VariableArray::getIteratorKey() {
@@ -118,6 +109,7 @@ namespace Quantum {
 		};
 
 		void VariableArray::initMemory() {
+			Variable::initMemory();
 			TMemory<Variable>::initMemory();
 			TMemory<Array>::initMemory();
 		};
@@ -131,18 +123,18 @@ namespace Quantum {
 			return out;
 		};
 
-		bool VariableArray::hasProperty(Variable *variable) {
-			if(VariableNumber::isVariableNumber(variable)) {
+		bool VariableArray::hasPropertyByVariable(Variable *variable) {
+			if(TIsType<VariableNumber>(variable)) {
 				if((static_cast<VariableNumber *>(variable))->value < value->length()) {
 					return true;
 				};
 			};
-			if(VariableSymbol::isVariableSymbol(variable)) {
+			if(TIsType<VariableSymbol>(variable)) {
 				if((static_cast<VariableSymbol *>(variable))->value == Context::getSymbolLength()) {
 					return true;
 				};
 			};
-			return (Context::getPrototypeArray())->prototype->hasProperty(variable);
+			return (Context::getPrototypeArray())->prototype->hasPropertyByVariable(variable);
 		};
 
 		bool VariableArray::toBoolean() {

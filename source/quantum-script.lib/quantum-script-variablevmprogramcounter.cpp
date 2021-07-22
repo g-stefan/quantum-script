@@ -18,9 +18,13 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		const char *VariableVmProgramCounter::typeVmProgramCounterKey = "{583F4867-23AF-4861-B20B-582B178C30AA}";
-		const void *VariableVmProgramCounter::typeVmProgramCounter;
+		XYO_DYNAMIC_TYPE_IMPLEMENT(VariableVmProgramCounter, "{583F4867-23AF-4861-B20B-582B178C30AA}");
 		const char *VariableVmProgramCounter::strTypeVmProgramCounter = "ProgramCounter";
+
+		VariableVmProgramCounter::VariableVmProgramCounter() {
+			XYO_DYNAMIC_TYPE_PUSH(VariableVmProgramCounter);
+		};
+
 
 		Variable *VariableVmProgramCounter::newVariable(ProgramCounter *value) {
 			VariableVmProgramCounter *retV;
@@ -29,7 +33,7 @@ namespace Quantum {
 			return (Variable *) retV;
 		};
 
-		String VariableVmProgramCounter::getType() {
+		String VariableVmProgramCounter::getVariableType() {
 			return strTypeVmProgramCounter;
 		};
 

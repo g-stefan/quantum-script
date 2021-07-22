@@ -42,29 +42,18 @@ namespace Quantum {
 		class VariableOperator23 :
 			public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableOperator23);
-				QUANTUM_SCRIPT_EXPORT static const char *typeOperator23Key;
-				QUANTUM_SCRIPT_EXPORT static const void *typeOperator23;
+				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableOperator23);
 			public:
 
 				ProgramCounter *linkBegin;
 				ProgramCounter *pc;
 
-				inline VariableOperator23() {
-					variableType = registerType(typeOperator23, typeOperator23Key);
-				};
+				QUANTUM_SCRIPT_EXPORT  VariableOperator23();
 
 				QUANTUM_SCRIPT_EXPORT static Variable *newVariable();
 
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT String toString();
-
-				//
-				inline static bool isVariableOperator23(const Variable *value) {
-					if(typeOperator23 == nullptr) {
-						typeOperator23 = registerType(typeOperator23, typeOperator23Key);
-					};
-					return (value->variableType == typeOperator23);
-				};
 
 		};
 

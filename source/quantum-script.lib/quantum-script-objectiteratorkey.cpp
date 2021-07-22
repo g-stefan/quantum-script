@@ -22,14 +22,14 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		bool ObjectIteratorKey::next(TPointerX<Variable> &out) {
+		bool ObjectIteratorKey::next(Variable *out) {
 			PropertyNode *next_;
 			if(value) {
-				out=VariableSymbol::newVariable(value->key);
+				out->referenceSet(VariableSymbol::newVariable(value->key));
 				value = value->successor();
 				return true;
 			};
-			out = Context::getValueUndefined();
+			out->referenceSet(Context::getValueUndefined());
 			return false;
 		};
 

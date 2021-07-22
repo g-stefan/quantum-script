@@ -24,11 +24,14 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		const char *VariableString::typeStringKey = "{2CE1F6BC-552C-4EAF-943D-DC3A4D212221}";
-		const void *VariableString::typeString;
+		XYO_DYNAMIC_TYPE_IMPLEMENT(VariableString, "{2CE1F6BC-552C-4EAF-943D-DC3A4D212221}");
 		const char *VariableString::strTypeString = "String";
 
-		String VariableString::getType() {
+		VariableString::VariableString() {
+			XYO_DYNAMIC_TYPE_PUSH(VariableString);
+		};
+
+		String VariableString::getVariableType() {
 			return strTypeString;
 		};
 
@@ -39,20 +42,11 @@ namespace Quantum {
 			return (Variable *) retV;
 		};
 
-		Variable &VariableString::operatorReference(Symbol symbolId) {
+		TPointer<Variable> VariableString::getPropertyBySymbol(Symbol symbolId) {
 			if(symbolId == Context::getSymbolLength()) {
-				if(vLength) {
-					if(vLength->hasOneReference()) {
-						((VariableNumber *)vLength.value())->value = (Number)value.length();
-					} else {
-						vLength=VariableNumber::newVariable((Number)value.length());
-					};
-				} else {
-					vLength=VariableNumber::newVariable((Number)value.length());
-				};
-				return *vLength;
+				return VariableNumber::newVariable((Number)value.length());
 			};
-			return operatorReferenceX(symbolId, (Context::getPrototypeString())->prototype);
+			return Variable::getPropertyBySymbol(symbolId);
 		};
 
 		Variable *VariableString::instancePrototype() {
@@ -60,6 +54,7 @@ namespace Quantum {
 		};
 
 		void VariableString::initMemory() {
+			Variable::initMemory();
 			TMemory<String>::initMemory();
 		};
 
@@ -67,13 +62,13 @@ namespace Quantum {
 			return newVariable(value.value());
 		};
 
-		bool VariableString::hasProperty(Variable *variable) {
-			if(VariableSymbol::isVariableSymbol(variable)) {
+		bool VariableString::hasPropertyByVariable(Variable *variable) {
+			if(TIsType<VariableSymbol>(variable)) {
 				if((static_cast<VariableSymbol *>(variable))->value == Context::getSymbolLength()) {
 					return true;
 				};
 			};
-			return (Context::getPrototypeString())->prototype->hasProperty(variable);
+			return (Context::getPrototypeString())->prototype->hasPropertyByVariable(variable);
 		};
 
 		bool VariableString::toBoolean() {

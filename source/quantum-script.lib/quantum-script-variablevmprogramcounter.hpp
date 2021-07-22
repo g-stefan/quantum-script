@@ -43,32 +43,22 @@ namespace Quantum {
 		class VariableVmProgramCounter :
 			public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableVmProgramCounter);
+				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableVmProgramCounter);
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeVmProgramCounter;
-				QUANTUM_SCRIPT_EXPORT static const char *typeVmProgramCounterKey;
-				QUANTUM_SCRIPT_EXPORT static const void *typeVmProgramCounter;
 			public:
 
 				ProgramCounter *value;
 
-				inline VariableVmProgramCounter() {
-					variableType = registerType(typeVmProgramCounter, typeVmProgramCounterKey);
-				};
+				QUANTUM_SCRIPT_EXPORT VariableVmProgramCounter();
 
 				QUANTUM_SCRIPT_EXPORT static Variable *newVariable(ProgramCounter *value);
 
-				QUANTUM_SCRIPT_EXPORT String getType();
+				QUANTUM_SCRIPT_EXPORT String getVariableType();
 
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT String toString();
 
-				//
-				inline static bool isVariableVmProgramCounter(const Variable *value) {
-					if(typeVmProgramCounter == nullptr) {
-						typeVmProgramCounter = registerType(typeVmProgramCounter, typeVmProgramCounterKey);
-					};
-					return (value->variableType == typeVmProgramCounter);
-				};
 		};
 
 	};

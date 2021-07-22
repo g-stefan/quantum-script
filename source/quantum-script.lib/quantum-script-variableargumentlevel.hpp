@@ -38,32 +38,22 @@ namespace Quantum {
 		class VariableArgumentLevel :
 			public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableArgumentLevel);
+				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableArgumentLevel);
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeArgumentLevel;
-				QUANTUM_SCRIPT_EXPORT static const char *typeArgumentLevelKey;
-				QUANTUM_SCRIPT_EXPORT static const void *typeArgumentLevel;
 			public:
 
 				int value;
 				int level;
 
-				inline VariableArgumentLevel() {
-					variableType = registerType(typeArgumentLevel, typeArgumentLevelKey);
-				};
+				QUANTUM_SCRIPT_EXPORT  VariableArgumentLevel();
 
 				QUANTUM_SCRIPT_EXPORT static Variable *newVariable(int value, int level);
 
-				QUANTUM_SCRIPT_EXPORT String getType();
+				QUANTUM_SCRIPT_EXPORT String getVariableType();
 
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT String toString();
-				//
-				inline static bool isVariableArgumentLevel(const Variable *value) {
-					if(typeArgumentLevel == nullptr) {
-						typeArgumentLevel = registerType(typeArgumentLevel, typeArgumentLevelKey);
-					};
-					return (value->variableType == typeArgumentLevel);
-				};
 
 		};
 

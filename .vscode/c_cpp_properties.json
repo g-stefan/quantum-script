@@ -4,13 +4,12 @@
         {
             "name": "Win32",
             "intelliSenseMode": "msvc-x64",
-            "includePath": [
-                "${workspaceRoot}/include",
-		"${workspaceRoot}/source",
-		"${workspaceRoot}/util/quantum-script-extension-console/include",
+            "includePath": [                
+		"${workspaceRoot}/source/quantum-script.lib",
+		"${workspaceRoot}/source/quantum-script-extension-console",
                 "${env:HOMEDRIVE}${env:HOMEPATH}/SDK/include/xyo",
-                "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.26.28801/ATLMFC/include",
-                "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.26.28801/include",
+                "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30037/ATLMFC/include",
+                "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30037/include",
                 "C:/Program Files (x86)/Windows Kits/NETFXSDK/4.8/include/um",
                 "C:/Program Files (x86)/Windows Kits/10/include/10.0.18362.0/ucrt",
                 "C:/Program Files (x86)/Windows Kits/10/include/10.0.18362.0/shared",
@@ -25,11 +24,10 @@
                 "XYO_PLATFORM=\"win64-msvc-2019\""
             ],
             "browse": {
-                "path": [
-                    "${workspaceRoot}/include",
-                    "${workspaceRoot}/source",
-                    "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.26.28801/ATLMFC/include",
-                    "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.26.28801/include",
+                "path": [                    
+                    "${workspaceRoot}/source/quantum-script.lib",
+                    "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30037/ATLMFC/include",
+                    "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30037/include",
                     "C:/Program Files (x86)/Windows Kits/NETFXSDK/4.8/include/um",
                     "C:/Program Files (x86)/Windows Kits/10/include/10.0.18362.0/ucrt",
                     "C:/Program Files (x86)/Windows Kits/10/include/10.0.18362.0/shared",
@@ -41,14 +39,13 @@
             },
             "cStandard": "c11",
             "cppStandard": "c++17",
-            "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.26.28801/bin/Hostx64/x64/cl.exe"
+            "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30037/bin/Hostx64/x64/cl.exe"
         },
         {
             "name": "linux",
             "intelliSenseMode": "gcc-x64",
-            "includePath": [
-                "${workspaceRoot}/include",
-                "${workspaceRoot}/source"
+            "includePath": [                
+                "${workspaceRoot}/source/quantum-script.lib"
             ],
             "defines": [
                 "XYO_OS_UNIX",
@@ -58,9 +55,8 @@
                 "XYO_PLATFORM=\"ubuntu-focal\""
             ],
             "browse": {
-                "path": [
-                    "${workspaceRoot}/include",
-                    "${workspaceRoot}/source"
+                "path": [                    
+                    "${workspaceRoot}/source/quantum-script.lib"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""

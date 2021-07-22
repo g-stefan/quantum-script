@@ -43,29 +43,21 @@ namespace Quantum {
 		class VariableSymbol :
 			public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableSymbol);
+				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableSymbol);
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeSymbol;
-				QUANTUM_SCRIPT_EXPORT static const char *typeSymbolKey;
-				QUANTUM_SCRIPT_EXPORT static const void *typeSymbol;
-
-				TPointer<Variable> vLength;
 			public:
 
 				Symbol value;
 
-				inline VariableSymbol() {
-					variableType = registerType(typeSymbol, typeSymbolKey);
-				};
-
-				inline void activeDestructor() {
-					vLength.deleteMemory();
-				};
+				QUANTUM_SCRIPT_EXPORT VariableSymbol();
 
 				QUANTUM_SCRIPT_EXPORT static Variable *newVariable(Symbol value);
 
-				QUANTUM_SCRIPT_EXPORT String getType();
+				QUANTUM_SCRIPT_EXPORT String getVariableType();
 
-				QUANTUM_SCRIPT_EXPORT Variable &operatorReference(Symbol symbolId);
+				QUANTUM_SCRIPT_EXPORT TPointer<Variable> getPropertyBySymbol(Symbol symbolId);
+
 				QUANTUM_SCRIPT_EXPORT Variable *instancePrototype();
 
 				QUANTUM_SCRIPT_EXPORT Variable *clone(SymbolList &inSymbolList);
@@ -75,14 +67,6 @@ namespace Quantum {
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT Number toNumber();
 				QUANTUM_SCRIPT_EXPORT bool isString();
-
-				//
-				inline static bool isVariableSymbol(const Variable *value) {
-					if(typeSymbol == nullptr) {
-						typeSymbol = registerType(typeSymbol, typeSymbolKey);
-					};
-					return (value->variableType == typeSymbol);
-				};
 
 		};
 

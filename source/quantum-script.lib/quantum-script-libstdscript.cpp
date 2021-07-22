@@ -53,14 +53,14 @@ namespace Quantum {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 				printf("- script-is-undefined\n");
 #endif
-				return VariableBoolean::newVariable(VariableUndefined::isVariableUndefined(arguments->index(0)));
+				return VariableBoolean::newVariable(TIsTypeExact<VariableUndefined>(arguments->index(0)));
 			};
 
 			static TPointer<Variable> isNull(VariableFunction *function, Variable *this_, VariableArray *arguments) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 				printf("- script-is-null\n");
 #endif
-				return VariableBoolean::newVariable(VariableNull::isVariableNull(arguments->index(0)));
+				return VariableBoolean::newVariable(TIsType<VariableNull>(arguments->index(0)));
 			};
 
 			static TPointer<Variable> isNil(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -69,8 +69,8 @@ namespace Quantum {
 #endif
 				TPointerX<Variable> &value = arguments->index(0);
 				return VariableBoolean::newVariable(
-						VariableUndefined::isVariableUndefined(value) ||
-						VariableNull::isVariableNull(value)
+						TIsTypeExact<VariableUndefined>(value) ||
+						TIsType<VariableNull>(value)
 					);
 			};
 
@@ -107,42 +107,42 @@ namespace Quantum {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 				printf("- script-is-boolean\n");
 #endif
-				return VariableBoolean::newVariable(VariableBoolean::isVariableBoolean(arguments->index(0)));
+				return VariableBoolean::newVariable(TIsType<VariableBoolean>(arguments->index(0)));
 			};
 
 			static TPointer<Variable> isNumber(VariableFunction *function, Variable *this_, VariableArray *arguments) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 				printf("- script-is-number\n");
 #endif
-				return VariableBoolean::newVariable(VariableNumber::isVariableNumber(arguments->index(0)));
+				return VariableBoolean::newVariable(TIsType<VariableNumber>(arguments->index(0)));
 			};
 
 			static TPointer<Variable> isString(VariableFunction *function, Variable *this_, VariableArray *arguments) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 				printf("- script-is-string\n");
 #endif
-				return VariableBoolean::newVariable(VariableString::isVariableString(arguments->index(0)));
+				return VariableBoolean::newVariable(TIsType<VariableString>(arguments->index(0)));
 			};
 
 			static TPointer<Variable> isArray(VariableFunction *function, Variable *this_, VariableArray *arguments) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 				printf("- script-is-array\n");
 #endif
-				return VariableBoolean::newVariable(VariableArray::isVariableArray(arguments->index(0)));
+				return VariableBoolean::newVariable(TIsType<VariableArray>(arguments->index(0)));
 			};
 
 			static TPointer<Variable> isResource(VariableFunction *function, Variable *this_, VariableArray *arguments) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 				printf("- script-is-resource\n");
 #endif
-				return VariableBoolean::newVariable(VariableResource::isVariableResource(arguments->index(0)));
+				return VariableBoolean::newVariable(TIsType<VariableResource>(arguments->index(0)));
 			};
 
 			static TPointer<Variable> isAssociativeArray(VariableFunction *function, Variable *this_, VariableArray *arguments) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 				printf("- script-is-associative-array\n");
 #endif
-				return VariableBoolean::newVariable(VariableAssociativeArray::isVariableAssociativeArray(arguments->index(0)));
+				return VariableBoolean::newVariable(TIsType<VariableAssociativeArray>(arguments->index(0)));
 			};
 
 			static TPointer<Variable> isFunction(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -152,10 +152,10 @@ namespace Quantum {
 
 				TPointerX<Variable> &variable = arguments->index(0);
 				return VariableBoolean::newVariable(
-						VariableFunction::isVariableFunction(variable) ||
-						VariableFunctionWithYield::isVariableFunctionWithYield(variable) ||
-						VariableVmFunction::isVariableVmFunction(variable) ||
-						VariableNativeVmFunction::isVariableNativeVmFunction(variable)
+						TIsType<VariableFunction>(variable) ||
+						TIsType<VariableFunctionWithYield>(variable) ||
+						TIsType<VariableVmFunction>(variable) ||
+						TIsType<VariableNativeVmFunction>(variable)
 					);
 
 			};
@@ -166,9 +166,9 @@ namespace Quantum {
 #endif
 				TPointerX<Variable> &variable = arguments->index(0);
 				return VariableBoolean::newVariable(
-						VariableFunction::isVariableFunction(variable) ||
-						VariableFunctionWithYield::isVariableFunctionWithYield(variable) ||
-						VariableNativeVmFunction::isVariableNativeVmFunction(variable)
+						TIsType<VariableFunction>(variable) ||
+						TIsType<VariableFunctionWithYield>(variable) ||
+						TIsType<VariableNativeVmFunction>(variable)
 					);
 			};
 
@@ -176,21 +176,21 @@ namespace Quantum {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 				printf("- script-is-object\n");
 #endif
-				return VariableBoolean::newVariable(VariableObject::isVariableObject(arguments->index(0)));
+				return VariableBoolean::newVariable(TIsType<VariableObject>(arguments->index(0)));
 			};
 
 			static TPointer<Variable> isDefined(VariableFunction *function, Variable *this_, VariableArray *arguments) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 				printf("- script-is-defined\n");
 #endif
-				return VariableBoolean::newVariable(!VariableUndefined::isVariableUndefined(arguments->index(0)));
+				return VariableBoolean::newVariable(!TIsTypeExact<VariableUndefined>(arguments->index(0)));
 			};
 
 			static TPointer<Variable> isStackTrace(VariableFunction *function, Variable *this_, VariableArray *arguments) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 				printf("- script-is-stack-trace\n");
 #endif
-				return VariableBoolean::newVariable(VariableStackTrace::isVariableStackTrace(arguments->index(0)));
+				return VariableBoolean::newVariable(TIsType<VariableStackTrace>(arguments->index(0)));
 			};
 
 			static TPointer<Variable> stackTraceWithLevel(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -212,7 +212,7 @@ namespace Quantum {
 				operand1 = context->getArgument(0);
 				operand2 = context->getArgument(1);
 
-				if(!VariableArray::isVariableArray(operand2)) {
+				if(!TIsType<VariableArray>(operand2)) {
 					operand2=VariableArray::newVariable();
 				};
 				context->functionContext->functionArguments=static_cast<VariableArray *>(operand2.value());
@@ -222,7 +222,7 @@ namespace Quantum {
 				};
 
 				if (operand1) {
-					if (VariableString::isVariableString(operand1)) {
+					if (TIsType<VariableString>(operand1)) {
 
 						Executive *executive = (Executive *) (((VariableResource *) operand)->resource);
 						bool found = false;
@@ -320,7 +320,7 @@ namespace Quantum {
 				operand1 = context->getArgument(0);
 				operand2 = context->getArgument(1);
 
-				if(!VariableArray::isVariableArray(operand2)) {
+				if(!TIsType<VariableArray>(operand2)) {
 					operand2=VariableArray::newVariable();
 				};
 
@@ -331,7 +331,7 @@ namespace Quantum {
 				};
 
 				if (operand1) {
-					if (VariableString::isVariableString(operand1)) {
+					if (TIsType<VariableString>(operand1)) {
 						Executive *executive = (Executive *) (((VariableResource *) operand)->resource);
 						bool found = false;
 						String fileName;
@@ -443,7 +443,7 @@ namespace Quantum {
 				operand2 = context->getArgument(1);
 				size_t skipLines = (context->getArgument(2))->toIndex();
 
-				if(!VariableArray::isVariableArray(operand2)) {
+				if(!TIsType<VariableArray>(operand2)) {
 					operand2=VariableArray::newVariable();
 				};
 				context->functionContext->functionArguments=static_cast<VariableArray *>(operand2.value());
@@ -453,7 +453,7 @@ namespace Quantum {
 				};
 
 				if (operand1) {
-					if (VariableString::isVariableString(operand1)) {
+					if (TIsType<VariableString>(operand1)) {
 
 						Executive *executive = (Executive *) (((VariableResource *) operand)->resource);
 						bool found = false;
@@ -553,7 +553,7 @@ namespace Quantum {
 				operand1 = context->getArgument(0);
 				operand2 = context->getArgument(1);
 
-				if(!VariableArray::isVariableArray(operand2)) {
+				if(!TIsType<VariableArray>(operand2)) {
 					operand2=VariableArray::newVariable();
 				};
 				context->functionContext->functionArguments=static_cast<VariableArray *>(operand2.value());
@@ -563,7 +563,7 @@ namespace Quantum {
 				};
 
 				if (operand1) {
-					if (VariableString::isVariableString(operand1)) {
+					if (TIsType<VariableString>(operand1)) {
 						Executive *executive = (Executive *) (((VariableResource *) operand)->resource);
 						String stringToCompile;
 						stringToCompile = ((VariableString *) operand1.value())->value.value();
@@ -599,7 +599,7 @@ namespace Quantum {
 				operand2 = context->getArgument(1);
 				size_t skipLines = (context->getArgument(2))->toIndex();
 
-				if(!VariableArray::isVariableArray(operand2)) {
+				if(!TIsType<VariableArray>(operand2)) {
 					operand2=VariableArray::newVariable();
 				};
 				context->functionContext->functionArguments=static_cast<VariableArray *>(operand2.value());
@@ -609,7 +609,7 @@ namespace Quantum {
 				};
 
 				if (operand1) {
-					if (VariableString::isVariableString(operand1)) {
+					if (TIsType<VariableString>(operand1)) {
 						Executive *executive = (Executive *) (((VariableResource *) operand)->resource);
 						String stringToCompile;
 						stringToCompile = ((VariableString *) operand1.value())->value.value();
@@ -657,7 +657,7 @@ namespace Quantum {
 				operand1 = context->getArgument(0);
 				operand2 = context->getArgument(1);
 
-				if(!VariableArray::isVariableArray(operand2)) {
+				if(!TIsType<VariableArray>(operand2)) {
 					operand2=VariableArray::newVariable();
 				};
 				context->functionContext->functionArguments=static_cast<VariableArray *>(operand2.value());
@@ -667,7 +667,7 @@ namespace Quantum {
 				};
 
 				if (operand1) {
-					if (VariableString::isVariableString(operand1)) {
+					if (TIsType<VariableString>(operand1)) {
 						Executive *executive = (Executive *) (((VariableResource *) operand)->resource);
 
 						if(executive->isExtensionLoaded(((VariableString *) operand1.value())->value)) {
@@ -803,7 +803,7 @@ namespace Quantum {
 				operand1 = context->getArgument(0);
 				operand2 = context->getArgument(1);
 
-				if(!VariableArray::isVariableArray(operand2)) {
+				if(!TIsType<VariableArray>(operand2)) {
 					operand2=VariableArray::newVariable();
 				};
 				context->functionContext->functionArguments=static_cast<VariableArray *>(operand2.value());
@@ -813,7 +813,7 @@ namespace Quantum {
 				};
 
 				if (operand1) {
-					if (VariableString::isVariableString(operand1)) {
+					if (TIsType<VariableString>(operand1)) {
 						Executive *executive = (Executive *) (((VariableResource *) operand)->resource);
 
 						if(executive->isExtensionLoaded(((VariableString *) operand1.value())->value)) {
@@ -891,11 +891,12 @@ namespace Quantum {
 				int k;
 				for (scan = executive->extensionList->head, k = 0; scan; scan = scan->next, ++k) {
 					if(scan->value.isPublic) {
-						(out->operatorIndex(k))=VariableObject::newVariable();
-						((out->operatorIndex(k))->operatorReferenceOwnProperty(symFileName))=VariableString::newVariable(scan->value.fileName);
-						((out->operatorIndex(k))->operatorReferenceOwnProperty(symName))=VariableString::newVariable(scan->value.name);
-						((out->operatorIndex(k))->operatorReferenceOwnProperty(symInfo))=VariableString::newVariable(scan->value.info);
-						((out->operatorIndex(k))->operatorReferenceOwnProperty(symVersion))=VariableString::newVariable(scan->value.version);
+						TPointer<Variable> info(VariableObject::newVariable());
+						info->setPropertyBySymbol(symFileName, VariableString::newVariable(scan->value.fileName));
+						info->setPropertyBySymbol(symName, VariableString::newVariable(scan->value.name));
+						info->setPropertyBySymbol(symInfo, VariableString::newVariable(scan->value.info));
+						info->setPropertyBySymbol(symVersion, VariableString::newVariable(scan->value.version));
+						out->setPropertyByIndex(k, info);
 					};
 				};
 				context->push(out);
@@ -904,7 +905,7 @@ namespace Quantum {
 
 			static TPointer<Variable> protectSource(VariableFunction *function, Variable *this_, VariableArray *arguments) {
 				TPointerX<Variable> &value = arguments->index(0);
-				if(VariableVmFunction::isVariableVmFunction(value)) {
+				if(TIsType<VariableVmFunction>(value)) {
 					((VariableVmFunction *)value.value())->fnSource = 0;
 					if(((VariableVmFunction *)value.value())->valueEnd) {
 						TDoubleEndedQueue<InstructionX>::Node *index = (TDoubleEndedQueue<InstructionX>::Node *)(((VariableVmFunction *)value.value())->value);
@@ -941,9 +942,9 @@ namespace Quantum {
 				};
 
 				if (operand1) {
-					if (VariableString::isVariableString(operand1)) {
+					if (TIsType<VariableString>(operand1)) {
 						if (operand2) {
-							if (VariableString::isVariableString(operand2)) {
+							if (TIsType<VariableString>(operand2)) {
 								Executive *executive = (Executive *) (((VariableResource *) operand)->resource);
 								bool found = false;
 								String fileName;
@@ -1021,9 +1022,9 @@ namespace Quantum {
 				};
 
 				if (operand1) {
-					if (VariableString::isVariableString(operand1)) {
+					if (TIsType<VariableString>(operand1)) {
 						if (operand2) {
-							if (VariableString::isVariableString(operand2)) {
+							if (TIsType<VariableString>(operand2)) {
 								Executive *executive = (Executive *) (((VariableResource *) operand)->resource);
 
 								int retV = executive->setVmFunctionFromStringX(context, ((VariableString *) operand2.value())->value, ((VariableString *) operand1.value())->value);

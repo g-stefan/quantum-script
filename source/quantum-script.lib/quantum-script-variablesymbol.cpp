@@ -23,12 +23,22 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		const char *VariableSymbol::typeSymbolKey = "{C3417ABA-592E-403B-8C3A-11E4EAF889C6}";
-		const void *VariableSymbol::typeSymbol;
+		XYO_DYNAMIC_TYPE_IMPLEMENT(VariableSymbol, "{C3417ABA-592E-403B-8C3A-11E4EAF889C6}");
 		const char *VariableSymbol::strTypeSymbol = "Symbol";
 
-		String VariableSymbol::getType() {
+		VariableSymbol::VariableSymbol() {
+			XYO_DYNAMIC_TYPE_PUSH(VariableSymbol);
+		};
+
+		String VariableSymbol::getVariableType() {
 			return strTypeSymbol;
+		};
+
+		TPointer<Variable> VariableSymbol::getPropertyBySymbol(Symbol symbolId) {
+			if(symbolId == Context::getSymbolLength()) {
+				return VariableNumber::newVariable((Number)((toString()).length()));
+			};
+			return Variable::getPropertyBySymbol(symbolId);
 		};
 
 		Variable *VariableSymbol::newVariable(Symbol value) {
@@ -36,17 +46,6 @@ namespace Quantum {
 			retV = TMemory<VariableSymbol>::newMemory();
 			retV->value = value;
 			return (Variable *) retV;
-		};
-
-		Variable &VariableSymbol::operatorReference(Symbol symbolId) {
-			if(symbolId == Context::getSymbolLength()) {
-				if(vLength) {
-				} else {
-					vLength=VariableNumber::newVariable((Number)((toString()).length()));
-				};
-				return *vLength;
-			};
-			return operatorReferenceX(symbolId, (Context::getPrototypeString())->prototype);
 		};
 
 		Variable *VariableSymbol::instancePrototype() {

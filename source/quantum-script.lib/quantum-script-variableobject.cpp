@@ -16,6 +16,7 @@
 #include "quantum-script-objectiteratorkey.hpp"
 #include "quantum-script-objectiteratorvalue.hpp"
 
+#include "quantum-script-variablesymbol.hpp"
 #include "quantum-script-variablefunction.hpp"
 #include "quantum-script-variablefunctionwithyield.hpp"
 #include "quantum-script-variablevmfunction.hpp"
@@ -26,45 +27,95 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		const char *VariableObject::typeObjectKey = "{1F81286F-F646-4DCD-B5B5-EEB61C2BFDC0}";
-		const void *VariableObject::typeObject;
+		XYO_DYNAMIC_TYPE_IMPLEMENT(VariableObject, "{1F81286F-F646-4DCD-B5B5-EEB61C2BFDC0}");
 		const char *VariableObject::strTypeObject = "Object";
 
-		String VariableObject::getType() {
-			return strTypeObject;
+		VariableObject::VariableObject() {
+			XYO_DYNAMIC_TYPE_PUSH(VariableObject);
+			value.pointerLink(this);
+			prototype.pointerLink(this);
+			value.newMemory();
+			prototype.newMemory();
 		};
 
+
+		String VariableObject::getVariableType() {
+			return strTypeObject;
+		};
 
 		Variable *VariableObject::newVariable() {
 			return (Variable *) TMemory<VariableObject>::newMemory();
 		};
 
-		TPointerX<Variable> &VariableObject::operatorReferenceOwnProperty(Symbol symbolId) {
+		TPointer<Variable> VariableObject::getPropertyBySymbol(Symbol symbolId) {
 			PropertyNode *outX;
 			outX = value->find(symbolId);
 			if (outX) {
 				return outX->value;
 			};
-			outX = Property::newNode();
-			outX->key = symbolId;
-			outX->value.pointerLink(this);
-			outX->value=VariableUndefined::newVariable();
-			value->insertNode(outX);
-			return outX->value;
-		};
-
-		bool VariableObject::findOwnProperty(Symbol symbolId, Variable *&out) {
-			PropertyNode *outX;
-			outX = value->find(symbolId);
-			if (outX) {
-				out = outX->value;
-				return true;
+			Variable *prototype_ = instancePrototype();
+			if(prototype_) {
+				return prototype_->getPropertyBySymbol(symbolId);
 			};
-			return false;
+			return Context::getValueUndefined();
 		};
 
-		Variable &VariableObject::operatorReference(Symbol symbolId) {
-			return operatorReferenceX(symbolId, this);
+		TPointer<Variable> VariableObject::getPropertyByIndex(size_t index) {
+			char buffer[22];
+			sprintf(buffer, "%zu", index);
+			return getPropertyBySymbol(Context::getSymbol(buffer));
+		};
+
+		TPointer<Variable> VariableObject::getPropertyByVariable(Variable *index) {
+			if (TIsType<VariableSymbol>(index)) {
+				return getPropertyBySymbol(((VariableSymbol *) index)->value);
+			};
+			return getPropertyBySymbol(Context::getSymbol(index->toString()));
+		};
+
+		void VariableObject::setPropertyBySymbol(Symbol symbolId, Variable *valueToSet) {
+			PropertyNode *node;
+			node = value->find(symbolId);
+			if (node) {
+				node->value=valueToSet;
+				return;
+			};
+			node = Property::newNode();
+			node->key = symbolId;
+			node->value.pointerLink(this);
+			node->value = valueToSet;
+			value->insertNode(node);
+		};
+
+		void VariableObject::setPropertyByIndex(size_t index, Variable *valueToSet) {
+			char buffer[22];
+			sprintf(buffer, "%zu", index);
+			setPropertyBySymbol(Context::getSymbol(buffer), valueToSet);
+		};
+
+		void VariableObject::setPropertyByVariable(Variable *index, Variable *valueToSet) {
+			if (TIsType<VariableSymbol>(index)) {
+				return setPropertyBySymbol(((VariableSymbol *) index)->value, valueToSet);
+			};
+			return setPropertyBySymbol(Context::getSymbol(index->toString()), valueToSet);
+		};
+
+		bool VariableObject::deletePropertyBySymbol(Symbol symbolId) {
+			value->remove(symbolId);
+			return true;
+		};
+
+		bool VariableObject::deletePropertyByIndex(size_t index) {
+			char buffer[22];
+			sprintf(buffer, "%zu", index);
+			return deletePropertyBySymbol(Context::getSymbol(buffer));
+		};
+
+		bool VariableObject::deletePropertyByVariable(Variable *index) {
+			if (TIsType<VariableSymbol>(index)) {
+				return deletePropertyBySymbol(((VariableSymbol *) index)->value);
+			};
+			return deletePropertyBySymbol(Context::getSymbol(index->toString()));
 		};
 
 		Variable *VariableObject::instancePrototype() {
@@ -75,44 +126,6 @@ namespace Quantum {
 				return nullptr;
 			};
 			return (Context::getPrototypeObject())->prototype;
-		};
-
-		bool VariableObject::operatorDeleteIndex(Variable *variable) {
-			PropertyNode *out;
-			Symbol symbolId = Context::getSymbol(variable->toString());
-			value->remove(symbolId);
-			return true;
-		};
-
-		bool VariableObject::operatorDeleteOwnProperty(Symbol symbolId) {
-			value->remove(symbolId);
-			return true;
-		};
-
-
-		Variable &VariableObject::operatorIndex2(Variable *variable) {
-			PropertyNode *out;
-			Symbol symbolId = Context::getSymbol(variable->toString());
-			out = value->find(symbolId);
-			if (out) {
-				return  *(out->value);
-			};
-			return *(Context::getValueUndefined());
-		};
-
-		TPointerX<Variable> &VariableObject::operatorReferenceIndex(Variable *variable) {
-			PropertyNode *out;
-			Symbol symbolId = Context::getSymbol(variable->toString());
-			out = value->find(symbolId);
-			if (out) {
-				return out->value;
-			};
-			out = Property::newNode();
-			out->key = symbolId;
-			out->value.pointerLink(this);
-			out->value=VariableUndefined::newVariable();
-			value->insertNode(out);
-			return out->value;
 		};
 
 		TPointer<Iterator> VariableObject::getIteratorKey() {
@@ -130,6 +143,7 @@ namespace Quantum {
 		};
 
 		void VariableObject::initMemory() {
+			Variable::initMemory();
 			TMemory<Prototype>::initMemory();
 			TMemory<Property>::initMemory();
 			TMemory<Variable>::initMemory();
@@ -151,7 +165,7 @@ namespace Quantum {
 			return out;
 		};
 
-		bool VariableObject::hasProperty(Variable *variable) {
+		bool VariableObject::hasPropertyByVariable(Variable *variable) {
 			PropertyNode *outX;
 			Symbol symbolId = Context::getSymbol(variable->toString());
 			outX = value->find(symbolId);
@@ -160,7 +174,7 @@ namespace Quantum {
 			};
 			Variable *prototype_ = instancePrototype();
 			if(prototype_) {
-				return prototype_->hasProperty(variable);
+				return prototype_->hasPropertyByVariable(variable);
 			};
 			return false;
 		};
@@ -170,15 +184,15 @@ namespace Quantum {
 		};
 
 		String VariableObject::toString() {
-			Variable &variable = operatorReference(Context::getSymbolToString());
+			TPointer<Variable> variable =  getPropertyBySymbol(Context::getSymbolToString());
 			if(
-				VariableFunction::isVariableFunction(&variable) ||
-				VariableFunctionWithYield::isVariableFunctionWithYield(&variable) ||
-				VariableVmFunction::isVariableVmFunction(&variable) ||
-				VariableNativeVmFunction::isVariableNativeVmFunction(&variable)
+				TIsType<VariableFunction>(variable) ||
+				TIsType<VariableFunctionWithYield>(variable) ||
+				TIsType<VariableVmFunction>(variable) ||
+				TIsType<VariableNativeVmFunction>(variable)
 			) {
 				TPointer<VariableArray> arguments(VariableArray::newArray());
-				return (variable.functionApply(this, arguments))->toString();
+				return (variable->functionApply(this, arguments))->toString();
 			};
 			return strTypeObject;
 		};

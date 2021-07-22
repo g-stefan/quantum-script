@@ -43,25 +43,15 @@ namespace Quantum {
 		class VariableObject :
 			public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableObject);
+				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableObject);
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeObject;
-				QUANTUM_SCRIPT_EXPORT static const char *typeObjectKey;
-				QUANTUM_SCRIPT_EXPORT static const void *typeObject;
 			public:
 
 				TPointerX<Property> value;
 				TPointerX<Prototype> prototype;
 
-				inline VariableObject() {
-					value.pointerLink(this);
-					prototype.pointerLink(this);
-					variableType = registerType(typeObject, typeObjectKey);
-					value.newMemory();
-					prototype.newMemory();
-				};
-
-				inline ~VariableObject() {
-				};
+				QUANTUM_SCRIPT_EXPORT  VariableObject();
 
 				inline void activeConstructor() {
 					prototype.newMemory();
@@ -75,16 +65,19 @@ namespace Quantum {
 
 				QUANTUM_SCRIPT_EXPORT static Variable *newVariable();
 
-				QUANTUM_SCRIPT_EXPORT String getType();
+				QUANTUM_SCRIPT_EXPORT String getVariableType();
 
-				QUANTUM_SCRIPT_EXPORT TPointerX<Variable> &operatorReferenceOwnProperty(Symbol symbolId);
-				QUANTUM_SCRIPT_EXPORT Variable &operatorReference(Symbol symbolId);
+				QUANTUM_SCRIPT_EXPORT TPointer<Variable> getPropertyBySymbol(Symbol symbolId);
+				QUANTUM_SCRIPT_EXPORT TPointer<Variable> getPropertyByIndex(size_t index);
+				QUANTUM_SCRIPT_EXPORT TPointer<Variable> getPropertyByVariable(Variable *index);
+				QUANTUM_SCRIPT_EXPORT void setPropertyBySymbol(Symbol symbolId, Variable *value);
+				QUANTUM_SCRIPT_EXPORT void setPropertyByIndex(size_t index, Variable *value);
+				QUANTUM_SCRIPT_EXPORT void setPropertyByVariable(Variable *index, Variable *value);
+				QUANTUM_SCRIPT_EXPORT bool deletePropertyBySymbol(Symbol symbolId);
+				QUANTUM_SCRIPT_EXPORT bool deletePropertyByIndex(size_t index);
+				QUANTUM_SCRIPT_EXPORT bool deletePropertyByVariable(Variable *index);
+
 				QUANTUM_SCRIPT_EXPORT Variable *instancePrototype();
-				QUANTUM_SCRIPT_EXPORT bool findOwnProperty(Symbol symbolId, Variable *&out);
-				QUANTUM_SCRIPT_EXPORT bool operatorDeleteIndex(Variable *variable);
-				QUANTUM_SCRIPT_EXPORT bool operatorDeleteOwnProperty(Symbol symbolId);
-				QUANTUM_SCRIPT_EXPORT Variable &operatorIndex2(Variable *variable);
-				QUANTUM_SCRIPT_EXPORT TPointerX<Variable> &operatorReferenceIndex(Variable *variable);
 
 				QUANTUM_SCRIPT_EXPORT TPointer<Iterator> getIteratorKey();
 				QUANTUM_SCRIPT_EXPORT TPointer<Iterator> getIteratorValue();
@@ -92,18 +85,10 @@ namespace Quantum {
 				QUANTUM_SCRIPT_EXPORT static void initMemory();
 
 				QUANTUM_SCRIPT_EXPORT Variable *clone(SymbolList &inSymbolList);
-				QUANTUM_SCRIPT_EXPORT bool hasProperty(Variable *variable);
+				QUANTUM_SCRIPT_EXPORT bool hasPropertyByVariable(Variable *variable);
 
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT String toString();
-
-				//
-				inline static bool isVariableObject(const Variable *value) {
-					if(typeObject == nullptr) {
-						typeObject = registerType(typeObject, typeObjectKey);
-					};
-					return (value->variableType == typeObject);
-				};
 
 		};
 

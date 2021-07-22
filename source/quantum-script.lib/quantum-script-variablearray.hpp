@@ -38,23 +38,16 @@ namespace Quantum {
 		class VariableArray :
 			public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableArray);
+				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableArray);
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeArray;
-				QUANTUM_SCRIPT_EXPORT static const char *typeArrayKey;
-				QUANTUM_SCRIPT_EXPORT static const void *typeArray;
-				TPointer<Variable> vLength;
 			public:
 				TPointerX<Array> value;
 
-				inline VariableArray() {
-					variableType = registerType(typeArray, typeArrayKey);
-					value.pointerLink(this);
-					value.newMemory();
-				};
+				QUANTUM_SCRIPT_EXPORT VariableArray();
 
 				inline void activeDestructor() {
 					value->activeDestructor();
-					vLength.deleteMemory();
 				};
 
 				QUANTUM_SCRIPT_EXPORT static Variable *newVariable();
@@ -63,10 +56,15 @@ namespace Quantum {
 					return TMemory<VariableArray>::newMemory();
 				};
 
-				QUANTUM_SCRIPT_EXPORT String getType();
+				QUANTUM_SCRIPT_EXPORT String getVariableType();
 
-				QUANTUM_SCRIPT_EXPORT TPointerX<Variable> &operatorIndex(uint32_t index);
-				QUANTUM_SCRIPT_EXPORT Variable &operatorReference(Symbol symbolId);
+				QUANTUM_SCRIPT_EXPORT TPointer<Variable> getPropertyBySymbol(Symbol symbolId);
+				QUANTUM_SCRIPT_EXPORT TPointer<Variable> getPropertyByIndex(size_t index);
+				QUANTUM_SCRIPT_EXPORT TPointer<Variable> getPropertyByVariable(Variable *index);
+				QUANTUM_SCRIPT_EXPORT void setPropertyByIndex(size_t index, Variable *value);
+				QUANTUM_SCRIPT_EXPORT void setPropertyByVariable(Variable *index, Variable *value);
+				QUANTUM_SCRIPT_EXPORT bool deletePropertyByIndex(size_t index);
+				QUANTUM_SCRIPT_EXPORT bool deletePropertyByVariable(Variable *index);
 
 				inline TPointerX<Variable> &index(uint32_t index_) {
 					TPointerX<Variable> &retV = (*value)[index_];
@@ -77,12 +75,9 @@ namespace Quantum {
 				};
 
 				QUANTUM_SCRIPT_EXPORT Variable *instancePrototype();
-				QUANTUM_SCRIPT_EXPORT bool operatorDeleteIndex(Variable *variable);
-				QUANTUM_SCRIPT_EXPORT Variable &operatorIndex2(Variable *variable);
-				QUANTUM_SCRIPT_EXPORT TPointerX<Variable> &operatorReferenceIndex(Variable *variable);
 				QUANTUM_SCRIPT_EXPORT TPointer<Iterator> getIteratorKey();
 				QUANTUM_SCRIPT_EXPORT TPointer<Iterator> getIteratorValue();
-				QUANTUM_SCRIPT_EXPORT bool hasProperty(Variable *variable);
+				QUANTUM_SCRIPT_EXPORT bool hasPropertyByVariable(Variable *variable);
 
 				QUANTUM_SCRIPT_EXPORT static void initMemory();
 
@@ -92,14 +87,6 @@ namespace Quantum {
 				QUANTUM_SCRIPT_EXPORT String toString();
 
 				QUANTUM_SCRIPT_EXPORT String join(String with_);
-
-				//
-				inline static bool isVariableArray(const Variable *value) {
-					if(typeArray == nullptr) {
-						typeArray = registerType(typeArray, typeArrayKey);
-					};
-					return (value->variableType == typeArray);
-				};
 
 		};
 

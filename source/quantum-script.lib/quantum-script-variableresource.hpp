@@ -39,27 +39,19 @@ namespace Quantum {
 		class VariableResource :
 			public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableResource);
+				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableResource);
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeResource;
-				QUANTUM_SCRIPT_EXPORT static const char *typeResourceKey;
-				QUANTUM_SCRIPT_EXPORT static const void *typeResource;
 			public:
 
 				typedef void (*ResourceDelete)(void *);
 
-				const void *resourceType;
 				void *resource;
 				ResourceDelete resourceDelete;
 
-				inline VariableResource() {
-					variableType = registerType(typeResource, typeResourceKey);
-					resourceType = typeResource;
-					resource = nullptr;
-					resourceDelete = nullptr;
-				};
+				QUANTUM_SCRIPT_EXPORT VariableResource();
 
 				inline void drop() {
-					resourceType = typeResource;
 					resource = nullptr;
 					resourceDelete = nullptr;
 				};
@@ -72,31 +64,20 @@ namespace Quantum {
 						};
 						resource = nullptr;
 					};
-					variableType = typeResource;
 				};
 
 				inline void activeDestructor() {
 					close();
 				};
 
-
 				QUANTUM_SCRIPT_EXPORT static Variable *newVariable(void *resource, ResourceDelete resourceDelete);
-				QUANTUM_SCRIPT_EXPORT static Variable *newVariable2(void *resource, ResourceDelete resourceDelete, const void *resourceType);
 
-				QUANTUM_SCRIPT_EXPORT String getType();
+				QUANTUM_SCRIPT_EXPORT String getVariableType();
 
 				QUANTUM_SCRIPT_EXPORT Variable *instancePrototype();
 
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT String toString();
-
-				//
-				inline static bool isVariableResource(const Variable *value) {
-					if(typeResource == nullptr) {
-						typeResource = registerType(typeResource, typeResourceKey);
-					};
-					return (value->variableType == typeResource);
-				};
 
 		};
 

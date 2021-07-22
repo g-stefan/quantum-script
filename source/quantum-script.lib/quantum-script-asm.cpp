@@ -690,20 +690,7 @@ namespace Quantum {
 #endif
 						return pc;
 					};
-				case ParserAsm::OperatorArrayPushReference: {
-						QUANTUM_SCRIPT_ASM_INSTRUCTION(OperatorArrayPushReference, nullptr);
-#ifdef QUANTUM_SCRIPT_DEBUG_ASM
-						printf("%p    operator-array-push-reference\n", pc);
-#endif
-						return pc;
-					};
-				case ParserAsm::OperatorObjectReferenceValue: {
-						QUANTUM_SCRIPT_ASM_INSTRUCTION(OperatorObjectReferenceValue, nullptr);
-#ifdef QUANTUM_SCRIPT_DEBUG_ASM
-						printf("%p    operator-object-reference-value\n", pc);
-#endif
-						return pc;
-					};
+
 				case ParserAsm::OperatorPlusPlusLeft: {
 						QUANTUM_SCRIPT_ASM_INSTRUCTION(OperatorPlusPlusLeft, nullptr);
 #ifdef QUANTUM_SCRIPT_DEBUG_ASM
@@ -1301,7 +1288,7 @@ namespace Quantum {
 
 			if(reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (old_)->value.operand) {
 
-				if(VariableVmProgramCounter::isVariableVmProgramCounter(reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (old_)->value.operand)) {
+				if(TIsType<VariableVmProgramCounter>(reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (old_)->value.operand)) {
 					((VariableVmProgramCounter *) (reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (old_)->value.operand.value()))->value = new_;
 					return;
 				};

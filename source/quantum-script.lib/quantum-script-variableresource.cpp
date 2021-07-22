@@ -22,11 +22,16 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		const char *VariableResource::typeResourceKey = "{B3910AC4-B98C-4890-94FB-BA5B38F24621}";
-		const void *VariableResource::typeResource;
+		XYO_DYNAMIC_TYPE_IMPLEMENT(VariableResource, "{B3910AC4-B98C-4890-94FB-BA5B38F24621}");
 		const char *VariableResource::strTypeResource = "Resource";
 
-		String VariableResource::getType() {
+		VariableResource::VariableResource() {
+			XYO_DYNAMIC_TYPE_PUSH(VariableResource);
+			resource = nullptr;
+			resourceDelete = nullptr;
+		};
+
+		String VariableResource::getVariableType() {
 			return strTypeResource;
 		};
 
@@ -38,15 +43,6 @@ namespace Quantum {
 			return (Variable *) retV;
 		};
 
-		Variable *VariableResource::newVariable2(void *resource, ResourceDelete resourceDelete, const void *resourceType) {
-			VariableResource *retV;
-			retV = TMemory<VariableResource>::newMemory();
-			retV->resource = resource;
-			retV->resourceDelete = resourceDelete;
-			retV->resourceType = resourceType;
-			return (Variable *) retV;
-		};
-
 		Variable *VariableResource::instancePrototype() {
 			return (Context::getPrototypeResource())->prototype;
 		};
@@ -54,7 +50,6 @@ namespace Quantum {
 		bool VariableResource::toBoolean() {
 			return true;
 		};
-
 
 		String VariableResource::toString() {
 			return strTypeResource;

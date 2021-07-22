@@ -20,11 +20,14 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		const char *VariableNull::typeNullKey = "{BD1A147D-2E59-4583-9E4B-C815A3EF5543}";
-		const void *VariableNull::typeNull;
+		XYO_DYNAMIC_TYPE_IMPLEMENT(VariableNull, "{BD1A147D-2E59-4583-9E4B-C815A3EF5543}");
 		const char *VariableNull::strTypeNull = "null";
 
-		String VariableNull::getType() {
+		VariableNull::VariableNull() {
+			XYO_DYNAMIC_TYPE_PUSH(VariableNull);
+		};
+
+		String VariableNull::getVariableType() {
 			return strTypeNull;
 		};
 

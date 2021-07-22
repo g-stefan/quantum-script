@@ -59,33 +59,29 @@ namespace Quantum {
 		class VariableAssociativeArray :
 			public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableAssociativeArray);
+				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableAssociativeArray);
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeAssociativeArray;
-				QUANTUM_SCRIPT_EXPORT static const char *typeAssociativeArrayKey;
-				QUANTUM_SCRIPT_EXPORT static const void *typeAssociativeArray;
-				TPointer<Variable> vLength;
 			public:
 				TPointerX<AssociativeArray> value;
 
-				inline VariableAssociativeArray() {
-					variableType = registerType(typeAssociativeArray, typeAssociativeArrayKey);
-					value.pointerLink(this);
-					value.newMemory();
-				};
+				QUANTUM_SCRIPT_EXPORT  VariableAssociativeArray();
 
 				inline void activeDestructor() {
 					value->activeDestructor();
-					vLength.deleteMemory();
 				};
 
 				QUANTUM_SCRIPT_EXPORT static Variable *newVariable();
 
-				QUANTUM_SCRIPT_EXPORT String getType();
+				QUANTUM_SCRIPT_EXPORT String getVariableType();
 
-				QUANTUM_SCRIPT_EXPORT Variable &operatorReference(Symbol symbolId);
-				QUANTUM_SCRIPT_EXPORT TPointerX<Variable> &operatorReferenceIndex(Variable *variable);
-				QUANTUM_SCRIPT_EXPORT bool operatorDeleteIndex(Variable *variable);
-				QUANTUM_SCRIPT_EXPORT Variable &operatorIndex2(Variable *variable);
+				QUANTUM_SCRIPT_EXPORT TPointer<Variable> getPropertyBySymbol(Symbol symbolId);
+				QUANTUM_SCRIPT_EXPORT TPointer<Variable> getPropertyByIndex(size_t index);
+				QUANTUM_SCRIPT_EXPORT TPointer<Variable> getPropertyByVariable(Variable *index);
+				QUANTUM_SCRIPT_EXPORT void setPropertyByIndex(size_t index, Variable *value);
+				QUANTUM_SCRIPT_EXPORT void setPropertyByVariable(Variable *index, Variable *value);
+				QUANTUM_SCRIPT_EXPORT bool deletePropertyByIndex(size_t index);
+				QUANTUM_SCRIPT_EXPORT bool deletePropertyByVariable(Variable *index);
 
 				QUANTUM_SCRIPT_EXPORT Variable *instancePrototype();
 				QUANTUM_SCRIPT_EXPORT TPointer<Iterator> getIteratorKey();
@@ -99,14 +95,6 @@ namespace Quantum {
 
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT String toString();
-
-				//
-				inline static bool isVariableAssociativeArray(const Variable *value) {
-					if(typeAssociativeArray == nullptr) {
-						typeAssociativeArray = registerType(typeAssociativeArray, typeAssociativeArrayKey);
-					};
-					return (value->variableType == typeAssociativeArray);
-				};
 
 		};
 

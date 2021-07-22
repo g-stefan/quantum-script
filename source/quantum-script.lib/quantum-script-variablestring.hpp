@@ -38,49 +38,37 @@ namespace Quantum {
 		class VariableString :
 			public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableString);
+				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableString);
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeString;
-				QUANTUM_SCRIPT_EXPORT static const char *typeStringKey;
-				QUANTUM_SCRIPT_EXPORT static const void *typeString;
-
-				TPointer<Variable> vLength;
 			public:
 				String value;
 
-				inline VariableString() {
-					variableType = registerType(typeString, typeStringKey);
-				};
+				QUANTUM_SCRIPT_EXPORT VariableString();
 
 				inline void activeDestructor() {
 					value.activeDestructor();
-					vLength.deleteMemory();
 				};
 
 				QUANTUM_SCRIPT_EXPORT  static Variable *newVariable(String value);
 
-				QUANTUM_SCRIPT_EXPORT String getType();
+				QUANTUM_SCRIPT_EXPORT String getVariableType();
 
-				QUANTUM_SCRIPT_EXPORT Variable &operatorReference(Symbol symbolId);
+				QUANTUM_SCRIPT_EXPORT TPointer<Variable> getPropertyBySymbol(Symbol symbolId);
+
 				QUANTUM_SCRIPT_EXPORT Variable *instancePrototype();
 
 				QUANTUM_SCRIPT_EXPORT static void initMemory();
 
 				QUANTUM_SCRIPT_EXPORT Variable *clone(SymbolList &inSymbolList);
 
-				QUANTUM_SCRIPT_EXPORT bool hasProperty(Variable *variable);
+				QUANTUM_SCRIPT_EXPORT bool hasPropertyByVariable(Variable *variable);
 
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT Number toNumber();
 				QUANTUM_SCRIPT_EXPORT String toString();
 				QUANTUM_SCRIPT_EXPORT bool isString();
 
-				//
-				inline static bool isVariableString(const Variable *value) {
-					if(typeString == nullptr) {
-						typeString = registerType(typeString, typeStringKey);
-					};
-					return (value->variableType == typeString);
-				};
 		};
 
 	};

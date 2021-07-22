@@ -19,8 +19,8 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		bool Iterator::next(TPointerX<Variable> &out) {
-			out = Context::getValueUndefined();
+		bool Iterator::next(Variable *out) {
+			out->referenceSet(Context::getValueUndefined());
 			return false;
 		};
 

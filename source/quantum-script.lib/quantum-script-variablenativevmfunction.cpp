@@ -19,11 +19,14 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		const char *VariableNativeVmFunction::typeNativeVmFunctionKey = "{4E32D29F-5FF0-4D33-A16E-4B221233C809}";
-		const void *VariableNativeVmFunction::typeNativeVmFunction;
+		XYO_DYNAMIC_TYPE_IMPLEMENT(VariableNativeVmFunction,  "{4E32D29F-5FF0-4D33-A16E-4B221233C809}");
 		const char *VariableNativeVmFunction::strTypeFunction = "Function";
 
-		String VariableNativeVmFunction::getType() {
+		VariableNativeVmFunction::VariableNativeVmFunction() {
+			XYO_DYNAMIC_TYPE_PUSH(VariableNativeVmFunction);
+		};
+
+		String VariableNativeVmFunction::getVariableType() {
 			return strTypeFunction;
 		};
 

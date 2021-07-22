@@ -39,8 +39,8 @@ namespace Quantum {
 				//
 				// Variables
 				//
-				QUANTUM_SCRIPT_EXPORT static TPointerX<Variable> &getValueUndefined();
-				QUANTUM_SCRIPT_EXPORT static TPointerX<Variable> &getGlobalObject();
+				QUANTUM_SCRIPT_EXPORT static TPointer<Variable> getValueUndefined();
+				QUANTUM_SCRIPT_EXPORT static TPointer<Variable> getGlobalObject();
 
 				QUANTUM_SCRIPT_EXPORT static Symbol getSymbolLength();
 				QUANTUM_SCRIPT_EXPORT static Symbol getSymbolPrototype();
@@ -56,14 +56,14 @@ namespace Quantum {
 				QUANTUM_SCRIPT_EXPORT static Symbol getSymbolToNumber();
 				QUANTUM_SCRIPT_EXPORT static Symbol getSymbolToString();
 
-				QUANTUM_SCRIPT_EXPORT static TPointerX<Prototype> &getPrototypeBoolean();
-				QUANTUM_SCRIPT_EXPORT static TPointerX<Prototype> &getPrototypeNumber();
-				QUANTUM_SCRIPT_EXPORT static TPointerX<Prototype> &getPrototypeString();
-				QUANTUM_SCRIPT_EXPORT static TPointerX<Prototype> &getPrototypeArray();
-				QUANTUM_SCRIPT_EXPORT static TPointerX<Prototype> &getPrototypeFunction();
-				QUANTUM_SCRIPT_EXPORT static TPointerX<Prototype> &getPrototypeObject();
-				QUANTUM_SCRIPT_EXPORT static TPointerX<Prototype> &getPrototypeAssociativeArray();
-				QUANTUM_SCRIPT_EXPORT static TPointerX<Prototype> &getPrototypeResource();
+				QUANTUM_SCRIPT_EXPORT static TPointer<Prototype> getPrototypeBoolean();
+				QUANTUM_SCRIPT_EXPORT static TPointer<Prototype> getPrototypeNumber();
+				QUANTUM_SCRIPT_EXPORT static TPointer<Prototype> getPrototypeString();
+				QUANTUM_SCRIPT_EXPORT static TPointer<Prototype> getPrototypeArray();
+				QUANTUM_SCRIPT_EXPORT static TPointer<Prototype> getPrototypeFunction();
+				QUANTUM_SCRIPT_EXPORT static TPointer<Prototype> getPrototypeObject();
+				QUANTUM_SCRIPT_EXPORT static TPointer<Prototype> getPrototypeAssociativeArray();
+				QUANTUM_SCRIPT_EXPORT static TPointer<Prototype> getPrototypeResource();
 
 				QUANTUM_SCRIPT_EXPORT static void initMemory();
 				//

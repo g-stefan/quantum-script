@@ -103,13 +103,9 @@ namespace Quantum {
 
 				QUANTUM_SCRIPT_EXPORT TPointer<Variable> newError(String str);
 
-				inline TPointerX<Variable> &getReference(Symbol &name) {
-					return (Context::getGlobalObject())->operatorReferenceOwnProperty(name);
-				};
-
-				inline bool getFunctionX(uint32_t &name, TPointer<Variable> &out) {
-					Variable *out_ = &(Context::getGlobalObject())->operatorReference(name);
-					if (VariableVmFunction::isVariableVmFunction(out_)) {
+				inline bool getFunctionX(Symbol &name, TPointer<Variable> &out) {
+					TPointer<Variable> out_ = (Context::getGlobalObject())->getPropertyBySymbol(name);
+					if (TIsType<VariableVmFunction>(out_)) {
 						out = out_;
 						return true;
 					};

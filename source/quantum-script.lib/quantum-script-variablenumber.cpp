@@ -23,11 +23,14 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		const char *VariableNumber::typeNumberKey = "{14F9D487-6647-4D2E-9C5B-23F8A486F8BD}";
-		const void *VariableNumber::typeNumber;
+		XYO_DYNAMIC_TYPE_IMPLEMENT(VariableNumber, "{14F9D487-6647-4D2E-9C5B-23F8A486F8BD}");
 		const char *VariableNumber::strTypeNumber = "Number";
 
-		String VariableNumber::getType() {
+		VariableNumber::VariableNumber() {
+			XYO_DYNAMIC_TYPE_PUSH(VariableNumber);
+		};
+
+		String VariableNumber::getVariableType() {
 			return strTypeNumber;
 		};
 
@@ -36,10 +39,6 @@ namespace Quantum {
 			retV = TMemory<VariableNumber>::newMemory();
 			retV->value = value;
 			return (Variable *) retV;
-		};
-
-		Variable &VariableNumber::operatorReference(Symbol symbolId) {
-			return operatorReferenceX(symbolId, (Context::getPrototypeNumber())->prototype);
 		};
 
 		Variable *VariableNumber::instancePrototype() {

@@ -68,14 +68,11 @@ namespace Quantum {
 
 				ExecutiveContextFunction *functionContext;
 
-				TPointerX<Variable>  registerValue;
-				TPointerX<Iterator>  iteratorValue;
-				TPointerX<Variable> *referenceValue;
+				TPointer<Variable>  registerValue;
+				TPointer<Iterator>  iteratorValue;
+				TPointer<Variable> referenceValue;
 
 				inline ExecutiveContextPc() {
-					registerValue.pointerLink(this);
-					iteratorValue.pointerLink(this);
-
 					functionContext = nullptr;
 
 					catch_ = nullptr;
@@ -88,8 +85,7 @@ namespace Quantum {
 					tryThrow_ = nullptr;
 					pc_ = nullptr;
 					stackLink_ = nullptr;
-					//
-					referenceValue = nullptr;
+
 				};
 
 				inline void activeConstructor() {
@@ -103,13 +99,12 @@ namespace Quantum {
 					tryThrow_ = nullptr;
 					pc_ = nullptr;
 					stackLink_ = nullptr;
-					//
-					referenceValue = nullptr;
 				};
 
 				inline void activeDestructor() {
 					registerValue.deleteMemory();
 					iteratorValue.deleteMemory();
+					referenceValue.deleteMemory();
 				};
 
 				inline static void initMemory() {

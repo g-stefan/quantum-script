@@ -44,7 +44,7 @@ namespace Quantum {
 				inline Iterator() {
 				};
 
-				QUANTUM_SCRIPT_EXPORT virtual bool next(TPointerX<Variable> &out);
+				QUANTUM_SCRIPT_EXPORT virtual bool next(Variable *out);
 		};
 	};
 };

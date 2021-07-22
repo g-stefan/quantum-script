@@ -17,18 +17,28 @@
 #include "quantum-script-variablefunction.hpp"
 #include "quantum-script-variablearray.hpp"
 #include "quantum-script-variableobject.hpp"
+#include "quantum-script-variablesymbol.hpp"
 
 namespace Quantum {
 	namespace Script {
 
 		using namespace XYO;
 
-		const char *VariableFunction::typeFunctionKey = "{84EAB78C-BA85-4E5E-AC2F-06E7DF2E9E8B}";
-		const void *VariableFunction::typeFunction;
+		XYO_DYNAMIC_TYPE_IMPLEMENT(VariableFunction, "{84EAB78C-BA85-4E5E-AC2F-06E7DF2E9E8B}");
 		const char *VariableFunction::strTypeFunction = "Function";
 
-		String VariableFunction::getType() {
-			return strTypeFunction;
+		VariableFunction::VariableFunction() {
+			XYO_DYNAMIC_TYPE_PUSH(VariableFunction);
+
+			super.pointerLink(this);
+			prototype.pointerLink(this);
+			functionParent.pointerLink(this);
+
+			prototype.newMemory();
+			prototype->prototype=VariableObject::newVariable();
+
+			functionProcedure = nullptr;
+			valueSuper = nullptr;
 		};
 
 		Variable *VariableFunction::newVariable(FunctionParent *functionParent, VariableArray *parentVariables, VariableArray *parentArguments, FunctionProcedure functionProcedure, Object *super, void *valueSuper) {
@@ -46,38 +56,25 @@ namespace Quantum {
 			return (Variable *) retV;
 		};
 
-		TPointer<Variable> VariableFunction::functionApply(Variable *this_, VariableArray *arguments) {
-			return (*functionProcedure)(this, this_, arguments);
+		String VariableFunction::getVariableType() {
+			return strTypeFunction;
 		};
 
-		TPointerX<Variable> &VariableFunction::operatorReferenceOwnProperty(Symbol symbolId) {
+		TPointer<Variable> VariableFunction::getPropertyBySymbol(Symbol symbolId) {
 			if(symbolId == Context::getSymbolPrototype()) {
 				return prototype->prototype;
 			};
-
-			PropertyNode *outX;
-			outX = object->find(symbolId);
-			if (outX) {
-				return outX->value;
-			};
-			outX = Property::newNode();
-			outX->key = symbolId;
-			outX->value.pointerLink(this);
-			outX->value=VariableUndefined::newVariable();
-			object->insertNode(outX);
-			return outX->value;
+			return Variable::getPropertyBySymbol(symbolId);
 		};
 
-		Variable &VariableFunction::operatorReference(Symbol symbolId) {
+		void VariableFunction::setPropertyBySymbol(Symbol symbolId, Variable *valueToSet) {
 			if(symbolId == Context::getSymbolPrototype()) {
-				return *prototype->prototype;
+				prototype->prototype = valueToSet;
 			};
-			PropertyNode *outN;
-			outN = object->find(symbolId);
-			if(outN) {
-				return *(outN->value);
-			};
-			return operatorReferenceX(symbolId, (Context::getPrototypeFunction())->prototype);
+		};
+
+		TPointer<Variable> VariableFunction::functionApply(Variable *this_, VariableArray *arguments) {
+			return (*functionProcedure)(this, this_, arguments);
 		};
 
 		Variable *VariableFunction::instancePrototype() {
@@ -89,100 +86,8 @@ namespace Quantum {
 			return true;
 		};
 
-		bool VariableFunction::findOwnProperty(Symbol symbolId, Variable *&out) {
-			PropertyNode *outX;
-			outX = object->find(symbolId);
-			if (outX) {
-				out = outX->value;
-				return true;
-			};
-			return false;
-		};
-
-		bool VariableFunction::operatorDeleteIndex(Variable *variable) {
-			PropertyNode *out;
-			Symbol symbolId = Context::getSymbol(variable->toString());
-			object->remove(symbolId);
-			return true;
-		};
-
-		bool VariableFunction::operatorDeleteOwnProperty(Symbol symbolId) {
-			object->remove(symbolId);
-			return true;
-		};
-
-
-		Variable &VariableFunction::operatorIndex2(Variable *variable) {
-			PropertyNode *out;
-			Symbol symbolId = Context::getSymbol(variable->toString());
-			out = object->find(symbolId);
-			if (out) {
-				return  *(out->value);
-			};
-			return *(Context::getValueUndefined());
-		};
-
-		TPointerX<Variable> &VariableFunction::operatorReferenceIndex(Variable *variable) {
-			PropertyNode *out;
-			Symbol symbolId = Context::getSymbol(variable->toString());
-			out = object->find(symbolId);
-			if (out) {
-				return out->value;
-			};
-			out = Property::newNode();
-			out->key = symbolId;
-			out->value.pointerLink(this);
-			out->value=VariableUndefined::newVariable();
-			object->insertNode(out);
-			return out->value;
-		};
-
-		TPointer<Iterator> VariableFunction::getIteratorKey() {
-			ObjectIteratorKey *iterator_ = TMemory<ObjectIteratorKey>::newMemory();
-			iterator_->value_ = this;
-			iterator_->value = object->begin();
-			return iterator_;
-		};
-
-		TPointer<Iterator> VariableFunction::getIteratorValue() {
-			ObjectIteratorValue *iterator_ = TMemory<ObjectIteratorValue>::newMemory();
-			iterator_->value_ = this;
-			iterator_->value = object->begin();
-			return iterator_;
-		};
-
-		Variable *VariableFunction::clone(SymbolList &inSymbolList) {
-			VariableObject *out = (VariableObject *)VariableObject::newVariable();
-			PropertyNode *scan;
-			Symbol symbolId;
-			String symbolString;
-
-			for(scan = object->begin(); scan; scan = scan->successor()) {
-				if(inSymbolList.symbolListMirror.get(scan->key, symbolString)) {
-					symbolId = Context::getSymbol(symbolString.value());
-					out->value->set(symbolId, scan->value->clone(inSymbolList));
-				};
-			};
-			// don't copy prototype ...
-			return out;
-		};
-
-		bool VariableFunction::hasProperty(Variable *variable) {
-			PropertyNode *outX;
-			Symbol symbolId = Context::getSymbol(variable->toString());
-			outX = object->find(symbolId);
-			if (outX) {
-				return true;
-			};
-			Variable *prototype_ = instancePrototype();
-			if(prototype_) {
-				return prototype_->hasProperty(variable);
-			};
-			return false;
-		};
-
-
 		void VariableFunction::initMemory() {
+			Variable::initMemory();
 			TMemory<Prototype>::initMemory();
 			TMemory<FunctionParent>::initMemory();
 		};

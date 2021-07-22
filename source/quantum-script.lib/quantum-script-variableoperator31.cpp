@@ -18,8 +18,11 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		const char *VariableOperator31::typeOperator31Key = "{7539857E-DB8F-4744-A1DF-8E25EC271281}";
-		const void *VariableOperator31::typeOperator31;
+		XYO_DYNAMIC_TYPE_IMPLEMENT(VariableOperator31, "{7539857E-DB8F-4744-A1DF-8E25EC271281}");
+
+		VariableOperator31::VariableOperator31() {
+			XYO_DYNAMIC_TYPE_PUSH(VariableOperator31);
+		};
 
 		Variable *VariableOperator31::newVariable() {
 			return (Variable *) TMemory<VariableOperator31>::newMemory();

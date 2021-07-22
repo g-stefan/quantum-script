@@ -35,7 +35,9 @@
 #include "quantum-script-instructioncontext.hpp"
 #include "quantum-script-variablestacktrace.hpp"
 #include "quantum-script-variableargumentlevel.hpp"
-#include "quantum-script-variablereferenceobject.hpp"
+#include "quantum-script-variablereferencesymbol.hpp"
+#include "quantum-script-variablereferenceindex.hpp"
+#include "quantum-script-variablereferencevariable.hpp"
 #include "quantum-script-variableoperator21.hpp"
 #include "quantum-script-variableoperator22.hpp"
 #include "quantum-script-variableoperator23.hpp"
@@ -1086,16 +1088,16 @@ namespace Quantum {
 				return nullptr;
 			};
 			if(fnProcedure) {
-				if(VariableVmFunction::isVariableVmFunction(fnProcedure)) {
+				if(TIsType<VariableVmFunction>(fnProcedure)) {
 					TPointer<Variable> fnParametersX(fnParameters);
 					if(fnParameters) {
-						if(VariableUndefined::isVariableUndefined(fnParameters)) {
+						if(TIsTypeExact<VariableUndefined>(fnParameters)) {
 							fnParametersX = VariableArray::newVariable();
 						};
 					} else {
 						fnParametersX=VariableArray::newVariable();
 					};
-					if(VariableArray::isVariableArray(fnParametersX)) {
+					if(TIsType<VariableArray>(fnParametersX)) {
 						TPointer<InstructionContext> fnContext;
 						fnContext.newMemory();
 
@@ -1148,7 +1150,7 @@ namespace Quantum {
 							ExecutiveX::setStackTrace(stackTrace->toString());
 							stackTrace.deleteMemory();
 							throw Error(
-								(&throwValue->operatorReference(Context::getSymbol("message")))->toString()
+								(throwValue->getPropertyBySymbol(Context::getSymbol("message")))->toString()
 							);
 						};
 
@@ -1159,7 +1161,7 @@ namespace Quantum {
 		};
 
 		void Executive::setFunction(const char *name, Variable *nativeFunction) {
-			if(VariableVmFunction::isVariableVmFunction(nativeFunction)) {
+			if(TIsType<VariableVmFunction>(nativeFunction)) {
 				throw Error("setFunction require native function");
 			};
 
@@ -1291,7 +1293,8 @@ namespace Quantum {
 			TMemory<VariableOperator22>::initMemory();
 			TMemory<VariableOperator23>::initMemory();
 			TMemory<VariableOperator31>::initMemory();
-			TMemory<VariableReferenceObject>::initMemory();
+			TMemory<VariableReferenceSymbol>::initMemory();
+			TMemory<VariableReferenceVariable>::initMemory();
 			TMemory<VariableStackTrace>::initMemory();
 			TMemory<VariableVmProgramCounter>::initMemory();
 			TMemory<VariableVmFunction>::initMemory();

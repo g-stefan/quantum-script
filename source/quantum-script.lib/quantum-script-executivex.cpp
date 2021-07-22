@@ -29,7 +29,9 @@
 #include "quantum-script-instructioncontext.hpp"
 #include "quantum-script-variablestacktrace.hpp"
 #include "quantum-script-variableargumentlevel.hpp"
-#include "quantum-script-variablereferenceobject.hpp"
+#include "quantum-script-variablereferencesymbol.hpp"
+#include "quantum-script-variablereferenceindex.hpp"
+#include "quantum-script-variablereferencevariable.hpp"
 #include "quantum-script-variableoperator21.hpp"
 #include "quantum-script-variableoperator22.hpp"
 #include "quantum-script-variableoperator23.hpp"
@@ -142,8 +144,8 @@ namespace Quantum {
 			try {
 				TPointer<VariableArray> arguments(VariableArray::newArray());
 				(arguments->index(0))=VariableString::newVariable(fileName);
-				Variable &script_((Context::getGlobalObject())->operatorReference(Context::getSymbol("Script")));
-				(TSingletonThread<ExecutiveX_>::getValue())->returnValue = (script_.operatorReference(Context::getSymbol("include"))).functionApply(&script_, arguments);
+				TPointer<Variable> script_((Context::getGlobalObject())->getPropertyBySymbol(Context::getSymbol("Script")));
+				(TSingletonThread<ExecutiveX_>::getValue())->returnValue = (script_->getPropertyBySymbol(Context::getSymbol("include")))->functionApply(script_, arguments);
 				return true;
 			} catch(const Error &e) {
 				error = "Error: ";
@@ -169,8 +171,8 @@ namespace Quantum {
 			try {
 				TPointer<VariableArray> arguments(VariableArray::newArray());
 				(arguments->index(0))=VariableString::newVariable(strSource);
-				Variable &script_((Context::getGlobalObject())->operatorReference(Context::getSymbol("Script")));
-				(TSingletonThread<ExecutiveX_>::getValue())->returnValue = (script_.operatorReference(Context::getSymbol("execute"))).functionApply(&script_, arguments);
+				TPointer<Variable> script_((Context::getGlobalObject())->getPropertyBySymbol(Context::getSymbol("Script")));
+				(TSingletonThread<ExecutiveX_>::getValue())->returnValue = (script_->getPropertyBySymbol(Context::getSymbol("execute")))->functionApply(script_, arguments);
 				return true;
 
 			} catch(const Error &e) {
@@ -214,8 +216,8 @@ namespace Quantum {
 				(arguments->index(0))=VariableString::newVariable(fileName);
 				(arguments->index(1))=Context::getValueUndefined();
 				(arguments->index(2))=VariableNumber::newVariable(skipLines);
-				Variable &script_((Context::getGlobalObject())->operatorReference(Context::getSymbol("Script")));
-				(TSingletonThread<ExecutiveX_>::getValue())->returnValue = (script_.operatorReference(Context::getSymbol("includeSkipLines"))).functionApply(&script_, arguments);
+				TPointer<Variable> script_((Context::getGlobalObject())->getPropertyBySymbol(Context::getSymbol("Script")));
+				(TSingletonThread<ExecutiveX_>::getValue())->returnValue = (script_->getPropertyBySymbol(Context::getSymbol("includeSkipLines")))->functionApply(script_, arguments);
 				return true;
 			} catch(const Error &e) {
 				error = "Error: ";
@@ -243,8 +245,8 @@ namespace Quantum {
 				(arguments->index(0))=VariableString::newVariable(strSource);
 				(arguments->index(1))=Context::getValueUndefined();
 				(arguments->index(2))=VariableNumber::newVariable(skipLines);
-				Variable &script_((Context::getGlobalObject())->operatorReference(Context::getSymbol("Script")));
-				(TSingletonThread<ExecutiveX_>::getValue())->returnValue = (script_.operatorReference(Context::getSymbol("executeSkipLines"))).functionApply(&script_, arguments);
+				TPointer<Variable> script_((Context::getGlobalObject())->getPropertyBySymbol(Context::getSymbol("Script")));
+				(TSingletonThread<ExecutiveX_>::getValue())->returnValue = (script_->getPropertyBySymbol(Context::getSymbol("executeSkipLines")))->functionApply(script_, arguments);
 				return true;
 
 			} catch(const Error &e) {

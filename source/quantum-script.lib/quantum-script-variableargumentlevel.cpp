@@ -18,11 +18,15 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		const char *VariableArgumentLevel::typeArgumentLevelKey = "{E3D25A81-CBD1-4EF4-8E58-7CE3EDB6569B}";
-		const void *VariableArgumentLevel::typeArgumentLevel;
+		XYO_DYNAMIC_TYPE_IMPLEMENT(VariableArgumentLevel, "{E3D25A81-CBD1-4EF4-8E58-7CE3EDB6569B}");
+
 		const char *VariableArgumentLevel::strTypeArgumentLevel = "ArgumentLevel";
 
-		String VariableArgumentLevel::getType() {
+		VariableArgumentLevel::VariableArgumentLevel() {
+			XYO_DYNAMIC_TYPE_PUSH(VariableArgumentLevel);
+		};
+
+		String VariableArgumentLevel::getVariableType() {
 			return strTypeArgumentLevel;
 		};
 

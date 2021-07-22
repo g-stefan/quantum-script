@@ -38,23 +38,19 @@ namespace Quantum {
 		class VariableNumber :
 			public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableNumber);
+				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableNumber);
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeNumber;
-				QUANTUM_SCRIPT_EXPORT static const char *typeNumberKey;
-				QUANTUM_SCRIPT_EXPORT static const void *typeNumber;
 			public:
 
 				Number value;
 
-				inline VariableNumber() {
-					variableType = registerType(typeNumber, typeNumberKey);
-				};
+				QUANTUM_SCRIPT_EXPORT  VariableNumber();
 
 				QUANTUM_SCRIPT_EXPORT static Variable *newVariable(Number value);
 
-				QUANTUM_SCRIPT_EXPORT String getType();
+				QUANTUM_SCRIPT_EXPORT String getVariableType();
 
-				QUANTUM_SCRIPT_EXPORT Variable &operatorReference(Symbol symbolId);
 				QUANTUM_SCRIPT_EXPORT Variable *instancePrototype();
 
 				QUANTUM_SCRIPT_EXPORT Variable *clone(SymbolList &inSymbolList);
@@ -65,14 +61,6 @@ namespace Quantum {
 				QUANTUM_SCRIPT_EXPORT String toString();
 
 				QUANTUM_SCRIPT_EXPORT static String toStringX(Number value_);
-
-				//
-				inline static bool isVariableNumber(const Variable *value) {
-					if(typeNumber == nullptr) {
-						typeNumber = registerType(typeNumber, typeNumberKey);
-					};
-					return (value->variableType == typeNumber);
-				};
 
 		};
 	};

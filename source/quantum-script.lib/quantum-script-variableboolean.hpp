@@ -38,25 +38,20 @@ namespace Quantum {
 		class VariableBoolean :
 			public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableBoolean);
+				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableBoolean);
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTrue;
 				QUANTUM_SCRIPT_EXPORT static const char *strFalse;
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeBoolean;
-				QUANTUM_SCRIPT_EXPORT static const char *typeBooleanKey;
-				QUANTUM_SCRIPT_EXPORT static const void *typeBoolean;
 			public:
 
 				Boolean value;
 
-				inline VariableBoolean() {
-					variableType = registerType(typeBoolean, typeBooleanKey);
-				};
+				QUANTUM_SCRIPT_EXPORT  VariableBoolean();
 
 				QUANTUM_SCRIPT_EXPORT static Variable *newVariable(bool value);
 
-				QUANTUM_SCRIPT_EXPORT String getType();
-
-				QUANTUM_SCRIPT_EXPORT Variable &operatorReference(Symbol symbolId);
+				QUANTUM_SCRIPT_EXPORT String getVariableType();
 
 				QUANTUM_SCRIPT_EXPORT Variable *instancePrototype();
 
@@ -65,14 +60,6 @@ namespace Quantum {
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT Number toNumber();
 				QUANTUM_SCRIPT_EXPORT String toString();
-
-				//
-				inline static bool isVariableBoolean(const Variable *value) {
-					if(typeBoolean == nullptr) {
-						typeBoolean = registerType(typeBoolean, typeBooleanKey);
-					};
-					return (value->variableType == typeBoolean);
-				};
 
 		};
 

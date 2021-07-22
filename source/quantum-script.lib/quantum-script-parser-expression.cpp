@@ -290,8 +290,8 @@ namespace Quantum {
 		ProgramCounter *Parser::expressionProcessToken(Token *token_) {
 			int index;
 			int level;
-			char buffer1[12];
-			char buffer2[12];
+			char buffer1[22];
+			char buffer2[22];
 			tokenLastAsm = ParserAsm::Nop;
 			tokenLastValue = "";
 			tokenLastIndex = 0;

@@ -41,33 +41,31 @@ namespace Quantum {
 		class XValueUndefined:
 			public Object {
 			public:
-				TPointerX<Variable> valueUndefined;
+				TPointer<Variable> valueUndefined;
 				XValueUndefined();
 				static void initMemory();
 		};
 
 		XValueUndefined::XValueUndefined() {
-			valueUndefined.pointerLink(this);
 		};
 
 		void XValueUndefined::initMemory() {
 			TMemory<Variable>::initMemory();
 		};
 
-		TPointerX<Variable> &Context::getValueUndefined() {
+		TPointer<Variable> Context::getValueUndefined() {
 			return  (TSingletonThread<XValueUndefined>::getValue())->valueUndefined;
 		};
 
 		class XGlobalObject:
 			public Object {
 			public:
-				TPointerX<Variable> globalObject;
+				TPointer<Variable> globalObject;
 				XGlobalObject();
 				static void initMemory();
 		};
 
 		XGlobalObject::XGlobalObject() {
-			globalObject.pointerLink(this);
 		};
 
 		void XGlobalObject::initMemory() {
@@ -75,7 +73,7 @@ namespace Quantum {
 			TMemory<VariableObject>::initMemory();
 		};
 
-		TPointerX<Variable> &Context::getGlobalObject() {
+		TPointer<Variable> Context::getGlobalObject() {
 			return  (TSingletonThread<XGlobalObject>::getValue())->globalObject;
 		};
 
@@ -83,14 +81,14 @@ namespace Quantum {
 			public Object {
 			public:
 
-				TPointerX<Prototype> prototypeBoolean;
-				TPointerX<Prototype> prototypeNumber;
-				TPointerX<Prototype> prototypeString;
-				TPointerX<Prototype> prototypeArray;
-				TPointerX<Prototype> prototypeFunction;
-				TPointerX<Prototype> prototypeObject;
-				TPointerX<Prototype> prototypeAssociativeArray;
-				TPointerX<Prototype> prototypeResource;
+				TPointer<Prototype> prototypeBoolean;
+				TPointer<Prototype> prototypeNumber;
+				TPointer<Prototype> prototypeString;
+				TPointer<Prototype> prototypeArray;
+				TPointer<Prototype> prototypeFunction;
+				TPointer<Prototype> prototypeObject;
+				TPointer<Prototype> prototypeAssociativeArray;
+				TPointer<Prototype> prototypeResource;
 
 				Symbol symbolLength;
 				Symbol symbolPrototype;
@@ -115,14 +113,6 @@ namespace Quantum {
 		};
 
 		XContext::XContext() {
-			prototypeBoolean.pointerLink(this);
-			prototypeNumber.pointerLink(this);
-			prototypeString.pointerLink(this);
-			prototypeArray.pointerLink(this);
-			prototypeFunction.pointerLink(this);
-			prototypeObject.pointerLink(this);
-			prototypeAssociativeArray.pointerLink(this);
-			prototypeResource.pointerLink(this);
 		};
 
 		static TPointer<Variable> functionBoolean(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -179,35 +169,35 @@ namespace Quantum {
 			prototypeResource.newMemory();
 
 			defaultPrototypeFunction = (VariableFunction *)VariableFunction::newVariable(nullptr, nullptr, nullptr, functionBoolean, nullptr, nullptr);
-			((Context::getGlobalObject())->operatorReferenceOwnProperty(symbolFunctionBoolean))=defaultPrototypeFunction;
+			(Context::getGlobalObject())->setPropertyBySymbol(symbolFunctionBoolean, defaultPrototypeFunction);
 			prototypeBoolean = defaultPrototypeFunction->prototype;
 
 			defaultPrototypeFunction = (VariableFunction *)VariableFunction::newVariable(nullptr, nullptr, nullptr, functionNumber, nullptr, nullptr);
-			((Context::getGlobalObject())->operatorReferenceOwnProperty(symbolFunctionNumber))=defaultPrototypeFunction;
+			(Context::getGlobalObject())->setPropertyBySymbol(symbolFunctionNumber, defaultPrototypeFunction);
 			prototypeNumber = defaultPrototypeFunction->prototype;
 
 			defaultPrototypeFunction = (VariableFunction *)VariableFunction::newVariable(nullptr, nullptr, nullptr, functionString, nullptr, nullptr);
-			((Context::getGlobalObject())->operatorReferenceOwnProperty(symbolFunctionString))=defaultPrototypeFunction;
+			(Context::getGlobalObject())->setPropertyBySymbol(symbolFunctionString, defaultPrototypeFunction);
 			prototypeString = defaultPrototypeFunction->prototype;
 
 			defaultPrototypeFunction = (VariableFunction *)VariableFunction::newVariable(nullptr, nullptr, nullptr, functionArray, nullptr, nullptr);
-			((Context::getGlobalObject())->operatorReferenceOwnProperty(symbolFunctionArray))=defaultPrototypeFunction;
+			(Context::getGlobalObject())->setPropertyBySymbol(symbolFunctionArray, defaultPrototypeFunction);
 			prototypeArray = defaultPrototypeFunction->prototype;
 
 			defaultPrototypeFunction = (VariableFunction *)VariableFunction::newVariable(nullptr, nullptr, nullptr, functionFunction, nullptr, nullptr);
-			((Context::getGlobalObject())->operatorReferenceOwnProperty(symbolFunctionFunction))=defaultPrototypeFunction;
+			(Context::getGlobalObject())->setPropertyBySymbol(symbolFunctionFunction, defaultPrototypeFunction);
 			prototypeFunction = defaultPrototypeFunction->prototype;
 
 			defaultPrototypeFunction = (VariableFunction *)VariableFunction::newVariable(nullptr, nullptr, nullptr, functionObject, nullptr, nullptr);
-			((Context::getGlobalObject())->operatorReferenceOwnProperty(symbolFunctionObject))=defaultPrototypeFunction;
+			(Context::getGlobalObject())->setPropertyBySymbol(symbolFunctionObject, defaultPrototypeFunction);
 			prototypeObject = defaultPrototypeFunction->prototype;
 
 			defaultPrototypeFunction = (VariableFunction *)VariableFunction::newVariable(nullptr, nullptr, nullptr, functionAssociativeArray, nullptr, nullptr);
-			((Context::getGlobalObject())->operatorReferenceOwnProperty(symbolFunctionAssociativeArray))=defaultPrototypeFunction;
+			(Context::getGlobalObject())->setPropertyBySymbol(symbolFunctionAssociativeArray, defaultPrototypeFunction);
 			prototypeAssociativeArray = defaultPrototypeFunction->prototype;
 
 			defaultPrototypeFunction = (VariableFunction *)VariableFunction::newVariable(nullptr, nullptr, nullptr, functionFunction, nullptr, nullptr);
-			((Context::getGlobalObject())->operatorReferenceOwnProperty(symbolFunctionResource))=defaultPrototypeFunction;
+			(Context::getGlobalObject())->setPropertyBySymbol(symbolFunctionResource, defaultPrototypeFunction);
 			prototypeResource = defaultPrototypeFunction->prototype;
 		};
 
@@ -244,35 +234,35 @@ namespace Quantum {
 			TMemory<VariableFunction>::initMemory();
 		};
 
-		TPointerX<Prototype> &Context::getPrototypeBoolean() {
+		TPointer<Prototype> Context::getPrototypeBoolean() {
 			return (TSingletonThread<XContext>::getValue())->prototypeBoolean;
 		};
 
-		TPointerX<Prototype> &Context::getPrototypeNumber() {
+		TPointer<Prototype> Context::getPrototypeNumber() {
 			return (TSingletonThread<XContext>::getValue())->prototypeNumber;
 		};
 
-		TPointerX<Prototype> &Context::getPrototypeString() {
+		TPointer<Prototype> Context::getPrototypeString() {
 			return (TSingletonThread<XContext>::getValue())->prototypeString;
 		};
 
-		TPointerX<Prototype> &Context::getPrototypeArray() {
+		TPointer<Prototype> Context::getPrototypeArray() {
 			return (TSingletonThread<XContext>::getValue())->prototypeArray;
 		};
 
-		TPointerX<Prototype> &Context::getPrototypeFunction() {
+		TPointer<Prototype> Context::getPrototypeFunction() {
 			return (TSingletonThread<XContext>::getValue())->prototypeFunction;
 		};
 
-		TPointerX<Prototype> &Context::getPrototypeObject() {
+		TPointer<Prototype> Context::getPrototypeObject() {
 			return (TSingletonThread<XContext>::getValue())->prototypeObject;
 		};
 
-		TPointerX<Prototype> &Context::getPrototypeAssociativeArray() {
+		TPointer<Prototype> Context::getPrototypeAssociativeArray() {
 			return (TSingletonThread<XContext>::getValue())->prototypeAssociativeArray;
 		};
 
-		TPointerX<Prototype> &Context::getPrototypeResource() {
+		TPointer<Prototype> Context::getPrototypeResource() {
 			return (TSingletonThread<XContext>::getValue())->prototypeResource;
 		};
 

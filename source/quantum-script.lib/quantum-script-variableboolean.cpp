@@ -21,13 +21,16 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		const char *VariableBoolean::typeBooleanKey = "{382D25CC-26F8-45AF-B763-D28B2206CF07}";
-		const void *VariableBoolean::typeBoolean;
+		XYO_DYNAMIC_TYPE_IMPLEMENT(VariableBoolean, "{382D25CC-26F8-45AF-B763-D28B2206CF07}");
 		const char *VariableBoolean::strTrue = "true";
 		const char *VariableBoolean::strFalse = "false";
 		const char *VariableBoolean::strTypeBoolean = "Boolean";
 
-		String VariableBoolean::getType() {
+		VariableBoolean::VariableBoolean() {
+			XYO_DYNAMIC_TYPE_PUSH(VariableBoolean);
+		};
+
+		String VariableBoolean::getVariableType() {
 			return strTypeBoolean;
 		};
 
@@ -36,10 +39,6 @@ namespace Quantum {
 			retV = TMemory<VariableBoolean>::newMemory();
 			retV->value = value;
 			return (Variable *) retV;
-		};
-
-		Variable &VariableBoolean::operatorReference(Symbol symbolId) {
-			return operatorReferenceX(symbolId, (Context::getPrototypeBoolean())->prototype);
 		};
 
 		Variable *VariableBoolean::instancePrototype() {

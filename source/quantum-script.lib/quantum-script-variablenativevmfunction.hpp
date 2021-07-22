@@ -42,18 +42,15 @@ namespace Quantum {
 		class VariableNativeVmFunction :
 			public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableNativeVmFunction);
+				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableNativeVmFunction);
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeFunction;
-				QUANTUM_SCRIPT_EXPORT static const char *typeNativeVmFunctionKey;
-				QUANTUM_SCRIPT_EXPORT static const void *typeNativeVmFunction;
 			public:
 
 				InstructionProcedure procedure;
 				TPointer<Variable> operand;
 
-				inline VariableNativeVmFunction() {
-					variableType = registerType(typeNativeVmFunction, typeNativeVmFunctionKey);
-				};
+				QUANTUM_SCRIPT_EXPORT  VariableNativeVmFunction();
 
 				inline void activeDestructor() {
 					operand.deleteMemory();
@@ -61,18 +58,10 @@ namespace Quantum {
 
 				QUANTUM_SCRIPT_EXPORT static Variable *newVariable(InstructionProcedure procedure, Variable *operand);
 
-				QUANTUM_SCRIPT_EXPORT String getType();
+				QUANTUM_SCRIPT_EXPORT String getVariableType();
 
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT String toString();
-
-				//
-				inline static bool isVariableNativeVmFunction(const Variable *value) {
-					if(typeNativeVmFunction == nullptr) {
-						typeNativeVmFunction = registerType(typeNativeVmFunction, typeNativeVmFunctionKey);
-					};
-					return (value->variableType == typeNativeVmFunction);
-				};
 
 		};
 

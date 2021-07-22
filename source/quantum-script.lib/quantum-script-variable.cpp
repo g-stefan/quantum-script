@@ -19,15 +19,19 @@
 #include "quantum-script-variablenumber.hpp"
 #include "quantum-script-variablestring.hpp"
 #include "quantum-script-variablearray.hpp"
+#include "quantum-script-variablesymbol.hpp"
 
 namespace Quantum {
 	namespace Script {
 
 		using namespace XYO;
 
-		const char *Variable::typeUndefinedKey = "{23C345C1-0835-4938-863D-C2B39B68A2CE}";
-		const void *Variable::typeUndefined;
-		const char *Variable::strTypeUndefined = "undefined";
+		XYO_DYNAMIC_TYPE_IMPLEMENT(Variable, "{23C345C1-0835-4938-863D-C2B39B68A2CE}");
+		const char *Variable::strTypeUndefined="undefined";
+
+		Variable::Variable() {
+			XYO_DYNAMIC_TYPE_PUSH(Variable);
+		};
 
 		bool Variable::toBoolean() {
 			return false;
@@ -59,20 +63,104 @@ namespace Quantum {
 			return false;
 		};
 
-		String Variable::getType() {
+		String Variable::getVariableType() {
 			return strTypeUndefined;
 		};
 
-		TPointerX<Variable> &Variable::operatorIndex(uint32_t index) {
-			throw Error("operatorIndex");
+		TPointer<Variable> Variable::getPropertyBySymbol(Symbol symbolId) {
+			Variable *prototype_ = instancePrototype();
+			if(prototype_) {
+				return prototype_->getPropertyBySymbol(symbolId);
+			};
+			return Context::getValueUndefined();
 		};
 
-		TPointerX<Variable> &Variable::operatorReferenceOwnProperty(Symbol symbolId) {
-			throw Error("operatorReferenceOwnProperty");
+		TPointer<Variable> Variable::getPropertyByIndex(size_t index) {
+			Variable *prototype_ = instancePrototype();
+			if(prototype_) {
+				return prototype_->getPropertyByIndex(index);
+			};
+			return Context::getValueUndefined();
 		};
 
-		Variable &Variable::operatorReference(Symbol symbolId) {
-			throw Error("operatorReference");
+		TPointer<Variable> Variable::getPropertyByVariable(Variable *index) {
+			if(TIsType<VariableSymbol>(index)) {
+				return getPropertyBySymbol((static_cast<VariableSymbol *>(index))->value);
+			};
+			if(TIsType<VariableNumber>(index)) {
+				return getPropertyByIndex(index->toIndex());
+			};
+			Variable *prototype_ = instancePrototype();
+			if(prototype_) {
+				return prototype_->getPropertyByVariable(index);
+			};
+			return Context::getValueUndefined();
+		};
+
+		void Variable::setPropertyBySymbol(Symbol symbolId, Variable *value) {
+			throw Error("setPropertyBySymbol");
+		};
+
+		void Variable::setPropertyByIndex(size_t index, Variable *value) {
+			throw Error("setPropertyByIndex");
+		};
+
+		void Variable::setPropertyByVariable(Variable *index, Variable *value) {
+			if(TIsType<VariableSymbol>(index)) {
+				setPropertyBySymbol((static_cast<VariableSymbol *>(index))->value, value);
+				return;
+			};
+			if(TIsType<VariableNumber>(index)) {
+				setPropertyByIndex(index->toIndex(), value);
+				return;
+			};
+			throw Error("setPropertyByVariable");
+		};
+
+		bool Variable::deletePropertyBySymbol(Symbol symbolId) {
+			return false;
+		};
+
+		bool Variable::deletePropertyByIndex(size_t index) {
+			return false;
+		};
+
+		bool Variable::deletePropertyByVariable(Variable *index) {
+			if(TIsType<VariableSymbol>(index)) {
+				return deletePropertyBySymbol((static_cast<VariableSymbol *>(index))->value);
+			};
+			if(TIsType<VariableNumber>(index)) {
+				return deletePropertyByIndex(index->toIndex());
+			};
+			return false;
+		};
+
+		bool Variable::hasPropertyByVariable(Variable *variable) {
+			return false;
+		};
+
+		TPointer<Variable> Variable::referenceSet(Variable *value) {
+			throw Error("referenceSet");
+		};
+
+		TPointer<Variable> Variable::referenceGet() {
+			throw Error("referenceGet");
+		};
+
+		Number Variable::referenceToNumber() {
+			return NAN;
+		};
+
+		String Variable::referenceToString() {
+			return strTypeUndefined;
+		};
+
+		TPointer<Variable> Variable::referenceOperatorPlus(Variable *b) {
+			throw Error("referenceOperatorPlus");
+		};
+
+		void Variable::referenceSetA1(Variable *value) {
+			referenceSet(value);
 		};
 
 		TPointer<Variable> Variable::functionApply(Variable *this_, VariableArray *arguments) {
@@ -101,38 +189,6 @@ namespace Quantum {
 			return false;
 		};
 
-		bool Variable::findOwnProperty(Symbol symbolId, Variable *&out) {
-			return false;
-		};
-
-		Variable &Variable::operatorReferenceX(Symbol symbolId, Variable *prototype) {
-			Variable *outX;
-			Variable *scan = prototype;
-			while(scan) {
-				if(scan->findOwnProperty(symbolId, outX)) {
-					return *outX;
-				};
-				scan = scan->instancePrototype();
-			};
-			return *(Context::getValueUndefined());
-		};
-
-		bool Variable::operatorDeleteIndex(Variable *variable) {
-			return false;
-		};
-
-		bool Variable::operatorDeleteOwnProperty(Symbol symbolId) {
-			return false;
-		};
-
-		Variable &Variable::operatorIndex2(Variable *variable) {
-			throw Error("operatorIndex");
-		};
-
-		TPointerX<Variable> &Variable::operatorReferenceIndex(Variable *variable) {
-			throw Error("operatorReferenceIndex");
-		};
-
 		TPointer<Iterator> Variable::getIteratorKey() {
 			throw Error("key not iterable");
 		};
@@ -141,11 +197,8 @@ namespace Quantum {
 			throw Error("value not iterable");
 		};
 
-		bool Variable::hasProperty(Variable *variable) {
-			return false;
-		};
-
 		void Variable::initMemory() {
+			DynamicObject::initMemory();
 			TMemory<String>::initMemory();
 		};
 
@@ -246,14 +299,14 @@ namespace Quantum {
 		};
 
 		bool Variable::isEqual(Variable *b) {
-			if(variableType == b->variableType) {
-				if(VariableUndefined::isVariableUndefined(this)) {
+			if(isSameType(b)) {
+				if(TIsTypeExact<VariableUndefined>(this)) {
 					return true;
 				};
-				if(VariableNull::isVariableNull(this)) {
+				if(TIsType<VariableNull>(this)) {
 					return true;
 				};
-				if(VariableNumber::isVariableNumber(this)) {
+				if(TIsType<VariableNumber>(this)) {
 					if(isnan((static_cast<VariableNumber *>(this))->value)) {
 						return false;
 					};
@@ -273,13 +326,13 @@ namespace Quantum {
 				};
 				return false;
 			};
-			if(VariableNull::isVariableNull(this)) {
-				if(VariableUndefined::isVariableUndefined(b)) {
+			if(TIsType<VariableNull>(this)) {
+				if(TIsTypeExact<VariableUndefined>(b)) {
 					return true;
 				};
 			};
-			if(VariableUndefined::isVariableUndefined(this)) {
-				if(VariableNull::isVariableNull(b)) {
+			if(TIsTypeExact<VariableUndefined>(this)) {
+				if(TIsType<VariableNull>(b)) {
 					return true;
 				};
 			};
@@ -304,19 +357,19 @@ namespace Quantum {
 		};
 
 		bool Variable::isEqualStrict(Variable *b) {
-			if(variableType != b->variableType) {
+			if(!isSameType(b)) {
 				if(isString() && b->isString()) {
 					return (toString() == b->toString());
 				};
 				return false;
 			};
-			if(VariableUndefined::isVariableUndefined(this)) {
+			if(TIsTypeExact<VariableUndefined>(this)) {
 				return true;
 			};
-			if(VariableNull::isVariableNull(this)) {
+			if(TIsType<VariableNull>(this)) {
 				return true;
 			};
-			if(VariableNumber::isVariableNumber(this)) {
+			if(TIsType<VariableNumber>(this)) {
 				if(isnan((static_cast<VariableNumber *>(this))->value)) {
 					return false;
 				};
@@ -362,69 +415,6 @@ namespace Quantum {
 			};
 			return VariableNumber::newVariable(toNumber() + b->toNumber());
 		};
-
-
-		class TypeRegistryNode:
-			public TXRedBlackTreeNode<TypeRegistryNode, const char *> {
-			public:
-		};
-
-		class TypeRegistry {
-			public:
-				typedef TXRedBlackTree<TypeRegistryNode, TMemorySystem> RBTree;
-
-				TypeRegistryNode *root;
-
-#ifdef XYO_MULTI_THREAD
-				CriticalSection criticalSection;
-#endif
-
-				TypeRegistry();
-				~TypeRegistry();
-		};
-
-		TypeRegistry::TypeRegistry() {
-			root = nullptr;
-		};
-
-		TypeRegistry::~TypeRegistry() {
-			RBTree::empty(root);
-		};
-
-		const void *Variable::registerType(const void *&type, const char *key) {
-
-			if(type != nullptr) {
-				return type;
-			};
-
-			TypeRegistry *typeRegistry = TSingletonProcess<TypeRegistry>::getValue();
-			TypeRegistry::RBTree::Node *this_;
-
-#ifdef XYO_MULTI_THREAD
-			typeRegistry->criticalSection.enter();
-#endif
-			this_ = TypeRegistry::RBTree::find(typeRegistry->root, key);
-			if(this_ == nullptr) {
-				this_ = TypeRegistry::RBTree::newNode();
-				this_->key = key;
-				TypeRegistry::RBTree::insertNode(typeRegistry->root, this_);
-			};
-
-#ifdef XYO_MULTI_THREAD
-			typeRegistry->criticalSection.leave();
-#endif
-
-			type = this_;
-			return type;
-		};
-
-		const char *Variable::getVariableType() {
-			if(variableType == nullptr) {
-				return strTypeUndefined;
-			};
-			return (reinterpret_cast<const TypeRegistry::RBTree::Node *>(variableType))->key;
-		};
-
 	};
 };
 

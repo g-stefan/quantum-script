@@ -50,7 +50,7 @@ namespace Quantum {
 				inline AssociativeArrayIteratorKey() {
 				};
 
-				QUANTUM_SCRIPT_EXPORT bool next(TPointerX<Variable> &);
+				QUANTUM_SCRIPT_EXPORT bool next(Variable *out);
 
 				inline void activeDestructor() {
 					sourceArray.deleteMemory();

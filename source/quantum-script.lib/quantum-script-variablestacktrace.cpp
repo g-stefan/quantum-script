@@ -19,9 +19,13 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		const char *VariableStackTrace::typeStackTraceKey = "{D2C5840D-48B9-4424-8BCC-39147444BC1A}";
-		const void *VariableStackTrace::typeStackTrace;
+		XYO_DYNAMIC_TYPE_IMPLEMENT(VariableStackTrace, "{D2C5840D-48B9-4424-8BCC-39147444BC1A}");
 		const char *VariableStackTrace::strTypeStackTrace = "StackTrace";
+
+		VariableStackTrace::VariableStackTrace() {
+			XYO_DYNAMIC_TYPE_PUSH(VariableStackTrace);
+			configPrintStackTraceLimit = QUANTUM_SCRIPT_DEFAULT_STACK_TRACE_LEVEL;
+		};
 
 		Variable *VariableStackTrace::newVariable(TDoubleEndedQueue<InstructionTrace> *stackTrace, InstructionContext *context) {
 			VariableStackTrace *retV;
@@ -31,7 +35,7 @@ namespace Quantum {
 			return (Variable *) retV;
 		};
 
-		String VariableStackTrace::getType() {
+		String VariableStackTrace::getVariableType() {
 			return strTypeStackTrace;
 		};
 

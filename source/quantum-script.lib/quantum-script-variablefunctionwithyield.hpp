@@ -60,16 +60,14 @@ namespace Quantum {
 		class VariableFunctionWithYield :
 			public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableFunctionWithYield);
+				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableFunctionWithYield);
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeFunction;
-				QUANTUM_SCRIPT_EXPORT static const char *typeFunctionWithYieldKey;
-				QUANTUM_SCRIPT_EXPORT static const void *typeFunctionWithYield;
 			public:
 
 				TPointerX<Object> super;
 				void *valueSuper;
 
-				TPointerX<Property> object;
 				TPointerX<Prototype> prototype;
 
 				TPointerX<FunctionParent> functionParent;
@@ -78,32 +76,10 @@ namespace Quantum {
 				uint32_t yieldStep;
 				TPointerX<Variable> yieldVariables;
 
-
-				inline VariableFunctionWithYield() {
-					variableType = registerType(typeFunctionWithYield, typeFunctionWithYieldKey);
-
-					object.pointerLink(this);
-					super.pointerLink(this);
-					prototype.pointerLink(this);
-
-					object.newMemory();
-
-					prototype.newMemory();
-					prototype->prototype=VariableObject::newVariable();
-
-					functionParent.pointerLink(this);
-					yieldVariables.pointerLink(this);
-					functionProcedure = nullptr;
-					yieldStep = 0;
-					yieldVariables=VariableArray::newVariable();
-					valueSuper = nullptr;
-
-				};
+				QUANTUM_SCRIPT_EXPORT  VariableFunctionWithYield();
 
 				inline void activeConstructor() {
 					valueSuper = nullptr;
-
-					object.newMemory();
 
 					prototype.newMemory();
 					prototype->prototype=VariableObject::newVariable();
@@ -113,46 +89,27 @@ namespace Quantum {
 
 				inline void activeDestructor() {
 					functionParent.deleteMemory();
-
-					object.deleteMemory();
-
 					prototype.deleteMemory();
 					yieldVariables.deleteMemory();
+					super.deleteMemory();
 				};
 
 				QUANTUM_SCRIPT_EXPORT static Variable *newVariable(FunctionParent *functionParent, VariableArray *parentVariables, VariableArray *parentArguments, FunctionProcedureWithYield functionProcedure, Object *super, void *valueSuper);
 
+				QUANTUM_SCRIPT_EXPORT String getVariableType();
 
-				QUANTUM_SCRIPT_EXPORT String getType();
+				QUANTUM_SCRIPT_EXPORT TPointer<Variable> getPropertyBySymbol(Symbol symbolId);
+				QUANTUM_SCRIPT_EXPORT void setPropertyBySymbol(Symbol symbolId, Variable *value);
 
 				QUANTUM_SCRIPT_EXPORT TPointer<Variable> functionApply(Variable *this_, VariableArray *arguments);
 
-				QUANTUM_SCRIPT_EXPORT TPointerX<Variable> &operatorReferenceOwnProperty(Symbol symbolId);
-				QUANTUM_SCRIPT_EXPORT Variable &operatorReference(Symbol symbolId);
 				QUANTUM_SCRIPT_EXPORT Variable *instancePrototype();
 				QUANTUM_SCRIPT_EXPORT bool instanceOfPrototype(Prototype *&out);
-				QUANTUM_SCRIPT_EXPORT bool findOwnProperty(Symbol symbolId, Variable *&out);
-				QUANTUM_SCRIPT_EXPORT bool operatorDeleteIndex(Variable *variable);
-				QUANTUM_SCRIPT_EXPORT bool operatorDeleteOwnProperty(Symbol symbolId);
-				QUANTUM_SCRIPT_EXPORT Variable &operatorIndex2(Variable *variable);
-				QUANTUM_SCRIPT_EXPORT TPointerX<Variable> &operatorReferenceIndex(Variable *variable);
-				QUANTUM_SCRIPT_EXPORT TPointer<Iterator> getIteratorKey();
-				QUANTUM_SCRIPT_EXPORT TPointer<Iterator> getIteratorValue();
-				QUANTUM_SCRIPT_EXPORT Variable *clone(SymbolList &inSymbolList);
-				QUANTUM_SCRIPT_EXPORT bool hasProperty(Variable *variable);
 
 				QUANTUM_SCRIPT_EXPORT static void initMemory();
 
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT String toString();
-
-				//
-				inline static bool isVariableFunctionWithYield(const Variable *value) {
-					if(typeFunctionWithYield == nullptr) {
-						typeFunctionWithYield = registerType(typeFunctionWithYield, typeFunctionWithYieldKey);
-					};
-					return (value->variableType == typeFunctionWithYield);
-				};
 
 		};
 

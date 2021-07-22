@@ -20,12 +20,12 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		bool AssociativeArrayIteratorKey::next(TPointerX<Variable> &out) {
+		bool AssociativeArrayIteratorKey::next(Variable *out) {
 			if(index >= sourceArray->value->arrayKey->length()) {
-				out = Context::getValueUndefined();
+				out->referenceSet(Context::getValueUndefined());
 				return false;
 			};
-			out = (*(sourceArray->value->arrayKey))[index];
+			out->referenceSet((*(sourceArray->value->arrayKey))[index]);
 			index++;
 			return true;
 		};

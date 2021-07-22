@@ -16,6 +16,7 @@
 #include "quantum-script-context.hpp"
 #include "quantum-script-variableobject.hpp"
 #include "quantum-script-variablenumber.hpp"
+#include "quantum-script-variablesymbol.hpp"
 #include "quantum-script-associativearrayiteratorkey.hpp"
 #include "quantum-script-associativearrayiteratorvalue.hpp"
 
@@ -25,29 +26,76 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		const char *VariableAssociativeArray::typeAssociativeArrayKey = "{35EFC1B3-6F8B-4604-A31E-95CC449B48E1}";
-		const void *VariableAssociativeArray::typeAssociativeArray;
+		XYO_DYNAMIC_TYPE_IMPLEMENT(VariableAssociativeArray, "{35EFC1B3-6F8B-4604-A31E-95CC449B48E1}");
 		const char *VariableAssociativeArray::strTypeAssociativeArray = "AssociativeArray";
+
+		VariableAssociativeArray::VariableAssociativeArray() {
+			XYO_DYNAMIC_TYPE_PUSH(VariableAssociativeArray);
+			value.pointerLink(this);
+			value.newMemory();
+		};
 
 		Variable *VariableAssociativeArray::newVariable() {
 			return (Variable *) TMemory<VariableAssociativeArray>::newMemory();
 		};
 
-		String VariableAssociativeArray::getType() {
+		String VariableAssociativeArray::getVariableType() {
 			return strTypeAssociativeArray;
 		};
 
-		Variable &VariableAssociativeArray::operatorReference(Symbol symbolId) {
+		TPointer<Variable> VariableAssociativeArray::getPropertyBySymbol(Symbol symbolId) {
 			if(symbolId == Context::getSymbolLength()) {
-				if(vLength) {
-					((VariableNumber *)vLength.value())->value = (Number)value->length();
-				} else {
-					vLength=VariableNumber::newVariable((Number)value->length());
+				return VariableNumber::newVariable((Number)value->length());
+			};
+			return Variable::getPropertyBySymbol(symbolId);
+		};
+
+		TPointer<Variable> VariableAssociativeArray::getPropertyByIndex(size_t index) {
+			TPointer<Variable> index_ = VariableNumber::newVariable((Number)index);
+			return getPropertyByVariable(index_);
+		};
+
+		TPointer<Variable> VariableAssociativeArray::getPropertyByVariable(Variable *index) {
+			if(TIsType<VariableSymbol>(index)) {
+				if((static_cast<VariableSymbol *>(index))->value == Context::getSymbolLength()) {
+					return VariableNumber::newVariable((Number)value->length());
 				};
-				return *vLength;
 			};
 
-			return operatorReferenceX(symbolId, (Context::getPrototypeAssociativeArray())->prototype);
+			AssociativeArray::MapKey::Node *x;
+			x = value->mapKey->find(index);
+			if(x) {
+				return (*(value->arrayValue))[x->value];
+			};
+
+			return VariableUndefined::newVariable();
+		};
+
+		void VariableAssociativeArray::setPropertyByIndex(size_t index, Variable *valueToSet) {
+			TPointer<Variable> index_ = VariableNumber::newVariable((Number)index);
+			setPropertyByVariable(index_, valueToSet);
+		};
+
+		void VariableAssociativeArray::setPropertyByVariable(Variable *index, Variable *valueToSet) {
+			AssociativeArray::MapKey::Node *x;
+			x = value->mapKey->find(index);
+			if(x) {
+				(*(value->arrayValue))[x->value]=valueToSet;
+			};
+			value->mapKey->set(index, value->length_);
+			(*(value->arrayKey))[value->length_]=index;
+			(*(value->arrayValue))[value->length_]=valueToSet;
+			++value->length_;
+		};
+
+		bool VariableAssociativeArray::deletePropertyByIndex(size_t index) {
+			TPointer<Variable> index_ = VariableNumber::newVariable((Number)index);
+			deletePropertyByVariable(index_);
+			return true;
+		};
+
+		bool VariableAssociativeArray::deletePropertyByVariable(Variable *index) {
+			return value->remove(index);
 		};
 
 		Variable *VariableAssociativeArray::instancePrototype() {
@@ -68,28 +116,8 @@ namespace Quantum {
 			return iterator_;
 		};
 
-		TPointerX<Variable> &VariableAssociativeArray::operatorReferenceIndex(Variable *variable) {
-			AssociativeArray::MapKey::Node *x;
-			x = value->mapKey->find(variable);
-			if(x) {
-				return (*(value->arrayValue))[x->value];
-			};
-			value->mapKey->set(variable, value->length_);
-			(*(value->arrayKey))[value->length_]=variable;
-			(*(value->arrayValue))[value->length_]=VariableUndefined::newVariable();
-			++value->length_;
-			return (*(value->arrayValue))[value->length_ - 1];
-		};
-
-		bool VariableAssociativeArray::operatorDeleteIndex(Variable *variable) {
-			return value->remove(variable);
-		};
-
-		Variable &VariableAssociativeArray::operatorIndex2(Variable *variable) {
-			return *(operatorReferenceIndex(variable));
-		};
-
 		void VariableAssociativeArray::initMemory() {
+			Variable::initMemory();
 			TMemory<Variable>::initMemory();
 			TMemory<AssociativeArray>::initMemory();
 		};
