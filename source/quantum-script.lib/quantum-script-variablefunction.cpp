@@ -31,6 +31,7 @@ namespace Quantum {
 			XYO_DYNAMIC_TYPE_PUSH(VariableFunction);
 
 			super.pointerLink(this);
+			object.pointerLink(this);
 			prototype.pointerLink(this);
 			functionParent.pointerLink(this);
 

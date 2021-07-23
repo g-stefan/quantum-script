@@ -31,6 +31,7 @@ namespace Quantum {
 			XYO_DYNAMIC_TYPE_PUSH(VariableFunctionWithYield);
 
 			super.pointerLink(this);
+			object.pointerLink(this);
 			prototype.pointerLink(this);
 
 			prototype.newMemory();

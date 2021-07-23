@@ -31,6 +31,7 @@ namespace Quantum {
 
 		VariableVmFunction::VariableVmFunction() {
 			XYO_DYNAMIC_TYPE_PUSH(VariableVmFunction);
+			object.pointerLink(this);
 			prototype.pointerLink(this);
 			coroutineContext.pointerLink(this);
 			functionParent.pointerLink(this);
