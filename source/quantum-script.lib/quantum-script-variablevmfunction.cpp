@@ -59,15 +59,79 @@ namespace Quantum {
 			if(symbolId == Context::getSymbolPrototype()) {
 				return prototype->prototype;
 			};
-			return Variable::getPropertyBySymbol(symbolId);
+
+			PropertyNode *outX;
+			outX = object->find(symbolId);
+			if (outX) {
+				return outX->value;
+			};
+
+			return Variable::getPropertyBySymbol(symbolId);			
+		};
+
+		TPointer<Variable> VariableVmFunction::getPropertyByIndex(size_t index) {
+			char buffer[22];
+			sprintf(buffer, "%zu", index);
+			return getPropertyBySymbol(Context::getSymbol(buffer));
+		};
+
+		TPointer<Variable> VariableVmFunction::getPropertyByVariable(Variable *index) {
+			if (TIsType<VariableSymbol>(index)) {
+				return getPropertyBySymbol(((VariableSymbol *) index)->value);
+			};
+			return getPropertyBySymbol(Context::getSymbol(index->toString()));
 		};
 
 		void VariableVmFunction::setPropertyBySymbol(Symbol symbolId, Variable *valueToSet) {
 			if(symbolId == Context::getSymbolPrototype()) {
 				prototype->prototype = valueToSet;
+				return;
 			};
+
+			PropertyNode *node;
+			node = object->find(symbolId);
+			if (node) {
+				node->value=valueToSet;
+				return;
+			};
+			node = Property::newNode();
+			node->key = symbolId;
+			node->value.pointerLink(this);
+			node->value = valueToSet;
+			object->insertNode(node);
 		};
 
+		void VariableVmFunction::setPropertyByIndex(size_t index, Variable *valueToSet) {
+			char buffer[22];
+			sprintf(buffer, "%zu", index);
+			setPropertyBySymbol(Context::getSymbol(buffer), valueToSet);
+		};
+
+		void VariableVmFunction::setPropertyByVariable(Variable *index, Variable *valueToSet) {
+			if (TIsType<VariableSymbol>(index)) {
+				return setPropertyBySymbol(((VariableSymbol *) index)->value, valueToSet);
+			};
+			return setPropertyBySymbol(Context::getSymbol(index->toString()), valueToSet);
+		};
+
+		bool VariableVmFunction::deletePropertyBySymbol(Symbol symbolId) {
+			object->remove(symbolId);
+			return true;
+		};
+
+		bool VariableVmFunction::deletePropertyByIndex(size_t index) {
+			char buffer[22];
+			sprintf(buffer, "%zu", index);
+			return deletePropertyBySymbol(Context::getSymbol(buffer));
+		};
+
+		bool VariableVmFunction::deletePropertyByVariable(Variable *index) {
+			if (TIsType<VariableSymbol>(index)) {
+				return deletePropertyBySymbol(((VariableSymbol *) index)->value);
+			};
+			return deletePropertyBySymbol(Context::getSymbol(index->toString()));
+		};
+		
 		TPointer<Variable> VariableVmFunction::functionApply(Variable *this_, VariableArray *arguments) {
 			return  (ExecutiveX::getExecutive()).callVmFunction(this, this_, arguments);
 		};
@@ -90,6 +154,30 @@ namespace Quantum {
 
 		bool VariableVmFunction::toBoolean() {
 			return true;
+		};
+
+		TPointer<Iterator> VariableVmFunction::getIteratorKey() {
+			ObjectIteratorKey *iterator_ = TMemory<ObjectIteratorKey>::newMemory();
+			iterator_->value_ = this;
+			iterator_->value = object->begin();
+			return iterator_;
+		};
+
+		TPointer<Iterator> VariableVmFunction::getIteratorValue() {
+			ObjectIteratorValue *iterator_ = TMemory<ObjectIteratorValue>::newMemory();
+			iterator_->value_ = this;
+			iterator_->value = object->begin();
+			return iterator_;
+		};		
+
+		void VariableVmFunction::initMemory() {
+			Variable::initMemory();
+			TMemory<Property>::initMemory();
+			TMemory<Prototype>::initMemory();
+			TMemory<InstructionList>::initMemory();
+			TMemory<ExecutiveContext>::initMemory();
+			TMemory<FunctionParent>::initMemory();
+			TPointerX<TStack<TPointerX<ExecutiveContextPc> > >::initMemory();
 		};
 
 

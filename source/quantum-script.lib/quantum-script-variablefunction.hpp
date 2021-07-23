@@ -66,6 +66,7 @@ namespace Quantum {
 				TPointerX<Object> super;
 				void *valueSuper;
 
+				TPointerX<Property> object;
 				TPointerX<Prototype> prototype;
 
 				TPointerX<FunctionParent> functionParent;
@@ -73,14 +74,16 @@ namespace Quantum {
 
 				QUANTUM_SCRIPT_EXPORT  VariableFunction();
 
-				inline void activeConstructor() {
+				inline void activeConstructor() {					
 					valueSuper = nullptr;
+					object.newMemory();
 					prototype.newMemory();
 					prototype->prototype=VariableObject::newVariable();
 				};
 
 				inline void activeDestructor() {
 					functionParent.deleteMemory();
+					object.deleteMemory();
 					prototype.deleteMemory();
 					super.deleteMemory();
 				};
@@ -91,18 +94,27 @@ namespace Quantum {
 				QUANTUM_SCRIPT_EXPORT String getVariableType();
 
 				QUANTUM_SCRIPT_EXPORT TPointer<Variable> getPropertyBySymbol(Symbol symbolId);
+				QUANTUM_SCRIPT_EXPORT TPointer<Variable> getPropertyByIndex(size_t index);
+				QUANTUM_SCRIPT_EXPORT TPointer<Variable> getPropertyByVariable(Variable *index);
 				QUANTUM_SCRIPT_EXPORT void setPropertyBySymbol(Symbol symbolId, Variable *value);
+				QUANTUM_SCRIPT_EXPORT void setPropertyByIndex(size_t index, Variable *value);
+				QUANTUM_SCRIPT_EXPORT void setPropertyByVariable(Variable *index, Variable *value);
+				QUANTUM_SCRIPT_EXPORT bool deletePropertyBySymbol(Symbol symbolId);
+				QUANTUM_SCRIPT_EXPORT bool deletePropertyByIndex(size_t index);
+				QUANTUM_SCRIPT_EXPORT bool deletePropertyByVariable(Variable *index);
 
 				QUANTUM_SCRIPT_EXPORT TPointer<Variable> functionApply(Variable *this_, VariableArray *arguments);
 
 				QUANTUM_SCRIPT_EXPORT Variable *instancePrototype();
 				QUANTUM_SCRIPT_EXPORT bool instanceOfPrototype(Prototype *&out);
 
-				QUANTUM_SCRIPT_EXPORT static void initMemory();
+				QUANTUM_SCRIPT_EXPORT TPointer<Iterator> getIteratorKey();
+				QUANTUM_SCRIPT_EXPORT TPointer<Iterator> getIteratorValue();				
 
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT String toString();
 
+				QUANTUM_SCRIPT_EXPORT static void initMemory();
 		};
 
 	};

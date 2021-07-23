@@ -882,7 +882,7 @@ namespace Quantum {
 
 				Executive *executive = (Executive *) (((VariableResource *) operand)->resource);
 
-				Variable *out = VariableArray::newVariable();
+				TPointer<Variable> out = VariableArray::newVariable();
 				TDoubleEndedQueue<Extension_>::Node *scan;
 				Symbol symFileName = Context::getSymbol("fileName");
 				Symbol symName = Context::getSymbol("name");

@@ -68,13 +68,77 @@ namespace Quantum {
 			if(symbolId == Context::getSymbolPrototype()) {
 				return prototype->prototype;
 			};
-			return Variable::getPropertyBySymbol(symbolId);
+
+			PropertyNode *outX;
+			outX = object->find(symbolId);
+			if (outX) {
+				return outX->value;
+			};
+
+			return Variable::getPropertyBySymbol(symbolId);			
+		};
+
+		TPointer<Variable> VariableFunctionWithYield::getPropertyByIndex(size_t index) {
+			char buffer[22];
+			sprintf(buffer, "%zu", index);
+			return getPropertyBySymbol(Context::getSymbol(buffer));
+		};
+
+		TPointer<Variable> VariableFunctionWithYield::getPropertyByVariable(Variable *index) {
+			if (TIsType<VariableSymbol>(index)) {
+				return getPropertyBySymbol(((VariableSymbol *) index)->value);
+			};
+			return getPropertyBySymbol(Context::getSymbol(index->toString()));
 		};
 
 		void VariableFunctionWithYield::setPropertyBySymbol(Symbol symbolId, Variable *valueToSet) {
 			if(symbolId == Context::getSymbolPrototype()) {
 				prototype->prototype = valueToSet;
+				return;
 			};
+
+			PropertyNode *node;
+			node = object->find(symbolId);
+			if (node) {
+				node->value=valueToSet;
+				return;
+			};
+			node = Property::newNode();
+			node->key = symbolId;
+			node->value.pointerLink(this);
+			node->value = valueToSet;
+			object->insertNode(node);
+		};
+
+		void VariableFunctionWithYield::setPropertyByIndex(size_t index, Variable *valueToSet) {
+			char buffer[22];
+			sprintf(buffer, "%zu", index);
+			setPropertyBySymbol(Context::getSymbol(buffer), valueToSet);
+		};
+
+		void VariableFunctionWithYield::setPropertyByVariable(Variable *index, Variable *valueToSet) {
+			if (TIsType<VariableSymbol>(index)) {
+				return setPropertyBySymbol(((VariableSymbol *) index)->value, valueToSet);
+			};
+			return setPropertyBySymbol(Context::getSymbol(index->toString()), valueToSet);
+		};
+
+		bool VariableFunctionWithYield::deletePropertyBySymbol(Symbol symbolId) {
+			object->remove(symbolId);
+			return true;
+		};
+
+		bool VariableFunctionWithYield::deletePropertyByIndex(size_t index) {
+			char buffer[22];
+			sprintf(buffer, "%zu", index);
+			return deletePropertyBySymbol(Context::getSymbol(buffer));
+		};
+
+		bool VariableFunctionWithYield::deletePropertyByVariable(Variable *index) {
+			if (TIsType<VariableSymbol>(index)) {
+				return deletePropertyBySymbol(((VariableSymbol *) index)->value);
+			};
+			return deletePropertyBySymbol(Context::getSymbol(index->toString()));
 		};
 
 		TPointer<Variable> VariableFunctionWithYield::functionApply(Variable *this_, VariableArray *arguments) {
@@ -99,11 +163,18 @@ namespace Quantum {
 			return true;
 		};
 
-		void VariableFunctionWithYield::initMemory() {
-			Variable::initMemory();
-			TMemory<Variable>::initMemory();
-			TMemory<Prototype>::initMemory();
-			TMemory<FunctionParent>::initMemory();
+		TPointer<Iterator> VariableFunctionWithYield::getIteratorKey() {
+			ObjectIteratorKey *iterator_ = TMemory<ObjectIteratorKey>::newMemory();
+			iterator_->value_ = this;
+			iterator_->value = object->begin();
+			return iterator_;
+		};
+
+		TPointer<Iterator> VariableFunctionWithYield::getIteratorValue() {
+			ObjectIteratorValue *iterator_ = TMemory<ObjectIteratorValue>::newMemory();
+			iterator_->value_ = this;
+			iterator_->value = object->begin();
+			return iterator_;
 		};
 
 		bool VariableFunctionWithYield::toBoolean() {
@@ -114,6 +185,13 @@ namespace Quantum {
 			return strTypeFunction;
 		};
 
+		void VariableFunctionWithYield::initMemory() {
+			Variable::initMemory();
+			TMemory<Variable>::initMemory();
+			TMemory<Property>::initMemory();
+			TMemory<Prototype>::initMemory();
+			TMemory<FunctionParent>::initMemory();
+		};
 
 	};
 };
