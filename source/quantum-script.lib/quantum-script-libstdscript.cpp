@@ -12,7 +12,7 @@
 #include <string.h>
 #include <math.h>
 
-#include "quantum-script--config.hpp"
+#include "quantum-script--dependency.hpp"
 
 #ifdef XYO_OS_WINDOWS
 #       define WIN32_LEAN_AND_MEAN

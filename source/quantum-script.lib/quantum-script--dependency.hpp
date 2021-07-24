@@ -15,7 +15,7 @@
 #endif
 
 #ifndef QUANTUM_SCRIPT__CONFIG_HPP
-#include "quantum-script--config.hpp"
+#include "quantum-script--dependency.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT__EXPORT_HPP
