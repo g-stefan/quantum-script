@@ -14,9 +14,9 @@ namespace Quantum {
 		namespace Version {
 
 			static const char *version_ = "2.0.0";
-			static const char *build_ = "22";
-			static const char *versionWithBuild_ = "2.0.0.22";
-			static const char *datetime_ = "2021-08-05 20:38:13";
+			static const char *build_ = "43";
+			static const char *versionWithBuild_ = "2.0.0.43";
+			static const char *datetime_ = "2021-08-09 17:38:04";
 
 			const char *version() {
 				return version_;
