@@ -35,8 +35,12 @@ fi
 
 if [ "$1" = "release" ]; then
 	[ -d ./release ] || mkdir -p ./release 
-	cp -rfu $WSL_BUILD_PROCESS_PATH/release/*.7z ./release/
-	cp -rfu $WSL_BUILD_PROCESS_PATH/release/*.csv ./release/
+	if ls $WSL_BUILD_PROCESS_PATH/release/*.7z 1> /dev/null 2>&1; then
+		cp -rfu $WSL_BUILD_PROCESS_PATH/release/*.7z ./release/
+	fi
+	if ls $WSL_BUILD_PROCESS_PATH/release/*.csv 1> /dev/null 2>&1; then
+		cp -rfu $WSL_BUILD_PROCESS_PATH/release/*.csv ./release/
+	fi
 fi
 
 if [ "$RETV" = "1" ]; then
