@@ -3,7 +3,7 @@
 # http://unlicense.org/
 # Created by Grigore Stefan <g_stefan@yahoo.com>
 
-echo "-> test quantum-script"
+echo "- $BUILD_PROJECT > test"
 
 cmdX(){
 	if ! "$@" ; then
