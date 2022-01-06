@@ -851,7 +851,6 @@ namespace Quantum {
 
 			};
 
-
 			static TPointer<Variable> setIncludePath(VariableFunction *function, Variable *this_, VariableArray *arguments) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 				printf("- script-set-include-path\n");
@@ -859,6 +858,26 @@ namespace Quantum {
 
 				((Executive *)function->valueSuper)->includePath->push((arguments->index(0))->toString());
 				return VariableBoolean::newVariable(true);
+			};
+
+			static TPointer<Variable> getIncludePath(VariableFunction *function, Variable *this_, VariableArray *arguments) {
+#ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
+				printf("- script-get-include-path\n");
+#endif
+				TPointer<Variable> retV(VariableArray::newVariable());
+				TDoubleEndedQueue<String>::TNode *index;
+				for(index=((Executive *)function->valueSuper)->includePath->head;index!=nullptr;index=index->next){
+					((VariableArray *)retV.value())->value->push(VariableString::newVariable(index->value));
+				};
+				return retV;
+			};
+
+			static TPointer<Variable> resetIncludePath(VariableFunction *function, Variable *this_, VariableArray *arguments) {
+#ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
+				printf("- script-reset-include-path\n");
+#endif
+				((Executive *)function->valueSuper)->includePath->empty();				
+				return Context::getValueUndefined();
 			};
 
 			static TPointer<Variable> getPrototypeOf(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -1110,6 +1129,8 @@ namespace Quantum {
 				executive->setVmFunction("Script.requireInternalExtension", InstructionLibStdScript_requireInternalExtension, TPointer<Variable>(VariableResource::newVariable(executive, nullptr)));
 				executive->setVmFunction("Script.getExtensionList", InstructionLibStdScript_getExtensionList, TPointer<Variable>(VariableResource::newVariable(executive, nullptr)));
 				executive->setFunction4("Script.setIncludePath(path)", setIncludePath, executive);
+				executive->setFunction4("Script.getIncludePath()", getIncludePath, executive);
+				executive->setFunction4("Script.resetIncludePath()", resetIncludePath, executive);
 				executive->setFunction2("Script.getPrototypeOf(x)", getPrototypeOf);
 				executive->setFunction2("Script.protectSource(fn)", protectSource);
 				executive->setFunction2("Script.compare(a,b)", compare);
