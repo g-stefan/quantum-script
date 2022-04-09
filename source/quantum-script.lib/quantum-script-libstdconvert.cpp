@@ -76,11 +76,8 @@ namespace Quantum {
 				executive->setFunction2("Convert.toString(x)", toString);
 				executive->setFunction2("Convert.toStringSource(x)", toStringSource);
 				executive->setFunction2("Convert.numberFormat(x,fSize)", numberFormat);
-
 			};
 
 		};
 	};
 };
-
-

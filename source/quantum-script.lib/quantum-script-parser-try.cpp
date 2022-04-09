@@ -17,7 +17,6 @@
 namespace Quantum {
 	namespace Script {
 
-
 		bool Parser::statementTry() {
 			if (token.isSymbolX("try")) {
 
@@ -60,8 +59,7 @@ namespace Quantum {
 								if (token.isSymbol()) {
 									if (token.is1(")")) {
 										linkProgramCounter(linkCatch,
-											assemble(ParserAsm::Catch)
-										);
+										                   assemble(ParserAsm::Catch));
 										assemble1(ParserAsm::PushObjectReference, token.value);
 										assemble(ParserAsm::AssignReverse);
 
@@ -111,9 +109,6 @@ namespace Quantum {
 													linkProgramCounter(linkCallPC, linkPC);
 													return true;
 												};
-
-
-
 											};
 										};
 									};
@@ -146,10 +141,7 @@ namespace Quantum {
 									return true;
 								};
 							};
-
 						};
-
-
 					};
 				};
 
@@ -159,8 +151,5 @@ namespace Quantum {
 			return false;
 		};
 
-
 	};
 };
-
-

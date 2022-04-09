@@ -39,7 +39,6 @@ namespace Quantum {
 			strStackTrace__ = "stackTrace";
 			strValue__ = "value";
 
-
 			symbolLength__ = Context::getSymbol(strLength__);
 			symbolPrototype__ = Context::getSymbol(strPrototype__);
 			symbolArguments__ = Context::getSymbol(strArguments__);
@@ -50,7 +49,7 @@ namespace Quantum {
 			symbolStackTrace__ = Context::getSymbol(strStackTrace__);
 			symbolValue__ = Context::getSymbol(strValue__);
 
-			returnValue=VariableUndefined::newVariable();
+			returnValue = VariableUndefined::newVariable();
 
 			return true;
 		};
@@ -58,24 +57,22 @@ namespace Quantum {
 		TPointer<Variable> InstructionContext::newError(String str) {
 			TPointer<Variable> constructor;
 			VariableObject *retV_;
-			retV_ = (VariableObject *) VariableObject::newVariable();
+			retV_ = (VariableObject *)VariableObject::newVariable();
 			retV_->value->set(symbolMessage__, VariableString::newVariable(str));
 			if (getFunctionX(symbolError__, constructor)) {
-				retV_->prototype = ((VariableVmFunction *) constructor.value())->prototype;
+				retV_->prototype = ((VariableVmFunction *)constructor.value())->prototype;
 			};
-			return (Variable *) retV_;
+			return (Variable *)retV_;
 		};
 
 		void InstructionContext::initMemory() {
-			TMemory<TStack<String> >::initMemory();
-			TMemory<TRedBlackTree<String, bool> >::initMemory();
+			TMemory<TStack<String>>::initMemory();
+			TMemory<TRedBlackTree<String, bool>>::initMemory();
 			TMemory<ExecutiveContext>::initMemory();
 			TMemory<ExecutiveContextPc>::initMemory();
 			TMemory<ExecutiveContextFunction>::initMemory();
-			TMemory<TDoubleEndedQueue<InstructionTrace> >::initMemory();
+			TMemory<TDoubleEndedQueue<InstructionTrace>>::initMemory();
 		};
 
 	};
 };
-
-

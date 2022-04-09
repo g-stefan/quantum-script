@@ -11,7 +11,7 @@
 #define QUANTUM_SCRIPT_VARIABLEBOOLEAN_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLE_HPP
-#include "quantum-script-variable.hpp"
+#	include "quantum-script-variable.hpp"
 #endif
 
 namespace Quantum {
@@ -21,12 +21,10 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::VariableBoolean>:
-			public TMemoryPoolActive<Quantum::Script::VariableBoolean> {};
+		template <>
+		class TMemory<Quantum::Script::VariableBoolean> : public TMemoryPoolActive<Quantum::Script::VariableBoolean> {};
 	};
 };
 
@@ -35,19 +33,19 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class VariableBoolean :
-			public Variable {
+		class VariableBoolean : public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableBoolean);
 				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableBoolean);
+
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTrue;
 				QUANTUM_SCRIPT_EXPORT static const char *strFalse;
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeBoolean;
-			public:
 
+			public:
 				Boolean value;
 
-				QUANTUM_SCRIPT_EXPORT  VariableBoolean();
+				QUANTUM_SCRIPT_EXPORT VariableBoolean();
 
 				QUANTUM_SCRIPT_EXPORT static Variable *newVariable(bool value);
 
@@ -60,11 +58,9 @@ namespace Quantum {
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT Number toNumber();
 				QUANTUM_SCRIPT_EXPORT String toString();
-
 		};
 
 	};
 };
-
 
 #endif

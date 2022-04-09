@@ -22,8 +22,7 @@ namespace Quantum {
 			reset();
 		};
 
-		Token::~Token() {
-		};
+		Token::~Token(){};
 
 		void Token::reset() {
 			value = "";
@@ -58,19 +57,11 @@ namespace Quantum {
 
 		bool Token::isSpace() {
 			if (
-				(input->inputChar == '\t')
-				|| (input->inputChar == '\r')
-				|| (input->inputChar == '\n')
-				|| (input->inputChar == ' ')
-			) {
+			    (input->inputChar == '\t') || (input->inputChar == '\r') || (input->inputChar == '\n') || (input->inputChar == ' ')) {
 				while (input->read()) {
 
 					if (
-						(input->inputChar == '\t')
-						|| (input->inputChar == '\r')
-						|| (input->inputChar == '\n')
-						|| (input->inputChar == ' ')
-					) {
+					    (input->inputChar == '\t') || (input->inputChar == '\r') || (input->inputChar == '\n') || (input->inputChar == ' ')) {
 					} else {
 						return true;
 					};
@@ -78,7 +69,7 @@ namespace Quantum {
 				return true;
 			};
 			// UTF-8 BOM 0xEF,0xBB,0xBF ignore ...
-			if(isN("\xEF\xBB\xBF")) {
+			if (isN("\xEF\xBB\xBF")) {
 				return isSpace();
 			};
 			return false;
@@ -90,16 +81,14 @@ namespace Quantum {
 					if (input->inputChar == '/') {
 						if (input->read()) {
 							if (
-								(input->inputChar == '\r')
-								|| (input->inputChar == '\n')
+							    (input->inputChar == '\r') || (input->inputChar == '\n')
 
 							) {
 								return isSpace();
 							};
 							while (input->read()) {
 								if (
-									(input->inputChar == '\r')
-									|| (input->inputChar == '\n')
+								    (input->inputChar == '\r') || (input->inputChar == '\n')
 
 								) {
 									return isSpace();
@@ -129,18 +118,12 @@ namespace Quantum {
 		};
 
 		bool Token::isSymbol() {
-			if ((input->inputChar == '_')
-				|| ((input->inputChar >= 'A') && (input->inputChar <= 'Z'))
-				|| ((input->inputChar >= 'a') && (input->inputChar <= 'z'))
-			) {
+			if ((input->inputChar == '_') || ((input->inputChar >= 'A') && (input->inputChar <= 'Z')) || ((input->inputChar >= 'a') && (input->inputChar <= 'z'))) {
 				type = TokenType::Symbol;
 				value << input->inputChar;
 				while (input->read()) {
 					if (
-						(input->inputChar == '_')
-						|| ((input->inputChar >= 'A') && (input->inputChar <= 'Z'))
-						|| ((input->inputChar >= 'a') && (input->inputChar <= 'z'))
-						|| ((input->inputChar >= '0') && (input->inputChar <= '9'))
+					    (input->inputChar == '_') || ((input->inputChar >= 'A') && (input->inputChar <= 'Z')) || ((input->inputChar >= 'a') && (input->inputChar <= 'z')) || ((input->inputChar >= '0') && (input->inputChar <= '9'))
 
 					) {
 						value << input->inputChar;
@@ -207,27 +190,27 @@ namespace Quantum {
 									char code[5];
 									code[4] = 0;
 									unsigned int code4;
-									if(!input->read()) {
+									if (!input->read()) {
 										return false;
 									};
 									code[0] = input->inputChar;
-									if(!input->read()) {
+									if (!input->read()) {
 										return false;
 									};
 									code[1] = input->inputChar;
-									if(!input->read()) {
+									if (!input->read()) {
 										return false;
 									};
 									code[2] = input->inputChar;
-									if(!input->read()) {
+									if (!input->read()) {
 										return false;
 									};
 									code[3] = input->inputChar;
-									if(sscanf(code, "%04X", &code4) != 1) {
+									if (sscanf(code, "%04X", &code4) != 1) {
 										return false;
 									};
 									code[0] = (code4 >> 8) & 0xFF;
-									code[1] = (code4) & 0xFF;
+									code[1] = (code4)&0xFF;
 									code[2] = 0;
 									value.concatenate(code, 2);
 									continue;
@@ -236,15 +219,15 @@ namespace Quantum {
 									char code[3];
 									code[2] = 0;
 									int codeHex;
-									if(!input->read()) {
+									if (!input->read()) {
 										return false;
 									};
 									code[0] = input->inputChar;
-									if(!input->read()) {
+									if (!input->read()) {
 										return false;
 									};
 									code[1] = input->inputChar;
-									if(sscanf(code, "%02X", &codeHex) != 1) {
+									if (sscanf(code, "%02X", &codeHex) != 1) {
 										return false;
 									};
 									code[0] = (uint8_t)codeHex;
@@ -256,19 +239,19 @@ namespace Quantum {
 									char code[4];
 									code[3] = 0;
 									int codeOctal;
-									if(!input->read()) {
+									if (!input->read()) {
 										return false;
 									};
 									code[0] = input->inputChar;
-									if(!input->read()) {
+									if (!input->read()) {
 										return false;
 									};
 									code[1] = input->inputChar;
-									if(!input->read()) {
+									if (!input->read()) {
 										return false;
 									};
 									code[2] = input->inputChar;
-									if(sscanf(code, "%03o", &codeOctal) != 1) {
+									if (sscanf(code, "%03o", &codeOctal) != 1) {
 										return false;
 									};
 									code[0] = (uint8_t)codeOctal;
@@ -304,9 +287,9 @@ namespace Quantum {
 					while (input->read()) {
 						if (
 
-							(input->inputChar >= '0') && (input->inputChar <= '9') ||
-							(input->inputChar >= 'A') && (input->inputChar <= 'Z') ||
-							(input->inputChar >= 'a') && (input->inputChar <= 'z')
+						    (input->inputChar >= '0') && (input->inputChar <= '9') ||
+						    (input->inputChar >= 'A') && (input->inputChar <= 'Z') ||
+						    (input->inputChar >= 'a') && (input->inputChar <= 'z')
 
 						) {
 							value << input->inputChar;
@@ -328,7 +311,7 @@ namespace Quantum {
 				while (input->read()) {
 					if (
 
-						(input->inputChar >= '0') && (input->inputChar <= '9')
+					    (input->inputChar >= '0') && (input->inputChar <= '9')
 
 					) {
 						value << input->inputChar;
@@ -344,8 +327,7 @@ namespace Quantum {
 
 					while (input->read()) {
 						if (
-							(input->inputChar >= '0') && (input->inputChar <= '9')
-						) {
+						    (input->inputChar >= '0') && (input->inputChar <= '9')) {
 
 							value << input->inputChar;
 							continue;
@@ -437,7 +419,6 @@ namespace Quantum {
 			return false;
 		};
 
-
 		void Token::ignoreSpaceOrComment() {
 			*sourceLineNumber = input->lineNumber;
 			while (isSpace() || isComment()) {
@@ -457,19 +438,13 @@ namespace Quantum {
 		};
 
 		bool Token::isSymbolX(const char *name) {
-			if ((input->inputChar == '_')
-				|| ((input->inputChar >= 'A') && (input->inputChar <= 'Z'))
-				|| ((input->inputChar >= 'a') && (input->inputChar <= 'z'))
-			) {
+			if ((input->inputChar == '_') || ((input->inputChar >= 'A') && (input->inputChar <= 'Z')) || ((input->inputChar >= 'a') && (input->inputChar <= 'z'))) {
 				int k = 0;
 				if (name[k] == input->inputChar) {
 					++k;
 					while (input->read()) {
 						if (
-							(input->inputChar == '_')
-							|| ((input->inputChar >= 'A') && (input->inputChar <= 'Z'))
-							|| ((input->inputChar >= 'a') && (input->inputChar <= 'z'))
-							|| ((input->inputChar >= '0') && (input->inputChar <= '9'))
+						    (input->inputChar == '_') || ((input->inputChar >= 'A') && (input->inputChar <= 'Z')) || ((input->inputChar >= 'a') && (input->inputChar <= 'z')) || ((input->inputChar >= '0') && (input->inputChar <= '9'))
 
 						) {
 							if (name[k] == input->inputChar) {
@@ -491,7 +466,6 @@ namespace Quantum {
 						input->push();
 						input->inputChar = name[k - 1];
 					};
-
 				};
 			};
 			return false;
@@ -499,5 +473,3 @@ namespace Quantum {
 
 	};
 };
-
-

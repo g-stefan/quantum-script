@@ -34,7 +34,7 @@ namespace Quantum {
 			retV = TMemory<VariableReferenceSymbol>::newMemory();
 			retV->object = object;
 			retV->symbol = symbol;
-			return (Variable *) retV;
+			return (Variable *)retV;
 		};
 
 		bool VariableReferenceSymbol::toBoolean() {
@@ -73,5 +73,3 @@ namespace Quantum {
 		};
 	};
 };
-
-

@@ -11,7 +11,7 @@
 #define QUANTUM_SCRIPT_VARIABLEOPERATOR21_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLE_HPP
-#include "quantum-script-variable.hpp"
+#	include "quantum-script-variable.hpp"
 #endif
 
 namespace Quantum {
@@ -21,12 +21,10 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::VariableOperator21>:
-			public TMemoryPoolActive<Quantum::Script::VariableOperator21> {};
+		template <>
+		class TMemory<Quantum::Script::VariableOperator21> : public TMemoryPoolActive<Quantum::Script::VariableOperator21> {};
 	};
 };
 
@@ -35,27 +33,23 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class VariableOperator21 :
-			public Variable {
+		class VariableOperator21 : public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableOperator21);
 				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableOperator21);
-			public:
 
+			public:
 				Symbol symbol;
 				Number value;
 
-				QUANTUM_SCRIPT_EXPORT  VariableOperator21();
+				QUANTUM_SCRIPT_EXPORT VariableOperator21();
 
 				QUANTUM_SCRIPT_EXPORT static Variable *newVariable();
 
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT String toString();
-
 		};
 
 	};
 };
 
-
 #endif
-

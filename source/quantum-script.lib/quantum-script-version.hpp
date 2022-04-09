@@ -10,17 +10,16 @@
 #ifndef QUANTUM_SCRIPT_VERSION_HPP
 #define QUANTUM_SCRIPT_VERSION_HPP
 
-#define QUANTUM_SCRIPT_VERSION_ABCD                2,6,0,34
-#define QUANTUM_SCRIPT_VERSION_STR                 "2.6.0"
-#define QUANTUM_SCRIPT_VERSION_STR_BUILD           "34"
-#define QUANTUM_SCRIPT_VERSION_STR_DATETIME        "2022-01-09 01:13:05"
+#define QUANTUM_SCRIPT_VERSION_ABCD 2,7,0,36
+#define QUANTUM_SCRIPT_VERSION_STR "2.7.0"
+#define QUANTUM_SCRIPT_VERSION_STR_BUILD "36"
+#define QUANTUM_SCRIPT_VERSION_STR_DATETIME "2022-04-04 01:44:48"
 
 #ifndef XYO_RC
 
-#ifndef QUANTUM_SCRIPT__EXPORT_HPP
-#include "quantum-script--export.hpp"
-#endif
-
+#	ifndef QUANTUM_SCRIPT__EXPORT_HPP
+#		include "quantum-script--export.hpp"
+#	endif
 
 namespace Quantum {
 	namespace Script {
@@ -33,7 +32,5 @@ namespace Quantum {
 	};
 };
 
-
 #endif
 #endif
-

@@ -36,7 +36,7 @@ namespace Quantum {
 			functionParent.pointerLink(this);
 
 			prototype.newMemory();
-			prototype->prototype=VariableObject::newVariable();
+			prototype->prototype = VariableObject::newVariable();
 
 			functionProcedure = nullptr;
 			valueSuper = nullptr;
@@ -45,7 +45,7 @@ namespace Quantum {
 		Variable *VariableFunction::newVariable(FunctionParent *functionParent, VariableArray *parentVariables, VariableArray *parentArguments, FunctionProcedure functionProcedure, Object *super, void *valueSuper) {
 			VariableFunction *retV;
 			retV = TMemory<VariableFunction>::newMemory();
-			if(functionParent || parentVariables || parentArguments) {
+			if (functionParent || parentVariables || parentArguments) {
 				retV->functionParent.newMemory();
 				retV->functionParent->functionParent = functionParent;
 				retV->functionParent->variables = parentVariables;
@@ -54,7 +54,7 @@ namespace Quantum {
 			retV->functionProcedure = functionProcedure;
 			retV->super = super;
 			retV->valueSuper = valueSuper;
-			return (Variable *) retV;
+			return (Variable *)retV;
 		};
 
 		String VariableFunction::getVariableType() {
@@ -62,7 +62,7 @@ namespace Quantum {
 		};
 
 		TPointer<Variable> VariableFunction::getPropertyBySymbol(Symbol symbolId) {
-			if(symbolId == Context::getSymbolPrototype()) {
+			if (symbolId == Context::getSymbolPrototype()) {
 				return prototype->prototype;
 			};
 
@@ -72,7 +72,7 @@ namespace Quantum {
 				return outX->value;
 			};
 
-			return Variable::getPropertyBySymbol(symbolId);			
+			return Variable::getPropertyBySymbol(symbolId);
 		};
 
 		TPointer<Variable> VariableFunction::getPropertyByIndex(size_t index) {
@@ -83,13 +83,13 @@ namespace Quantum {
 
 		TPointer<Variable> VariableFunction::getPropertyByVariable(Variable *index) {
 			if (TIsType<VariableSymbol>(index)) {
-				return getPropertyBySymbol(((VariableSymbol *) index)->value);
+				return getPropertyBySymbol(((VariableSymbol *)index)->value);
 			};
 			return getPropertyBySymbol(Context::getSymbol(index->toString()));
 		};
 
 		void VariableFunction::setPropertyBySymbol(Symbol symbolId, Variable *valueToSet) {
-			if(symbolId == Context::getSymbolPrototype()) {
+			if (symbolId == Context::getSymbolPrototype()) {
 				prototype->prototype = valueToSet;
 				return;
 			};
@@ -97,7 +97,7 @@ namespace Quantum {
 			PropertyNode *node;
 			node = object->find(symbolId);
 			if (node) {
-				node->value=valueToSet;
+				node->value = valueToSet;
 				return;
 			};
 			node = Property::newNode();
@@ -115,7 +115,7 @@ namespace Quantum {
 
 		void VariableFunction::setPropertyByVariable(Variable *index, Variable *valueToSet) {
 			if (TIsType<VariableSymbol>(index)) {
-				return setPropertyBySymbol(((VariableSymbol *) index)->value, valueToSet);
+				return setPropertyBySymbol(((VariableSymbol *)index)->value, valueToSet);
 			};
 			return setPropertyBySymbol(Context::getSymbol(index->toString()), valueToSet);
 		};
@@ -133,7 +133,7 @@ namespace Quantum {
 
 		bool VariableFunction::deletePropertyByVariable(Variable *index) {
 			if (TIsType<VariableSymbol>(index)) {
-				return deletePropertyBySymbol(((VariableSymbol *) index)->value);
+				return deletePropertyBySymbol(((VariableSymbol *)index)->value);
 			};
 			return deletePropertyBySymbol(Context::getSymbol(index->toString()));
 		};
@@ -149,7 +149,7 @@ namespace Quantum {
 		bool VariableFunction::instanceOfPrototype(Prototype *&out) {
 			out = prototype;
 			return true;
-		};		
+		};
 
 		TPointer<Iterator> VariableFunction::getIteratorKey() {
 			ObjectIteratorKey *iterator_ = TMemory<ObjectIteratorKey>::newMemory();
@@ -182,5 +182,3 @@ namespace Quantum {
 
 	};
 };
-
-

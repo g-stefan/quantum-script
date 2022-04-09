@@ -11,15 +11,15 @@
 #define QUANTUM_SCRIPT_EXECUTIVECONTEXTFUNCTION_HPP
 
 #ifndef QUANTUM_SCRIPT__DEPENDENCY_HPP
-#include "quantum-script--dependency.hpp"
+#	include "quantum-script--dependency.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_EXECUTIVECONTEXTPC_HPP
-#include "quantum-script-executivecontextpc.hpp"
+#	include "quantum-script-executivecontextpc.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_VARIABLEFUNCTION_HPP
-#include "quantum-script-variablefunction.hpp"
+#	include "quantum-script-variablefunction.hpp"
 #endif
 
 namespace Quantum {
@@ -29,12 +29,10 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::ExecutiveContextFunction>:
-			public TMemoryPoolActive<Quantum::Script::ExecutiveContextFunction> {};
+		template <>
+		class TMemory<Quantum::Script::ExecutiveContextFunction> : public TMemoryPoolActive<Quantum::Script::ExecutiveContextFunction> {};
 	};
 };
 
@@ -43,11 +41,10 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class ExecutiveContextFunction :
-			public ExecutiveContextPc {
+		class ExecutiveContextFunction : public ExecutiveContextPc {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(ExecutiveContextFunction);
-			public:
 
+			public:
 				TPointerX<Variable> thisFunction_;
 				TPointerX<Variable> this_;
 
@@ -89,15 +86,12 @@ namespace Quantum {
 #endif
 				};
 
-
 				inline static void initMemory() {
 					TMemory<ExecutiveContextPc>::initMemory();
 				};
-
 		};
 
 	};
 };
-
 
 #endif

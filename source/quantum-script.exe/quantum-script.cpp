@@ -12,7 +12,7 @@
 #include <string.h>
 
 #ifdef BUILD_WINDOWS_GUI
-#include <windows.h>
+#	include <windows.h>
 #endif
 
 #include "quantum-script.hpp"
@@ -27,19 +27,17 @@ namespace Main {
 	using namespace XYO;
 	using namespace Quantum::Script;
 
-	class Application :
-		public virtual IMain {
+	class Application : public virtual IMain {
 			XYO_DISALLOW_COPY_ASSIGN_MOVE(Application);
-		protected:
 
+		protected:
 			static void initExecutive(Executive *);
 
 			void showUsage();
 			void showLicense();
 
 		public:
-
-			inline Application() {};
+			inline Application(){};
 
 			int main(int cmdN, char *cmdS[]);
 	};
@@ -54,14 +52,13 @@ namespace Main {
 		printf("%s\n\n", Quantum::Script::Copyright::fullCopyright());
 
 		printf("%s",
-			"options:\n"
-			"    --license               show license\n"
-			"    --cmd script            execute script, skip first 2 lines\n"
-			"    script.js               execute script\n"
-			"    --run \"code\"          run code\n"
-			"    --execution-time        show execution time\n"
-			"    --execution-time-cmd    --execution-time + --cmd\n"
-		);
+		       "options:\n"
+		       "    --license               show license\n"
+		       "    --cmd script            execute script, skip first 2 lines\n"
+		       "    script.js               execute script\n"
+		       "    --run \"code\"          run code\n"
+		       "    --execution-time        show execution time\n"
+		       "    --execution-time-cmd    --execution-time + --cmd\n");
 		printf("\n");
 	};
 
@@ -107,8 +104,8 @@ namespace Main {
 				if (strcmp(opt, "run") == 0) {
 					runCode = true;
 					++i;
-					if(i < cmdN) {
-						code=cmdS[i];
+					if (i < cmdN) {
+						code = cmdS[i];
 						continue;
 					};
 					break;
@@ -120,27 +117,27 @@ namespace Main {
 			};
 		};
 
-		if(!runCode) {
-			if(fileIn == nullptr) {
+		if (!runCode) {
+			if (fileIn == nullptr) {
 				showUsage();
 				return 0;
 			};
 		} else {
-			if(code.length()==0) {
+			if (code.length() == 0) {
 				printf("Error: No code specified!");
 				return 1;
 			};
 		};
 
-		if(executionTime) {
+		if (executionTime) {
 			beginTimestampInMilliseconds = DateTime::timestampInMilliseconds();
 		};
 
-		if(ExecutiveX::initExecutive(cmdN, cmdS, initExecutive)) {
-			if(runCode) {
-				if(ExecutiveX::executeString(code)) {
+		if (ExecutiveX::initExecutive(cmdN, cmdS, initExecutive)) {
+			if (runCode) {
+				if (ExecutiveX::executeString(code)) {
 					ExecutiveX::endProcessing();
-					if(executionTime) {
+					if (executionTime) {
 						endTimestampInMilliseconds = DateTime::timestampInMilliseconds();
 						intervalTimestampInMilliseconds = endTimestampInMilliseconds - beginTimestampInMilliseconds;
 						printf("Execution time: " XYO_FORMAT_SIZET " ms\n", (size_t)intervalTimestampInMilliseconds);
@@ -149,10 +146,10 @@ namespace Main {
 				};
 			} else {
 				ExecutiveX::includePath(Shell::getFilePath(fileIn));
-				if(isCmd) {
-					if(ExecutiveX::executeFileSkipLines(fileIn, 2)) {
+				if (isCmd) {
+					if (ExecutiveX::executeFileSkipLines(fileIn, 2)) {
 						ExecutiveX::endProcessing();
-						if(executionTime) {
+						if (executionTime) {
 							endTimestampInMilliseconds = DateTime::timestampInMilliseconds();
 							intervalTimestampInMilliseconds = endTimestampInMilliseconds - beginTimestampInMilliseconds;
 							printf("Execution time: " XYO_FORMAT_SIZET " ms\n", (size_t)intervalTimestampInMilliseconds);
@@ -169,9 +166,9 @@ namespace Main {
 					return 1;
 				};
 
-				if(ExecutiveX::executeFile(fileIn)) {
+				if (ExecutiveX::executeFile(fileIn)) {
 					ExecutiveX::endProcessing();
-					if(executionTime) {
+					if (executionTime) {
 						endTimestampInMilliseconds = DateTime::timestampInMilliseconds();
 						intervalTimestampInMilliseconds = endTimestampInMilliseconds - beginTimestampInMilliseconds;
 						printf("Execution time: " XYO_FORMAT_SIZET " ms\n", (size_t)intervalTimestampInMilliseconds);

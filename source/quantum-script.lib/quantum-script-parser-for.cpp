@@ -17,7 +17,6 @@
 namespace Quantum {
 	namespace Script {
 
-
 		bool Parser::statementForSub(int hasSymbol) {
 			if (hasSymbol) {
 				expression(1);
@@ -71,26 +70,25 @@ namespace Quantum {
 							if (isVar) {
 								int index, level;
 								bool found = false;
-								if(isFunctionArgument(token.value, index, level)) {
-									if(level == 0) {
+								if (isFunctionArgument(token.value, index, level)) {
+									if (level == 0) {
 										error = ParserError::Compile;
 										return false;
 									};
 								};
-								if(isFunctionLocalVariable(token.value, index, level)) {
-									if(level == 0) { // already defined
+								if (isFunctionLocalVariable(token.value, index, level)) {
+									if (level == 0) { // already defined
 										found = true;
 									};
 								};
-								if(found) {
+								if (found) {
 									char buffer1[32];
 									sprintf(buffer1, "%d", index);
 									(functionHint.head)->value |= ParserFunctionHint::LocalVariables;
 									assemble1(ParserAsm::LocalVariablesPushObjectReference, buffer1);
 								} else {
 
-
-									if(functionLocalVariables.head) {
+									if (functionLocalVariables.head) {
 										char buf[32];
 										(functionLocalVariables.head)->value.set(token.value, (functionLocalVariableLevel.head)->value);
 										sprintf(buf, "%d", (functionLocalVariableLevel.head)->value);
@@ -100,12 +98,11 @@ namespace Quantum {
 									} else {
 										assemble1(ParserAsm::PushObjectReference, token.value);
 									};
-
 								};
 							} else {
 								token.lValue = true;
 								token.type = TokenType::FirstSymbol;
-								if(expressionProcessToken(&token) == nullptr) {
+								if (expressionProcessToken(&token) == nullptr) {
 									return false;
 								};
 							};
@@ -122,8 +119,7 @@ namespace Quantum {
 									assembleProgramCounter(ParserAsm::Goto, linkForInIf);
 
 									linkProgramCounter(linkForInSkip,
-										assemble(ParserAsm::Mark)
-									);
+									                   assemble(ParserAsm::Mark));
 
 									if (token.checkIs1("{")) {
 
@@ -144,9 +140,7 @@ namespace Quantum {
 											linkProgramCounter(linkForInBreak, linkForInEnd);
 											linkProgramCounter(linkForInIf, linkForInEnd);
 
-
 											return true;
-
 										};
 										error = ParserError::Compile;
 										return false;
@@ -175,25 +169,25 @@ namespace Quantum {
 
 								int index, level;
 								bool found = false;
-								if(isFunctionArgument(token.value, index, level)) {
-									if(level == 0) {
+								if (isFunctionArgument(token.value, index, level)) {
+									if (level == 0) {
 										error = ParserError::Compile;
 										return false;
 									};
 								};
-								if(isFunctionLocalVariable(token.value, index, level)) {
-									if(level == 0) { // already defined
+								if (isFunctionLocalVariable(token.value, index, level)) {
+									if (level == 0) { // already defined
 										found = true;
 									};
 								};
-								if(found) {
+								if (found) {
 									char buffer1[32];
 									sprintf(buffer1, "%d", index);
 									(functionHint.head)->value |= ParserFunctionHint::LocalVariables;
 									assemble1(ParserAsm::LocalVariablesPushObjectReference, buffer1);
 								} else {
 
-									if(functionLocalVariables.head) {
+									if (functionLocalVariables.head) {
 										char buf[32];
 										(functionLocalVariables.head)->value.set(token.value, (functionLocalVariableLevel.head)->value);
 										sprintf(buf, "%d", (functionLocalVariableLevel.head)->value);
@@ -208,7 +202,7 @@ namespace Quantum {
 							} else {
 								token.lValue = true;
 								token.type = TokenType::FirstSymbol;
-								if(expressionProcessToken(&token) == nullptr) {
+								if (expressionProcessToken(&token) == nullptr) {
 									return false;
 								};
 							};
@@ -225,8 +219,7 @@ namespace Quantum {
 									assembleProgramCounter(ParserAsm::Goto, linkForInIf);
 
 									linkProgramCounter(linkForInSkip,
-										assemble(ParserAsm::Mark)
-									);
+									                   assemble(ParserAsm::Mark));
 
 									if (token.checkIs1("{")) {
 
@@ -247,9 +240,7 @@ namespace Quantum {
 											linkProgramCounter(linkForInBreak, linkForInEnd);
 											linkProgramCounter(linkForInIf, linkForInEnd);
 
-
 											return true;
-
 										};
 										error = ParserError::Compile;
 										return false;
@@ -267,7 +258,6 @@ namespace Quantum {
 							error = ParserError::Compile;
 							return false;
 						};
-
 					};
 
 					ProgramCounter *linkFor;
@@ -307,19 +297,17 @@ namespace Quantum {
 							linkForInc = assemble(ParserAsm::Mark);
 
 							do {
-								if(expression(0)) {
+								if (expression(0)) {
 									assemble(ParserAsm::Pop1);
 								} else {
 									break;
 								};
-							} while(token.is1(","));
+							} while (token.is1(","));
 
 							if (token.is1(")")) {
 								assembleProgramCounter(ParserAsm::Goto, linkFor);
 								linkProgramCounter(linkForSkip,
-									assemble(ParserAsm::Mark)
-								);
-
+								                   assemble(ParserAsm::Mark));
 
 								if (token.checkIs1("{")) {
 
@@ -334,7 +322,7 @@ namespace Quantum {
 										linkForEnd = assemble(ParserAsm::Mark);
 										linkProgramCounter(linkForIf, linkForEnd);
 
-										while(!parserContext.head->value->pcBreak.isEmpty()) {
+										while (!parserContext.head->value->pcBreak.isEmpty()) {
 											parserContext.head->value->pcBreak.pop(linkForBreak);
 											linkProgramCounter(linkForBreak, linkForEnd);
 										};
@@ -352,10 +340,7 @@ namespace Quantum {
 									linkProgramCounter(linkForIf, linkForEnd);
 									return true;
 								};
-
-
 							};
-
 						};
 					};
 				};
@@ -366,5 +351,3 @@ namespace Quantum {
 
 	};
 };
-
-

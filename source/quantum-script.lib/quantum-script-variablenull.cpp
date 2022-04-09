@@ -14,7 +14,6 @@
 #include "quantum-script-variablenull.hpp"
 #include "quantum-script-context.hpp"
 
-
 namespace Quantum {
 	namespace Script {
 
@@ -32,7 +31,7 @@ namespace Quantum {
 		};
 
 		Variable *VariableNull::newVariable() {
-			return (Variable *) TMemory<VariableNull>::newMemory();
+			return (Variable *)TMemory<VariableNull>::newMemory();
 		};
 
 		Variable *VariableNull::clone(SymbolList &inSymbolList) {
@@ -51,8 +50,5 @@ namespace Quantum {
 			return strTypeNull;
 		};
 
-
 	};
 };
-
-

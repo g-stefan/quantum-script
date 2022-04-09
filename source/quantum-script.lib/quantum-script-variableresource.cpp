@@ -40,7 +40,7 @@ namespace Quantum {
 			retV = TMemory<VariableResource>::newMemory();
 			retV->resource = resource;
 			retV->resourceDelete = resourceDelete;
-			return (Variable *) retV;
+			return (Variable *)retV;
 		};
 
 		Variable *VariableResource::instancePrototype() {
@@ -57,6 +57,3 @@ namespace Quantum {
 
 	};
 };
-
-
-

@@ -11,11 +11,11 @@
 #define QUANTUM_SCRIPT_VARIABLEOPERATOR23_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLE_HPP
-#include "quantum-script-variable.hpp"
+#	include "quantum-script-variable.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_PROGRAMCOUNTER_HPP
-#include "quantum-script-programcounter.hpp"
+#	include "quantum-script-programcounter.hpp"
 #endif
 
 namespace Quantum {
@@ -25,12 +25,10 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::VariableOperator23>:
-			public TMemoryPoolActive<Quantum::Script::VariableOperator23> {};
+		template <>
+		class TMemory<Quantum::Script::VariableOperator23> : public TMemoryPoolActive<Quantum::Script::VariableOperator23> {};
 	};
 };
 
@@ -39,27 +37,23 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class VariableOperator23 :
-			public Variable {
+		class VariableOperator23 : public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableOperator23);
 				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableOperator23);
-			public:
 
+			public:
 				ProgramCounter *linkBegin;
 				ProgramCounter *pc;
 
-				QUANTUM_SCRIPT_EXPORT  VariableOperator23();
+				QUANTUM_SCRIPT_EXPORT VariableOperator23();
 
 				QUANTUM_SCRIPT_EXPORT static Variable *newVariable();
 
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT String toString();
-
 		};
 
 	};
 };
 
-
 #endif
-

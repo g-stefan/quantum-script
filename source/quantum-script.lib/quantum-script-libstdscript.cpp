@@ -15,16 +15,16 @@
 #include "quantum-script--dependency.hpp"
 
 #ifdef XYO_OS_WINDOWS
-#       define WIN32_LEAN_AND_MEAN
-#       include <windows.h>
+#	define WIN32_LEAN_AND_MEAN
+#	include <windows.h>
 #else
-#       include <dlfcn.h>
+#	include <dlfcn.h>
 #endif
 
 #ifndef QUANTUM_SCRIPT_NO_VERSION
-#ifndef QUANTUM_SCRIPT_VERSION_HPP
-#include "quantum-script-version.hpp"
-#endif
+#	ifndef QUANTUM_SCRIPT_VERSION_HPP
+#		include "quantum-script-version.hpp"
+#	endif
 #endif
 
 #include "quantum-script-libstdscript.hpp"
@@ -69,9 +69,8 @@ namespace Quantum {
 #endif
 				TPointerX<Variable> &value = arguments->index(0);
 				return VariableBoolean::newVariable(
-						TIsTypeExact<VariableUndefined>(value) ||
-						TIsType<VariableNull>(value)
-					);
+				    TIsTypeExact<VariableUndefined>(value) ||
+				    TIsType<VariableNull>(value));
 			};
 
 			static TPointer<Variable> isNaN(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -101,7 +100,6 @@ namespace Quantum {
 #endif
 				return VariableBoolean::newVariable(signbit((arguments->index(0))->toNumber()));
 			};
-
 
 			static TPointer<Variable> isBoolean(VariableFunction *function, Variable *this_, VariableArray *arguments) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -152,12 +150,10 @@ namespace Quantum {
 
 				TPointerX<Variable> &variable = arguments->index(0);
 				return VariableBoolean::newVariable(
-						TIsType<VariableFunction>(variable) ||
-						TIsType<VariableFunctionWithYield>(variable) ||
-						TIsType<VariableVmFunction>(variable) ||
-						TIsType<VariableNativeVmFunction>(variable)
-					);
-
+				    TIsType<VariableFunction>(variable) ||
+				    TIsType<VariableFunctionWithYield>(variable) ||
+				    TIsType<VariableVmFunction>(variable) ||
+				    TIsType<VariableNativeVmFunction>(variable));
 			};
 
 			static TPointer<Variable> isNativeFunction(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -166,10 +162,9 @@ namespace Quantum {
 #endif
 				TPointerX<Variable> &variable = arguments->index(0);
 				return VariableBoolean::newVariable(
-						TIsType<VariableFunction>(variable) ||
-						TIsType<VariableFunctionWithYield>(variable) ||
-						TIsType<VariableNativeVmFunction>(variable)
-					);
+				    TIsType<VariableFunction>(variable) ||
+				    TIsType<VariableFunctionWithYield>(variable) ||
+				    TIsType<VariableNativeVmFunction>(variable));
 			};
 
 			static TPointer<Variable> isObject(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -197,7 +192,7 @@ namespace Quantum {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 				printf("- script-stack-trace-with-level\n");
 #endif
-				return VariableString::newVariable((((VariableStackTrace *) (arguments->index(0)).value() ))->toString((Integer)((arguments->index(1))->toNumber())));
+				return VariableString::newVariable((((VariableStackTrace *)(arguments->index(0)).value()))->toString((Integer)((arguments->index(1))->toNumber())));
 			};
 
 			static QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(LibStdScript_include) {
@@ -212,29 +207,29 @@ namespace Quantum {
 				operand1 = context->getArgument(0);
 				operand2 = context->getArgument(1);
 
-				if(!TIsType<VariableArray>(operand2)) {
-					operand2=VariableArray::newVariable();
+				if (!TIsType<VariableArray>(operand2)) {
+					operand2 = VariableArray::newVariable();
 				};
-				context->functionContext->functionArguments=static_cast<VariableArray *>(operand2.value());
+				context->functionContext->functionArguments = static_cast<VariableArray *>(operand2.value());
 
-				if(!context->functionContext->this_) {
-					context->functionContext->this_=VariableUndefined::newVariable();
+				if (!context->functionContext->this_) {
+					context->functionContext->this_ = VariableUndefined::newVariable();
 				};
 
 				if (operand1) {
 					if (TIsType<VariableString>(operand1)) {
 
-						Executive *executive = (Executive *) (((VariableResource *) operand)->resource);
+						Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
 						bool found = false;
 						String fileName;
-						fileName = ((VariableString *) operand1.value())->value.value();
+						fileName = ((VariableString *)operand1.value())->value.value();
 						if (Shell::fileExists(fileName)) {
 							found = true;
 						} else {
-							TDoubleEndedQueue<String >::Node *scan;
+							TDoubleEndedQueue<String>::Node *scan;
 							for (scan = executive->includePath->head; scan; scan = scan->next) {
 								fileName = scan->value;
-								fileName << "/" << ((VariableString *) operand1.value())->value.value();
+								fileName << "/" << ((VariableString *)operand1.value())->value.value();
 								if (Shell::fileExists(fileName)) {
 									found = true;
 									break;
@@ -242,12 +237,12 @@ namespace Quantum {
 							};
 						};
 
-						if(!found) {
-							if(context->includedFile.head) {
-								fileName = ((VariableString *) operand1.value())->value.value();
-								if(!Shell::isAbsolutePath(fileName)) {
+						if (!found) {
+							if (context->includedFile.head) {
+								fileName = ((VariableString *)operand1.value())->value.value();
+								if (!Shell::isAbsolutePath(fileName)) {
 									fileName = Shell::getFilePathX((context->includedFile.head)->value) << fileName;
-									if(Shell::fileExists(fileName)) {
+									if (Shell::fileExists(fileName)) {
 										found = true;
 									};
 								};
@@ -259,17 +254,15 @@ namespace Quantum {
 							if (retV == VmParserError::None) {
 								return;
 							} else if (retV == VmParserError::Compile) {
-								sprintf( buf, "Compile error in %s line %u\n",
-									executive->errorInfo.compileFileName,
-									executive->errorInfo.compileLineNumber
-								);
+								sprintf(buf, "Compile error in %s line %u\n",
+								        executive->errorInfo.compileFileName,
+								        executive->errorInfo.compileLineNumber);
 								context->push(context->newError(buf));
 								InstructionVmThrow(context, nullptr);
 								return;
 							} else if (retV == VmParserError::FileNotFound) {
-								sprintf( buf, "File not found \"%s\"\n",
-									((VariableString *) operand1.value())->value.value()
-								);
+								sprintf(buf, "File not found \"%s\"\n",
+								        ((VariableString *)operand1.value())->value.value());
 								context->push(context->newError(buf));
 								InstructionVmThrow(context, nullptr);
 								return;
@@ -277,24 +270,22 @@ namespace Quantum {
 						};
 
 						String stringToCompile;
-						if(executive->includeSource->get(((VariableString *) operand1.value())->value, stringToCompile)) {
+						if (executive->includeSource->get(((VariableString *)operand1.value())->value, stringToCompile)) {
 							int retV = executive->includeAndExecuteString(context, stringToCompile);
 							if (retV == VmParserError::None) {
 								return;
 							} else if (retV == VmParserError::Compile) {
-								sprintf( buf, "Compile error in %s line %u\n",
-									executive->errorInfo.compileFileName,
-									executive->errorInfo.compileLineNumber
-								);
+								sprintf(buf, "Compile error in %s line %u\n",
+								        executive->errorInfo.compileFileName,
+								        executive->errorInfo.compileLineNumber);
 								context->push(context->newError(buf));
 								InstructionVmThrow(context, nullptr);
 								return;
 							};
 						};
 
-						sprintf( buf, "Unable to open \"%s\"\n",
-							((VariableString *) operand1.value())->value.value()
-						);
+						sprintf(buf, "Unable to open \"%s\"\n",
+						        ((VariableString *)operand1.value())->value.value());
 
 						context->push(context->newError(buf));
 						InstructionVmThrow(context, nullptr);
@@ -302,10 +293,8 @@ namespace Quantum {
 					};
 				};
 
-
 				context->push(context->newError("invalid arguments"));
 				InstructionVmThrow(context, nullptr);
-
 			};
 
 			static QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(LibStdScript_includeOnce) {
@@ -320,29 +309,29 @@ namespace Quantum {
 				operand1 = context->getArgument(0);
 				operand2 = context->getArgument(1);
 
-				if(!TIsType<VariableArray>(operand2)) {
-					operand2=VariableArray::newVariable();
+				if (!TIsType<VariableArray>(operand2)) {
+					operand2 = VariableArray::newVariable();
 				};
 
-				context->functionContext->functionArguments=static_cast<VariableArray *>(operand2.value());
+				context->functionContext->functionArguments = static_cast<VariableArray *>(operand2.value());
 
-				if(!context->functionContext->this_) {
-					context->functionContext->this_=VariableUndefined::newVariable();
+				if (!context->functionContext->this_) {
+					context->functionContext->this_ = VariableUndefined::newVariable();
 				};
 
 				if (operand1) {
 					if (TIsType<VariableString>(operand1)) {
-						Executive *executive = (Executive *) (((VariableResource *) operand)->resource);
+						Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
 						bool found = false;
 						String fileName;
-						fileName = ((VariableString *) operand1.value())->value.value();
+						fileName = ((VariableString *)operand1.value())->value.value();
 						if (Shell::fileExists(fileName)) {
 							found = true;
 						} else {
-							TDoubleEndedQueue<String >::Node *scan;
+							TDoubleEndedQueue<String>::Node *scan;
 							for (scan = executive->includePath->head; scan; scan = scan->next) {
 								fileName = scan->value;
-								fileName << "/" << ((VariableString *) operand1.value())->value.value();
+								fileName << "/" << ((VariableString *)operand1.value())->value.value();
 								if (Shell::fileExists(fileName)) {
 									found = true;
 									break;
@@ -350,12 +339,12 @@ namespace Quantum {
 							};
 						};
 
-						if(!found) {
-							if(context->includedFile.head) {
-								fileName = ((VariableString *) operand1.value())->value.value();
-								if(!Shell::isAbsolutePath(fileName)) {
+						if (!found) {
+							if (context->includedFile.head) {
+								fileName = ((VariableString *)operand1.value())->value.value();
+								if (!Shell::isAbsolutePath(fileName)) {
 									fileName = Shell::getFilePathX((context->includedFile.head)->value) << fileName;
-									if(Shell::fileExists(fileName)) {
+									if (Shell::fileExists(fileName)) {
 										found = true;
 									};
 								};
@@ -365,10 +354,10 @@ namespace Quantum {
 						if (found) {
 							char fileNameOut[1024];
 							String fileNameOut_;
-							if(Shell::realpath(fileName, fileNameOut, 1024)) {
+							if (Shell::realpath(fileName, fileNameOut, 1024)) {
 								fileNameOut_ = fileNameOut;
 								TRedBlackTree<String, bool>::Node *node = context->listIncludeOnce.find(fileNameOut_);
-								if(node) {
+								if (node) {
 									return;
 								};
 								bool xxx_ = true;
@@ -378,45 +367,39 @@ namespace Quantum {
 								if (retV == VmParserError::None) {
 									return;
 								} else if (retV == VmParserError::Compile) {
-									sprintf( buf, "Compile error in %s line %u\n",
-										executive->errorInfo.compileFileName,
-										executive->errorInfo.compileLineNumber
-									);
+									sprintf(buf, "Compile error in %s line %u\n",
+									        executive->errorInfo.compileFileName,
+									        executive->errorInfo.compileLineNumber);
 									context->push(context->newError(buf));
 									InstructionVmThrow(context, nullptr);
 									return;
 								} else if (retV == VmParserError::FileNotFound) {
-									sprintf( buf, "File not found \"%s\"\n",
-										((VariableString *) operand1.value())->value.value()
-									);
+									sprintf(buf, "File not found \"%s\"\n",
+									        ((VariableString *)operand1.value())->value.value());
 									context->push(context->newError(buf));
 									InstructionVmThrow(context, nullptr);
 									return;
 								};
-
 							};
 						};
 
 						String stringToCompile;
-						if(executive->includeSource->get(((VariableString *) operand1.value())->value, stringToCompile)) {
+						if (executive->includeSource->get(((VariableString *)operand1.value())->value, stringToCompile)) {
 							int retV = executive->includeAndExecuteString(context, stringToCompile);
 							if (retV == VmParserError::None) {
 								return;
 							} else if (retV == VmParserError::Compile) {
-								sprintf( buf, "Compile error in %s line %u\n",
-									executive->errorInfo.compileFileName,
-									executive->errorInfo.compileLineNumber
-								);
+								sprintf(buf, "Compile error in %s line %u\n",
+								        executive->errorInfo.compileFileName,
+								        executive->errorInfo.compileLineNumber);
 								context->push(context->newError(buf));
 								InstructionVmThrow(context, nullptr);
 								return;
 							};
 						};
 
-
-						sprintf( buf, "Unable to open \"%s\"\n",
-							((VariableString *) operand1.value())->value.value()
-						);
+						sprintf(buf, "Unable to open \"%s\"\n",
+						        ((VariableString *)operand1.value())->value.value());
 
 						context->push(context->newError(buf));
 						InstructionVmThrow(context, nullptr);
@@ -424,10 +407,8 @@ namespace Quantum {
 					};
 				};
 
-
 				context->push(context->newError("invalid arguments"));
 				InstructionVmThrow(context, nullptr);
-
 			};
 
 			static QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(LibStdScript_includeSkipLines) {
@@ -443,29 +424,29 @@ namespace Quantum {
 				operand2 = context->getArgument(1);
 				size_t skipLines = (context->getArgument(2))->toIndex();
 
-				if(!TIsType<VariableArray>(operand2)) {
-					operand2=VariableArray::newVariable();
+				if (!TIsType<VariableArray>(operand2)) {
+					operand2 = VariableArray::newVariable();
 				};
-				context->functionContext->functionArguments=static_cast<VariableArray *>(operand2.value());
+				context->functionContext->functionArguments = static_cast<VariableArray *>(operand2.value());
 
-				if(!context->functionContext->this_) {
-					context->functionContext->this_=VariableUndefined::newVariable();
+				if (!context->functionContext->this_) {
+					context->functionContext->this_ = VariableUndefined::newVariable();
 				};
 
 				if (operand1) {
 					if (TIsType<VariableString>(operand1)) {
 
-						Executive *executive = (Executive *) (((VariableResource *) operand)->resource);
+						Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
 						bool found = false;
 						String fileName;
-						fileName = ((VariableString *) operand1.value())->value.value();
+						fileName = ((VariableString *)operand1.value())->value.value();
 						if (Shell::fileExists(fileName)) {
 							found = true;
 						} else {
-							TDoubleEndedQueue<String >::Node *scan;
+							TDoubleEndedQueue<String>::Node *scan;
 							for (scan = executive->includePath->head; scan; scan = scan->next) {
 								fileName = scan->value;
-								fileName << "/" << ((VariableString *) operand1.value())->value.value();
+								fileName << "/" << ((VariableString *)operand1.value())->value.value();
 								if (Shell::fileExists(fileName)) {
 									found = true;
 									break;
@@ -473,12 +454,12 @@ namespace Quantum {
 							};
 						};
 
-						if(!found) {
-							if(context->includedFile.head) {
-								fileName = ((VariableString *) operand1.value())->value.value();
-								if(!Shell::isAbsolutePath(fileName)) {
+						if (!found) {
+							if (context->includedFile.head) {
+								fileName = ((VariableString *)operand1.value())->value.value();
+								if (!Shell::isAbsolutePath(fileName)) {
 									fileName = Shell::getFilePathX((context->includedFile.head)->value) << fileName;
-									if(Shell::fileExists(fileName)) {
+									if (Shell::fileExists(fileName)) {
 										found = true;
 									};
 								};
@@ -490,17 +471,15 @@ namespace Quantum {
 							if (retV == VmParserError::None) {
 								return;
 							} else if (retV == VmParserError::Compile) {
-								sprintf( buf, "Compile error in %s line %u\n",
-									executive->errorInfo.compileFileName,
-									executive->errorInfo.compileLineNumber
-								);
+								sprintf(buf, "Compile error in %s line %u\n",
+								        executive->errorInfo.compileFileName,
+								        executive->errorInfo.compileLineNumber);
 								context->push(context->newError(buf));
 								InstructionVmThrow(context, nullptr);
 								return;
 							} else if (retV == VmParserError::FileNotFound) {
-								sprintf( buf, "File not found \"%s\"\n",
-									((VariableString *) operand1.value())->value.value()
-								);
+								sprintf(buf, "File not found \"%s\"\n",
+								        ((VariableString *)operand1.value())->value.value());
 								context->push(context->newError(buf));
 								InstructionVmThrow(context, nullptr);
 								return;
@@ -508,24 +487,22 @@ namespace Quantum {
 						};
 
 						String stringToCompile;
-						if(executive->includeSource->get(((VariableString *) operand1.value())->value, stringToCompile)) {
+						if (executive->includeSource->get(((VariableString *)operand1.value())->value, stringToCompile)) {
 							int retV = executive->includeAndExecuteStringSkipLines(context, stringToCompile, skipLines);
 							if (retV == VmParserError::None) {
 								return;
 							} else if (retV == VmParserError::Compile) {
-								sprintf( buf, "Compile error in %s line %u\n",
-									executive->errorInfo.compileFileName,
-									executive->errorInfo.compileLineNumber
-								);
+								sprintf(buf, "Compile error in %s line %u\n",
+								        executive->errorInfo.compileFileName,
+								        executive->errorInfo.compileLineNumber);
 								context->push(context->newError(buf));
 								InstructionVmThrow(context, nullptr);
 								return;
 							};
 						};
 
-						sprintf( buf, "Unable to open \"%s\"\n",
-							((VariableString *) operand1.value())->value.value()
-						);
+						sprintf(buf, "Unable to open \"%s\"\n",
+						        ((VariableString *)operand1.value())->value.value());
 
 						context->push(context->newError(buf));
 						InstructionVmThrow(context, nullptr);
@@ -533,13 +510,9 @@ namespace Quantum {
 					};
 				};
 
-
 				context->push(context->newError("invalid arguments"));
 				InstructionVmThrow(context, nullptr);
-
 			};
-
-
 
 			static QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(LibStdScript_execute) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -553,28 +526,27 @@ namespace Quantum {
 				operand1 = context->getArgument(0);
 				operand2 = context->getArgument(1);
 
-				if(!TIsType<VariableArray>(operand2)) {
-					operand2=VariableArray::newVariable();
+				if (!TIsType<VariableArray>(operand2)) {
+					operand2 = VariableArray::newVariable();
 				};
-				context->functionContext->functionArguments=static_cast<VariableArray *>(operand2.value());
+				context->functionContext->functionArguments = static_cast<VariableArray *>(operand2.value());
 
-				if(!context->functionContext->this_) {
-					context->functionContext->this_=VariableUndefined::newVariable();
+				if (!context->functionContext->this_) {
+					context->functionContext->this_ = VariableUndefined::newVariable();
 				};
 
 				if (operand1) {
 					if (TIsType<VariableString>(operand1)) {
-						Executive *executive = (Executive *) (((VariableResource *) operand)->resource);
+						Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
 						String stringToCompile;
-						stringToCompile = ((VariableString *) operand1.value())->value.value();
+						stringToCompile = ((VariableString *)operand1.value())->value.value();
 						int retV = executive->includeAndExecuteString(context, stringToCompile);
 						if (retV == VmParserError::None) {
 							return;
 						} else if (retV == VmParserError::Compile) {
-							sprintf( buf, "Compile error in %s line %u\n",
-								executive->errorInfo.compileFileName,
-								executive->errorInfo.compileLineNumber
-							);
+							sprintf(buf, "Compile error in %s line %u\n",
+							        executive->errorInfo.compileFileName,
+							        executive->errorInfo.compileLineNumber);
 							context->push(context->newError(buf));
 							InstructionVmThrow(context, nullptr);
 							return;
@@ -599,28 +571,27 @@ namespace Quantum {
 				operand2 = context->getArgument(1);
 				size_t skipLines = (context->getArgument(2))->toIndex();
 
-				if(!TIsType<VariableArray>(operand2)) {
-					operand2=VariableArray::newVariable();
+				if (!TIsType<VariableArray>(operand2)) {
+					operand2 = VariableArray::newVariable();
 				};
-				context->functionContext->functionArguments=static_cast<VariableArray *>(operand2.value());
+				context->functionContext->functionArguments = static_cast<VariableArray *>(operand2.value());
 
-				if(!context->functionContext->this_) {
-					context->functionContext->this_=VariableUndefined::newVariable();
+				if (!context->functionContext->this_) {
+					context->functionContext->this_ = VariableUndefined::newVariable();
 				};
 
 				if (operand1) {
 					if (TIsType<VariableString>(operand1)) {
-						Executive *executive = (Executive *) (((VariableResource *) operand)->resource);
+						Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
 						String stringToCompile;
-						stringToCompile = ((VariableString *) operand1.value())->value.value();
+						stringToCompile = ((VariableString *)operand1.value())->value.value();
 						int retV = executive->includeAndExecuteStringSkipLines(context, stringToCompile, skipLines);
 						if (retV == VmParserError::None) {
 							return;
 						} else if (retV == VmParserError::Compile) {
-							sprintf( buf, "Compile error in %s line %u\n",
-								executive->errorInfo.compileFileName,
-								executive->errorInfo.compileLineNumber
-							);
+							sprintf(buf, "Compile error in %s line %u\n",
+							        executive->errorInfo.compileFileName,
+							        executive->errorInfo.compileLineNumber);
 							context->push(context->newError(buf));
 							InstructionVmThrow(context, nullptr);
 							return;
@@ -632,12 +603,11 @@ namespace Quantum {
 				InstructionVmThrow(context, nullptr);
 			};
 
-
 			static QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(LibStdScript_getIncludedFile) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 				printf("#%p    script-get-included-file\n", context->currentProgramCounter);
 #endif
-				if(context->includedFile.head) {
+				if (context->includedFile.head) {
 					context->push(VariableString::newVariable((context->includedFile.head)->value));
 				} else {
 					context->push(VariableString::newVariable(""));
@@ -657,20 +627,20 @@ namespace Quantum {
 				operand1 = context->getArgument(0);
 				operand2 = context->getArgument(1);
 
-				if(!TIsType<VariableArray>(operand2)) {
-					operand2=VariableArray::newVariable();
+				if (!TIsType<VariableArray>(operand2)) {
+					operand2 = VariableArray::newVariable();
 				};
-				context->functionContext->functionArguments=static_cast<VariableArray *>(operand2.value());
+				context->functionContext->functionArguments = static_cast<VariableArray *>(operand2.value());
 
-				if(!context->functionContext->this_) {
-					context->functionContext->this_=VariableUndefined::newVariable();
+				if (!context->functionContext->this_) {
+					context->functionContext->this_ = VariableUndefined::newVariable();
 				};
 
 				if (operand1) {
 					if (TIsType<VariableString>(operand1)) {
-						Executive *executive = (Executive *) (((VariableResource *) operand)->resource);
+						Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
 
-						if(executive->isExtensionLoaded(((VariableString *) operand1.value())->value)) {
+						if (executive->isExtensionLoaded(((VariableString *)operand1.value())->value)) {
 							return;
 						};
 
@@ -682,13 +652,12 @@ namespace Quantum {
 						String fileNameX;
 						size_t index;
 
-
-						fileNameFull = ((VariableString *) operand1.value())->value;
+						fileNameFull = ((VariableString *)operand1.value())->value;
 						fileName = "qse-";
-						if(String::indexOfFromEnd(fileNameFull, "\\", 0, index)) {
+						if (String::indexOfFromEnd(fileNameFull, "\\", 0, index)) {
 							filePath = String::substring(fileNameFull, 0, index + 1);
 							fileName << String::toLowerCaseAscii(String::substring(fileNameFull, index + 1));
-						} else if(String::indexOfFromEnd(fileNameFull, "/", 0, index)) {
+						} else if (String::indexOfFromEnd(fileNameFull, "/", 0, index)) {
 							filePath = String::substring(fileNameFull, 0, index + 1);
 							fileName << String::toLowerCaseAscii(String::substring(fileNameFull, index + 1));
 						} else {
@@ -722,35 +691,35 @@ namespace Quantum {
 						if (found) {
 							TDoubleEndedQueue<Extension_>::Node *scan;
 							for (scan = executive->extensionList->head; scan; scan = scan->next) {
-								if(scan->value.fileName == fileNameX) {
+								if (scan->value.fileName == fileNameX) {
 									return;
 								};
 							};
 #ifdef XYO_OS_WINDOWS
 							HMODULE hModule = LoadLibrary(fileNameX);
-							if(hModule) {
+							if (hModule) {
 								FARPROC farProc = GetProcAddress(hModule, "quantumScriptExtension");
-								if(farProc) {
+								if (farProc) {
 									executive->extensionList->push();
 									(executive->extensionList->head)->value.fileName = fileNameX;
-									(executive->extensionList->head)->value.name = ((VariableString *) operand1.value())->value;
+									(executive->extensionList->head)->value.name = ((VariableString *)operand1.value())->value;
 									(executive->extensionList->head)->value.isPublic = true;
-									if(executive->executeExtension(context, (QuantumScriptExtensionProc)farProc, executive->extensionList->head) == 0) {
+									if (executive->executeExtension(context, (QuantumScriptExtensionProc)farProc, executive->extensionList->head) == 0) {
 										return;
 									};
 								};
 							};
 #else
 							void *hModule = dlopen(fileNameX, RTLD_LAZY);
-							if(hModule) {
+							if (hModule) {
 								QuantumScriptExtensionProc farProc = (QuantumScriptExtensionProc)dlsym(hModule, "quantumScriptExtension");
-								if(dlerror() == nullptr) {
-									if(farProc) {
+								if (dlerror() == nullptr) {
+									if (farProc) {
 										executive->extensionList->push();
 										(executive->extensionList->head)->value.fileName = fileNameX;
-										(executive->extensionList->head)->value.name = ((VariableString *) operand1.value())->value;
+										(executive->extensionList->head)->value.name = ((VariableString *)operand1.value())->value;
 										(executive->extensionList->head)->value.isPublic = true;
-										if(executive->executeExtension(context, (QuantumScriptExtensionProc)farProc, executive->extensionList->head) == 0) {
+										if (executive->executeExtension(context, (QuantumScriptExtensionProc)farProc, executive->extensionList->head) == 0) {
 											return;
 										};
 									};
@@ -759,25 +728,23 @@ namespace Quantum {
 #endif
 						} else {
 
-							TDoubleEndedQueue<InternalExtension_ >::Node *scan;
-							String extensionName_ = String::toLowerCaseAscii(((VariableString *) operand1.value())->value);
+							TDoubleEndedQueue<InternalExtension_>::Node *scan;
+							String extensionName_ = String::toLowerCaseAscii(((VariableString *)operand1.value())->value);
 							for (scan = executive->internalExtensionList->head; scan; scan = scan->next) {
-								if(extensionName_ == String::toLowerCaseAscii(scan->value.name)) {
+								if (extensionName_ == String::toLowerCaseAscii(scan->value.name)) {
 									executive->extensionList->push();
 									(executive->extensionList->head)->value.fileName = "";
-									(executive->extensionList->head)->value.name = ((VariableString *) operand1.value())->value;
+									(executive->extensionList->head)->value.name = ((VariableString *)operand1.value())->value;
 									(executive->extensionList->head)->value.isPublic = true;
-									if(executive->executeExtension(context, (QuantumScriptExtensionProc)scan->value.extensionProc, executive->extensionList->head) == 0) {
+									if (executive->executeExtension(context, (QuantumScriptExtensionProc)scan->value.extensionProc, executive->extensionList->head) == 0) {
 										return;
 									};
 									break;
 								};
 							};
-
 						};
-						sprintf( buf, "Unable to open \"%s\"\n",
-							((VariableString *) operand1.value())->value.value()
-						);
+						sprintf(buf, "Unable to open \"%s\"\n",
+						        ((VariableString *)operand1.value())->value.value());
 
 						context->push(context->newError(buf));
 						InstructionVmThrow(context, nullptr);
@@ -787,9 +754,7 @@ namespace Quantum {
 
 				context->push(context->newError("invalid arguments"));
 				InstructionVmThrow(context, nullptr);
-
 			};
-
 
 			static QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(LibStdScript_requireInternalExtension) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -803,42 +768,40 @@ namespace Quantum {
 				operand1 = context->getArgument(0);
 				operand2 = context->getArgument(1);
 
-				if(!TIsType<VariableArray>(operand2)) {
-					operand2=VariableArray::newVariable();
+				if (!TIsType<VariableArray>(operand2)) {
+					operand2 = VariableArray::newVariable();
 				};
-				context->functionContext->functionArguments=static_cast<VariableArray *>(operand2.value());
+				context->functionContext->functionArguments = static_cast<VariableArray *>(operand2.value());
 
-				if(!context->functionContext->this_) {
-					context->functionContext->this_=VariableUndefined::newVariable();
+				if (!context->functionContext->this_) {
+					context->functionContext->this_ = VariableUndefined::newVariable();
 				};
 
 				if (operand1) {
 					if (TIsType<VariableString>(operand1)) {
-						Executive *executive = (Executive *) (((VariableResource *) operand)->resource);
+						Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
 
-						if(executive->isExtensionLoaded(((VariableString *) operand1.value())->value)) {
+						if (executive->isExtensionLoaded(((VariableString *)operand1.value())->value)) {
 							return;
 						};
 
-						TDoubleEndedQueue<InternalExtension_ >::Node *scan;
-						String extensionName_ = String::toLowerCaseAscii(((VariableString *) operand1.value())->value);
+						TDoubleEndedQueue<InternalExtension_>::Node *scan;
+						String extensionName_ = String::toLowerCaseAscii(((VariableString *)operand1.value())->value);
 						for (scan = executive->internalExtensionList->head; scan; scan = scan->next) {
-							if(extensionName_ == String::toLowerCaseAscii(scan->value.name)) {
+							if (extensionName_ == String::toLowerCaseAscii(scan->value.name)) {
 								executive->extensionList->push();
 								(executive->extensionList->head)->value.fileName = "";
-								(executive->extensionList->head)->value.name = ((VariableString *) operand1.value())->value;
+								(executive->extensionList->head)->value.name = ((VariableString *)operand1.value())->value;
 								(executive->extensionList->head)->value.isPublic = true;
-								if(executive->executeExtension(context, (QuantumScriptExtensionProc)scan->value.extensionProc, executive->extensionList->head) == 0) {
+								if (executive->executeExtension(context, (QuantumScriptExtensionProc)scan->value.extensionProc, executive->extensionList->head) == 0) {
 									return;
 								};
 								break;
 							};
 						};
 
-
-						sprintf( buf, "Unable to open \"%s\"\n",
-							((VariableString *) operand1.value())->value.value()
-						);
+						sprintf(buf, "Unable to open \"%s\"\n",
+						        ((VariableString *)operand1.value())->value.value());
 
 						context->push(context->newError(buf));
 						InstructionVmThrow(context, nullptr);
@@ -848,7 +811,6 @@ namespace Quantum {
 
 				context->push(context->newError("invalid arguments"));
 				InstructionVmThrow(context, nullptr);
-
 			};
 
 			static TPointer<Variable> setIncludePath(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -866,7 +828,7 @@ namespace Quantum {
 #endif
 				TPointer<Variable> retV(VariableArray::newVariable());
 				TDoubleEndedQueue<String>::TNode *index;
-				for(index=((Executive *)function->valueSuper)->includePath->head;index!=nullptr;index=index->next){
+				for (index = ((Executive *)function->valueSuper)->includePath->head; index != nullptr; index = index->next) {
 					((VariableArray *)retV.value())->value->push(VariableString::newVariable(index->value));
 				};
 				return retV;
@@ -876,7 +838,7 @@ namespace Quantum {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 				printf("- script-reset-include-path\n");
 #endif
-				((Executive *)function->valueSuper)->includePath->empty();				
+				((Executive *)function->valueSuper)->includePath->empty();
 				return Context::getValueUndefined();
 			};
 
@@ -887,19 +849,18 @@ namespace Quantum {
 
 				TPointerX<Variable> &value = arguments->index(0);
 				Variable *prototype = value->instancePrototype();
-				if(prototype) {
+				if (prototype) {
 					return prototype;
 				};
 				return Context::getValueUndefined();
 			};
-
 
 			static QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(LibStdScript_getExtensionList) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 				printf("- script-get-extension-list\n");
 #endif
 
-				Executive *executive = (Executive *) (((VariableResource *) operand)->resource);
+				Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
 
 				TPointer<Variable> out = VariableArray::newVariable();
 				TDoubleEndedQueue<Extension_>::Node *scan;
@@ -909,7 +870,7 @@ namespace Quantum {
 				Symbol symVersion = Context::getSymbol("version");
 				int k;
 				for (scan = executive->extensionList->head, k = 0; scan; scan = scan->next, ++k) {
-					if(scan->value.isPublic) {
+					if (scan->value.isPublic) {
 						TPointer<Variable> info(VariableObject::newVariable());
 						info->setPropertyBySymbol(symFileName, VariableString::newVariable(scan->value.fileName));
 						info->setPropertyBySymbol(symName, VariableString::newVariable(scan->value.name));
@@ -924,13 +885,13 @@ namespace Quantum {
 
 			static TPointer<Variable> protectSource(VariableFunction *function, Variable *this_, VariableArray *arguments) {
 				TPointerX<Variable> &value = arguments->index(0);
-				if(TIsType<VariableVmFunction>(value)) {
+				if (TIsType<VariableVmFunction>(value)) {
 					((VariableVmFunction *)value.value())->fnSource = 0;
-					if(((VariableVmFunction *)value.value())->valueEnd) {
+					if (((VariableVmFunction *)value.value())->valueEnd) {
 						TDoubleEndedQueue<InstructionX>::Node *index = (TDoubleEndedQueue<InstructionX>::Node *)(((VariableVmFunction *)value.value())->value);
 						TDoubleEndedQueue<InstructionX>::Node *indexEnd = (TDoubleEndedQueue<InstructionX>::Node *)(((VariableVmFunction *)value.value())->valueEnd);
 
-						for(; index != indexEnd; index = index->next) {
+						for (; index != indexEnd; index = index->next) {
 							index->value.sourceSymbol = 0;
 							index->value.sourceLineNumber = 0;
 						};
@@ -938,7 +899,6 @@ namespace Quantum {
 						// indexEnd also
 						index->value.sourceSymbol = 0;
 						index->value.sourceLineNumber = 0;
-
 					};
 				};
 				return Context::getValueUndefined();
@@ -956,25 +916,25 @@ namespace Quantum {
 				operand2 = context->getArgument(0);
 				operand1 = context->getArgument(1);
 
-				if(!context->functionContext->this_) {
-					context->functionContext->this_=VariableUndefined::newVariable();
+				if (!context->functionContext->this_) {
+					context->functionContext->this_ = VariableUndefined::newVariable();
 				};
 
 				if (operand1) {
 					if (TIsType<VariableString>(operand1)) {
 						if (operand2) {
 							if (TIsType<VariableString>(operand2)) {
-								Executive *executive = (Executive *) (((VariableResource *) operand)->resource);
+								Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
 								bool found = false;
 								String fileName;
-								fileName = ((VariableString *) operand1.value())->value.value();
+								fileName = ((VariableString *)operand1.value())->value.value();
 								if (Shell::fileExists(fileName)) {
 									found = true;
 								} else {
-									TDoubleEndedQueue<String >::Node *scan;
+									TDoubleEndedQueue<String>::Node *scan;
 									for (scan = executive->includePath->head; scan; scan = scan->next) {
 										fileName = scan->value;
-										fileName << "/" << ((VariableString *) operand1.value())->value.value();
+										fileName << "/" << ((VariableString *)operand1.value())->value.value();
 										if (Shell::fileExists(fileName)) {
 											found = true;
 											break;
@@ -983,32 +943,27 @@ namespace Quantum {
 								};
 
 								if (found) {
-									int retV = executive->setVmFunctionFromFileX(context, ((VariableString *) operand2.value())->value, fileName);
+									int retV = executive->setVmFunctionFromFileX(context, ((VariableString *)operand2.value())->value, fileName);
 									if (retV == VmParserError::None) {
 										return;
 									} else if (retV == VmParserError::Compile) {
-										sprintf( buf, "Compile error in %s line %u\n",
-											executive->errorInfo.compileFileName,
-											executive->errorInfo.compileLineNumber
-										);
+										sprintf(buf, "Compile error in %s line %u\n",
+										        executive->errorInfo.compileFileName,
+										        executive->errorInfo.compileLineNumber);
 										context->push(context->newError(buf));
 										InstructionVmThrow(context, nullptr);
 										return;
 									} else if (retV == VmParserError::FileNotFound) {
-										sprintf( buf, "File not found \"%s\"\n",
-											((VariableString *) operand1.value())->value.value()
-										);
+										sprintf(buf, "File not found \"%s\"\n",
+										        ((VariableString *)operand1.value())->value.value());
 										context->push(context->newError(buf));
 										InstructionVmThrow(context, nullptr);
 										return;
 									};
-
 								};
 
-
-								sprintf( buf, "Unable to open \"%s\"\n",
-									((VariableString *) operand1.value())->value.value()
-								);
+								sprintf(buf, "Unable to open \"%s\"\n",
+								        ((VariableString *)operand1.value())->value.value());
 
 								context->push(context->newError(buf));
 								InstructionVmThrow(context, nullptr);
@@ -1018,11 +973,9 @@ namespace Quantum {
 					};
 				};
 
-
 				context->push(context->newError("invalid arguments"));
 				InstructionVmThrow(context, nullptr);
 			};
-
 
 			static QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(LibStdScript_setFunctionFromString) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -1036,24 +989,23 @@ namespace Quantum {
 				operand2 = context->getArgument(0);
 				operand1 = context->getArgument(1);
 
-				if(!context->functionContext->this_) {
-					context->functionContext->this_=VariableUndefined::newVariable();
+				if (!context->functionContext->this_) {
+					context->functionContext->this_ = VariableUndefined::newVariable();
 				};
 
 				if (operand1) {
 					if (TIsType<VariableString>(operand1)) {
 						if (operand2) {
 							if (TIsType<VariableString>(operand2)) {
-								Executive *executive = (Executive *) (((VariableResource *) operand)->resource);
+								Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
 
-								int retV = executive->setVmFunctionFromStringX(context, ((VariableString *) operand2.value())->value, ((VariableString *) operand1.value())->value);
+								int retV = executive->setVmFunctionFromStringX(context, ((VariableString *)operand2.value())->value, ((VariableString *)operand1.value())->value);
 								if (retV == VmParserError::None) {
 									return;
 								} else if (retV == VmParserError::Compile) {
-									sprintf( buf, "Compile error in %s line %u\n",
-										executive->errorInfo.compileFileName,
-										executive->errorInfo.compileLineNumber
-									);
+									sprintf(buf, "Compile error in %s line %u\n",
+									        executive->errorInfo.compileFileName,
+									        executive->errorInfo.compileLineNumber);
 									context->push(context->newError(buf));
 									InstructionVmThrow(context, nullptr);
 									return;
@@ -1067,11 +1019,9 @@ namespace Quantum {
 					};
 				};
 
-
 				context->push(context->newError("invalid arguments"));
 				InstructionVmThrow(context, nullptr);
 			};
-
 
 			static TPointer<Variable> compare(VariableFunction *function, Variable *this_, VariableArray *arguments) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -1146,5 +1096,3 @@ namespace Quantum {
 		};
 	};
 };
-
-

@@ -24,8 +24,5 @@ namespace Quantum {
 			prototype.pointerLink(this);
 		};
 
-
 	};
 };
-
-

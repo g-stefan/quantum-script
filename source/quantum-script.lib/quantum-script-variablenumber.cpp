@@ -38,7 +38,7 @@ namespace Quantum {
 			VariableNumber *retV;
 			retV = TMemory<VariableNumber>::newMemory();
 			retV->value = value;
-			return (Variable *) retV;
+			return (Variable *)retV;
 		};
 
 		Variable *VariableNumber::instancePrototype() {
@@ -50,10 +50,10 @@ namespace Quantum {
 		};
 
 		bool VariableNumber::toBoolean() {
-			if(isnan(value)) {
+			if (isnan(value)) {
 				return false;
 			};
-			if(value) {
+			if (value) {
 				return true;
 			};
 			return false;
@@ -69,20 +69,20 @@ namespace Quantum {
 
 		String VariableNumber::toStringX(Number value_) {
 			char buf[128];
-			if(isnan(value_)) {
+			if (isnan(value_)) {
 				return "NaN";
 			};
-			if(isinf(value_)) {
-				if(signbit(value_)) {
+			if (isinf(value_)) {
+				if (signbit(value_)) {
 					return "-Infinity";
 				} else {
 					return "Infinity";
 				};
 			};
-			if((value_ > 0 && value_ < 1e+11) || (value_ < 0 && value_ > -1e+11)) {
+			if ((value_ > 0 && value_ < 1e+11) || (value_ < 0 && value_ > -1e+11)) {
 				Number fractpart, intpart;
 				fractpart = modf(value_, &intpart);
-				if(fractpart == 0.0) {
+				if (fractpart == 0.0) {
 					sprintf(buf, QUANTUM_SCRIPT_FORMAT_NUMBER_INTEGER, value_);
 				} else {
 					sprintf(buf, QUANTUM_SCRIPT_FORMAT_NUMBER, value_);
@@ -95,5 +95,3 @@ namespace Quantum {
 
 	};
 };
-
-

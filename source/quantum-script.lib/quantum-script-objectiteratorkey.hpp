@@ -11,11 +11,11 @@
 #define QUANTUM_SCRIPT_OBJECTITERATORKEY_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLEOBJECT_HPP
-#include "quantum-script-variableobject.hpp"
+#	include "quantum-script-variableobject.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_ITERATOR_HPP
-#include "quantum-script-iterator.hpp"
+#	include "quantum-script-iterator.hpp"
 #endif
 
 namespace Quantum {
@@ -25,12 +25,10 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::ObjectIteratorKey>:
-			public TMemoryPoolActive<Quantum::Script::ObjectIteratorKey> {};
+		template <>
+		class TMemory<Quantum::Script::ObjectIteratorKey> : public TMemoryPoolActive<Quantum::Script::ObjectIteratorKey> {};
 	};
 };
 
@@ -39,27 +37,23 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class ObjectIteratorKey :
-			public Iterator {
+		class ObjectIteratorKey : public Iterator {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(ObjectIteratorKey);
-			public:
 
+			public:
 				TPointer<Variable> value_;
 				PropertyNode *value;
 
-				inline ObjectIteratorKey() {
-				};
+				inline ObjectIteratorKey(){};
 
 				QUANTUM_SCRIPT_EXPORT bool next(Variable *out);
 
 				inline void activeDestructor() {
 					value_.deleteMemory();
 				};
-
 		};
 
 	};
 };
-
 
 #endif

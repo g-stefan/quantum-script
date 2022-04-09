@@ -11,30 +11,30 @@
 #define QUANTUM_SCRIPT_ASM_HPP
 
 #ifndef QUANTUM_SCRIPT__DEPENDENCY_HPP
-#include "quantum-script--dependency.hpp"
+#	include "quantum-script--dependency.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_INSTRUCTION_HPP
-#include "quantum-script-instruction.hpp"
+#	include "quantum-script-instruction.hpp"
 #endif
 
 namespace Quantum {
 	namespace Script {
 
-
 		using namespace XYO;
 
 		typedef struct SAsmLink {
-			ProgramCounter *old_;
-			ProgramCounter *new_;
+				ProgramCounter *old_;
+				ProgramCounter *new_;
 		} AsmLink;
 
-		class Asm :
-			public Object {
+		class Asm : public Object {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(Asm);
+
 			protected:
 				bool lastIsMark_;
 				TRedBlackTree<ProgramCounter *, ProgramCounter *> asmLink_;
+
 			public:
 				TPointer<InstructionList> instructionList;
 
@@ -52,7 +52,6 @@ namespace Quantum {
 
 				QUANTUM_SCRIPT_EXPORT ProgramCounter *assembleDirect(InstructionProcedure procedure, Variable *operand);
 
-
 #ifdef QUANTUM_SCRIPT_DISABLE_ASM_OPTIMIZER
 				inline ProgramCounter *optimizeCode(ProgramCounter *pc) {
 					return pc;
@@ -67,6 +66,4 @@ namespace Quantum {
 	};
 };
 
-
 #endif
-

@@ -48,18 +48,16 @@ namespace Quantum {
 
 							linkProgramCounter(linkWhileIf, linkWhileEnd);
 
-							while(!parserContext.head->value->pcBreak.isEmpty()) {
+							while (!parserContext.head->value->pcBreak.isEmpty()) {
 								parserContext.head->value->pcBreak.pop(linkWhileBreak);
 								linkProgramCounter(linkWhileBreak, linkWhileEnd);
 							};
 							parserLeaveContext();
 
 							return true;
-
 						};
 						error = ParserError::Compile;
 						return false;
-
 					};
 
 					if (statementOrExpression()) {
@@ -68,7 +66,7 @@ namespace Quantum {
 						linkWhileEnd = assemble(ParserAsm::Mark);
 						linkProgramCounter(linkWhileIf, linkWhileEnd);
 
-						while(!parserContext.head->value->pcBreak.isEmpty()) {
+						while (!parserContext.head->value->pcBreak.isEmpty()) {
 							parserContext.head->value->pcBreak.pop(linkWhileBreak);
 							linkProgramCounter(linkWhileBreak, linkWhileEnd);
 						};
@@ -76,7 +74,6 @@ namespace Quantum {
 
 						return true;
 					};
-
 				};
 
 				error = ParserError::Compile;
@@ -88,5 +85,3 @@ namespace Quantum {
 	};
 
 };
-
-

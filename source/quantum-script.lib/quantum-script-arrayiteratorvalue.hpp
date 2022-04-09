@@ -11,11 +11,11 @@
 #define QUANTUM_SCRIPT_ARRAYITERATORVALUE_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLEARRAY_HPP
-#include "quantum-script-variablearray.hpp"
+#	include "quantum-script-variablearray.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_ITERATOR_HPP
-#include "quantum-script-iterator.hpp"
+#	include "quantum-script-iterator.hpp"
 #endif
 
 namespace Quantum {
@@ -26,9 +26,8 @@ namespace Quantum {
 
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::ArrayIteratorValue>:
-			public TMemoryPoolActive<Quantum::Script::ArrayIteratorValue> {};
+		template <>
+		class TMemory<Quantum::Script::ArrayIteratorValue> : public TMemoryPoolActive<Quantum::Script::ArrayIteratorValue> {};
 	};
 };
 
@@ -37,16 +36,14 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class ArrayIteratorValue :
-			public Iterator {
+		class ArrayIteratorValue : public Iterator {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(ArrayIteratorValue);
-			public:
 
+			public:
 				Integer index;
 				TPointer<VariableArray> sourceArray;
 
-				inline ArrayIteratorValue() {
-				};
+				inline ArrayIteratorValue(){};
 
 				QUANTUM_SCRIPT_EXPORT bool next(Variable *out);
 
@@ -57,6 +54,5 @@ namespace Quantum {
 
 	};
 };
-
 
 #endif

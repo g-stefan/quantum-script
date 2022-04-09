@@ -11,43 +11,39 @@
 #define QUANTUM_SCRIPT_VARIABLEFUNCTIONWITHYIELD_HPP
 
 #ifndef QUANTUM_SCRIPT_CONTEXT_HPP
-#include "quantum-script-context.hpp"
+#	include "quantum-script-context.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_PROTOTYPE_HPP
-#include "quantum-script-prototype.hpp"
+#	include "quantum-script-prototype.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_FUNCTIONPARENT_HPP
-#include "quantum-script-functionparent.hpp"
+#	include "quantum-script-functionparent.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_VARIABLEARRAY_HPP
-#include "quantum-script-variablearray.hpp"
+#	include "quantum-script-variablearray.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_VARIABLEOBJECT_HPP
-#include "quantum-script-variableobject.hpp"
+#	include "quantum-script-variableobject.hpp"
 #endif
 
 namespace Quantum {
 	namespace Script {
-
 
 		class VariableFunctionWithYield;
 
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::VariableFunctionWithYield>:
-			public TMemoryPoolActive<Quantum::Script::VariableFunctionWithYield> {};
+		template <>
+		class TMemory<Quantum::Script::VariableFunctionWithYield> : public TMemoryPoolActive<Quantum::Script::VariableFunctionWithYield> {};
 	};
 };
-
 
 namespace Quantum {
 	namespace Script {
@@ -57,14 +53,14 @@ namespace Quantum {
 		class VariableFunctionWithYield;
 		typedef TPointer<Variable> (*FunctionProcedureWithYield)(VariableFunctionWithYield *function, Variable *this_, VariableArray *arguments);
 
-		class VariableFunctionWithYield :
-			public Variable {
+		class VariableFunctionWithYield : public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableFunctionWithYield);
 				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableFunctionWithYield);
+
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeFunction;
-			public:
 
+			public:
 				TPointerX<Object> super;
 				void *valueSuper;
 
@@ -77,19 +73,19 @@ namespace Quantum {
 				uint32_t yieldStep;
 				TPointerX<Variable> yieldVariables;
 
-				QUANTUM_SCRIPT_EXPORT  VariableFunctionWithYield();
+				QUANTUM_SCRIPT_EXPORT VariableFunctionWithYield();
 
 				inline void activeConstructor() {
 					valueSuper = nullptr;
 
 					object.newMemory();
 					prototype.newMemory();
-					prototype->prototype=VariableObject::newVariable();
+					prototype->prototype = VariableObject::newVariable();
 					yieldStep = 0;
-					yieldVariables=VariableArray::newVariable();
+					yieldVariables = VariableArray::newVariable();
 				};
 
-				inline void activeDestructor() {					
+				inline void activeDestructor() {
 					functionParent.deleteMemory();
 					object.deleteMemory();
 					prototype.deleteMemory();
@@ -117,36 +113,31 @@ namespace Quantum {
 				QUANTUM_SCRIPT_EXPORT bool instanceOfPrototype(Prototype *&out);
 
 				QUANTUM_SCRIPT_EXPORT TPointer<Iterator> getIteratorKey();
-				QUANTUM_SCRIPT_EXPORT TPointer<Iterator> getIteratorValue();				
+				QUANTUM_SCRIPT_EXPORT TPointer<Iterator> getIteratorValue();
 
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT String toString();
 
 				QUANTUM_SCRIPT_EXPORT static void initMemory();
-
 		};
 
 	};
 };
 
-
 #define QUANTUM_SCRIPT_FUNCTIONWITHYIELD_BEGIN() \
-	switch(function->yieldStep){ \
+	switch (function->yieldStep) {           \
 	case 0:
 
-
 #define QUANTUM_SCRIPT_FUNCTIONWITHYIELD_YIELD(returnValue) \
-	function->yieldStep=__LINE__;\
-	return returnValue;\
-	break;\
-	case __LINE__:
+	function->yieldStep = __LINE__;                     \
+	return returnValue;                                 \
+	break;                                              \
+case __LINE__:
 
 #define QUANTUM_SCRIPT_FUNCTIONWITHYIELD_END(returnValue) \
-	};\
-	function->yieldStep=0;\
+	}                                                 \
+	;                                                 \
+	function->yieldStep = 0;                          \
 	return returnValue
 
-
 #endif
-
-

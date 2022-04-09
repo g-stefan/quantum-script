@@ -11,7 +11,7 @@
 #define QUANTUM_SCRIPT_PROTOTYPE_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLE_HPP
-#include "quantum-script-variable.hpp"
+#	include "quantum-script-variable.hpp"
 #endif
 
 namespace Quantum {
@@ -22,12 +22,10 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::Prototype>:
-			public TMemoryPoolActive<Quantum::Script::Prototype> {};
+		template <>
+		class TMemory<Quantum::Script::Prototype> : public TMemoryPoolActive<Quantum::Script::Prototype> {};
 	};
 };
 
@@ -36,11 +34,10 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class Prototype :
-			public Object {
+		class Prototype : public Object {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(Prototype);
-			public:
 
+			public:
 				TPointerX<Prototype> parent;
 				TPointerX<Variable> prototype;
 
@@ -56,9 +53,7 @@ namespace Quantum {
 				};
 		};
 
-
 	};
 };
-
 
 #endif

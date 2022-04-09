@@ -17,7 +17,6 @@
 namespace Quantum {
 	namespace Script {
 
-
 		bool Parser::statementReturn() {
 			if (token.isSymbolX("return")) {
 
@@ -38,4 +37,3 @@ namespace Quantum {
 
 	};
 };
-

@@ -11,15 +11,15 @@
 #define QUANTUM_SCRIPT_EXECUTIVE_HPP
 
 #ifndef QUANTUM_SCRIPT_PARSER_HPP
-#include "quantum-script-parser.hpp"
+#	include "quantum-script-parser.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_ASM_HPP
-#include "quantum-script-asm.hpp"
+#	include "quantum-script-asm.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_VARIABLEFUNCTIONWITHYIELD_HPP
-#include "quantum-script-variablefunctionwithyield.hpp"
+#	include "quantum-script-variablefunctionwithyield.hpp"
 #endif
 
 extern "C" typedef void (*QuantumScriptExtensionProc)(void *, void *);
@@ -50,8 +50,7 @@ namespace Quantum {
 		typedef void (*QuantumScriptInitExecutiveProc)(Executive *);
 		typedef void (*QuantumScriptExtensionDeleteContextProc)();
 
-		class Extension_:
-			public Object {
+		class Extension_ : public Object {
 			public:
 				String fileName;
 				String name;
@@ -67,16 +66,15 @@ namespace Quantum {
 				};
 		};
 
-		class InternalExtension_:
-			public Object {
+		class InternalExtension_ : public Object {
 			public:
 				String name;
 				QuantumScriptExtensionInitProc extensionProc;
 		};
 
-		class Executive :
-			public Object {
+		class Executive : public Object {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(Executive);
+
 			protected:
 				QUANTUM_SCRIPT_EXPORT void errorInfoInit();
 				QUANTUM_SCRIPT_EXPORT int execute_(InstructionContext *);
@@ -85,18 +83,18 @@ namespace Quantum {
 				ProgramCounter *currentContextThrow;
 				ProgramCounter *currentContextContinue;
 				ProgramCounter *currentContextBreak;
+
 			public:
 				int mainCmdN;
 				char **mainCmdS;
 				String pathExecutable;
 
-				TPointer<TDoubleEndedQueue<String> > includePath;
-				TPointer<TDoubleEndedQueue<Extension_> > extensionList;
-				TPointer<TDoubleEndedQueue<InternalExtension_> > internalExtensionList;
-				TPointer<TRedBlackTree<String, String> > includeSource;
+				TPointer<TDoubleEndedQueue<String>> includePath;
+				TPointer<TDoubleEndedQueue<Extension_>> extensionList;
+				TPointer<TDoubleEndedQueue<InternalExtension_>> internalExtensionList;
+				TPointer<TRedBlackTree<String, String>> includeSource;
 
 				QuantumScriptInitExecutiveProc applicationInitExecutive;
-
 
 				TPointer<InstructionContext> instructionContext;
 				int configPrintStackTraceLimit;
@@ -164,6 +162,4 @@ namespace Quantum {
 	};
 };
 
-
 #endif
-

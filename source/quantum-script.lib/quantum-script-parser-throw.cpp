@@ -17,7 +17,6 @@
 namespace Quantum {
 	namespace Script {
 
-
 		bool Parser::statementThrow() {
 			if (token.isSymbolX("throw")) {
 
@@ -34,4 +33,3 @@ namespace Quantum {
 
 	};
 };
-

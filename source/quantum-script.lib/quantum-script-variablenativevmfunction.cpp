@@ -13,13 +13,12 @@
 
 #include "quantum-script-variablenativevmfunction.hpp"
 
-
 namespace Quantum {
 	namespace Script {
 
 		using namespace XYO;
 
-		XYO_DYNAMIC_TYPE_IMPLEMENT(VariableNativeVmFunction,  "{4E32D29F-5FF0-4D33-A16E-4B221233C809}");
+		XYO_DYNAMIC_TYPE_IMPLEMENT(VariableNativeVmFunction, "{4E32D29F-5FF0-4D33-A16E-4B221233C809}");
 		const char *VariableNativeVmFunction::strTypeFunction = "Function";
 
 		VariableNativeVmFunction::VariableNativeVmFunction() {
@@ -35,7 +34,7 @@ namespace Quantum {
 			retV = TMemory<VariableNativeVmFunction>::newMemory();
 			retV->procedure = procedure;
 			retV->operand = operand;
-			return (Variable *) retV;
+			return (Variable *)retV;
 		};
 
 		bool VariableNativeVmFunction::toBoolean() {
@@ -46,8 +45,5 @@ namespace Quantum {
 			return strTypeFunction;
 		};
 
-
 	};
 };
-
-

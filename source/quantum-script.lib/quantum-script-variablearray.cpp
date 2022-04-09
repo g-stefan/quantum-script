@@ -36,7 +36,7 @@ namespace Quantum {
 		};
 
 		Variable *VariableArray::newVariable() {
-			return (Variable *) TMemory<VariableArray>::newMemory();
+			return (Variable *)TMemory<VariableArray>::newMemory();
 		};
 
 		String VariableArray::getVariableType() {
@@ -44,7 +44,7 @@ namespace Quantum {
 		};
 
 		TPointer<Variable> VariableArray::getPropertyBySymbol(Symbol symbolId) {
-			if(symbolId == Context::getSymbolLength()) {
+			if (symbolId == Context::getSymbolLength()) {
 				return VariableNumber::newVariable((Number)value->length());
 			};
 			return Variable::getPropertyBySymbol(symbolId);
@@ -52,18 +52,18 @@ namespace Quantum {
 
 		TPointer<Variable> VariableArray::getPropertyByIndex(size_t index) {
 			TPointerX<Variable> &retV = (*value)[index];
-			if(!retV) {
-				retV=VariableUndefined::newVariable();
+			if (!retV) {
+				retV = VariableUndefined::newVariable();
 			};
 			return retV;
 		};
 
 		TPointer<Variable> VariableArray::getPropertyByVariable(Variable *index) {
-			if(TIsType<VariableNumber>(index)) {
+			if (TIsType<VariableNumber>(index)) {
 				return getPropertyByIndex(index->toIndex());
 			};
-			if(TIsType<VariableSymbol>(index)) {
-				if((static_cast<VariableSymbol *>(index))->value == Context::getSymbolLength()) {
+			if (TIsType<VariableSymbol>(index)) {
+				if ((static_cast<VariableSymbol *>(index))->value == Context::getSymbolLength()) {
 					return VariableNumber::newVariable((Number)value->length());
 				};
 			};
@@ -97,7 +97,7 @@ namespace Quantum {
 			ArrayIteratorKey *iterator_ = TMemory<ArrayIteratorKey>::newMemory();
 			iterator_->sourceArray = this;
 			iterator_->index = 0;
-			retV=iterator_;
+			retV = iterator_;
 			return retV;
 		};
 
@@ -117,20 +117,20 @@ namespace Quantum {
 		Variable *VariableArray::clone(SymbolList &inSymbolList) {
 			int k;
 			VariableArray *out = (VariableArray *)newVariable();
-			for(k = 0; k < value->length(); ++k) {
-				((*(out->value))[k])=((*value)[k])->clone(inSymbolList);
+			for (k = 0; k < value->length(); ++k) {
+				((*(out->value))[k]) = ((*value)[k])->clone(inSymbolList);
 			};
 			return out;
 		};
 
 		bool VariableArray::hasPropertyByVariable(Variable *variable) {
-			if(TIsType<VariableNumber>(variable)) {
-				if((static_cast<VariableNumber *>(variable))->value < value->length()) {
+			if (TIsType<VariableNumber>(variable)) {
+				if ((static_cast<VariableNumber *>(variable))->value < value->length()) {
 					return true;
 				};
 			};
-			if(TIsType<VariableSymbol>(variable)) {
-				if((static_cast<VariableSymbol *>(variable))->value == Context::getSymbolLength()) {
+			if (TIsType<VariableSymbol>(variable)) {
+				if ((static_cast<VariableSymbol *>(variable))->value == Context::getSymbolLength()) {
 					return true;
 				};
 			};
@@ -167,9 +167,5 @@ namespace Quantum {
 			return retV;
 		};
 
-
 	};
 };
-
-
-

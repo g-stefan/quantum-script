@@ -40,7 +40,7 @@ namespace Quantum {
 
 		String SymbolList::getSymbolMirror(Symbol id) {
 			XSymbolListMirror::Node *tmp = symbolListMirror.find(id);
-			if(tmp) {
+			if (tmp) {
 				return tmp->value;
 			};
 			throw(Error("getSymbolMirror"));
@@ -48,6 +48,3 @@ namespace Quantum {
 
 	};
 };
-
-
-

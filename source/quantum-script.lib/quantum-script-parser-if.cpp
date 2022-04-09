@@ -17,7 +17,6 @@
 namespace Quantum {
 	namespace Script {
 
-
 		bool Parser::statementIf() {
 			if (token.isSymbolX("if")) {
 				if (expressionParentheses()) {
@@ -36,32 +35,27 @@ namespace Quantum {
 
 									linkElse = assembleProgramCounter(ParserAsm::Goto, nullptr);
 									linkProgramCounter(linkIf,
-										assemble(ParserAsm::Mark)
-									);
+									                   assemble(ParserAsm::Mark));
 
 									if (isBlockStatement()) {
 
 										linkProgramCounter(linkElse,
-											assemble(ParserAsm::Mark)
-										);
+										                   assemble(ParserAsm::Mark));
 
 										return true;
 									};
 
 									error = ParserError::Compile;
 									return false;
-
 								};
 
 								linkElse = assembleProgramCounter(ParserAsm::Goto, nullptr);
 								linkProgramCounter(linkIf,
-									assemble(ParserAsm::Mark)
-								);
+								                   assemble(ParserAsm::Mark));
 
 								if (statementOrExpression()) {
 									linkProgramCounter(linkElse,
-										assemble(ParserAsm::Mark)
-									);
+									                   assemble(ParserAsm::Mark));
 									return true;
 								};
 
@@ -70,10 +64,8 @@ namespace Quantum {
 							};
 
 							linkProgramCounter(linkIf,
-								assemble(ParserAsm::Mark)
-							);
+							                   assemble(ParserAsm::Mark));
 							return true;
-
 						};
 						error = ParserError::Compile;
 						return false;
@@ -81,8 +73,7 @@ namespace Quantum {
 
 					if (statementOrExpression()) {
 						linkProgramCounter(linkIf,
-							assemble(ParserAsm::Mark)
-						);
+						                   assemble(ParserAsm::Mark));
 						return true;
 					};
 				};
@@ -93,5 +84,3 @@ namespace Quantum {
 
 	};
 };
-
-

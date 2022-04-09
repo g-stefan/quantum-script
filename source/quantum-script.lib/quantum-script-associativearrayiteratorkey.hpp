@@ -11,11 +11,11 @@
 #define QUANTUM_SCRIPT_ASSOCIATIVEARRAYITERATORKEY_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLEASSOCIATIVEARRAY_HPP
-#include "quantum-script-variableassociativearray.hpp"
+#	include "quantum-script-variableassociativearray.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_ITERATOR_HPP
-#include "quantum-script-iterator.hpp"
+#	include "quantum-script-iterator.hpp"
 #endif
 
 namespace Quantum {
@@ -25,12 +25,10 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::AssociativeArrayIteratorKey>:
-			public TMemoryPoolActive<Quantum::Script::AssociativeArrayIteratorKey> {};
+		template <>
+		class TMemory<Quantum::Script::AssociativeArrayIteratorKey> : public TMemoryPoolActive<Quantum::Script::AssociativeArrayIteratorKey> {};
 	};
 };
 
@@ -39,28 +37,23 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class AssociativeArrayIteratorKey :
-			public Iterator {
+		class AssociativeArrayIteratorKey : public Iterator {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(AssociativeArrayIteratorKey);
-			public:
 
+			public:
 				Integer index;
 				TPointer<VariableAssociativeArray> sourceArray;
 
-				inline AssociativeArrayIteratorKey() {
-				};
+				inline AssociativeArrayIteratorKey(){};
 
 				QUANTUM_SCRIPT_EXPORT bool next(Variable *out);
 
 				inline void activeDestructor() {
 					sourceArray.deleteMemory();
 				};
-
 		};
 
 	};
 };
 
-
 #endif
-

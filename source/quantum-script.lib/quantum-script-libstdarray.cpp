@@ -29,7 +29,7 @@ namespace Quantum {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 				printf("- array-join\n");
 #endif
-				if(TIsType<VariableArray>(this_)) {
+				if (TIsType<VariableArray>(this_)) {
 					return VariableString::newVariable((static_cast<VariableArray *>(this_))->join((arguments->index(0))->toString()));
 				};
 				return Context::getValueUndefined();
@@ -42,9 +42,6 @@ namespace Quantum {
 				executive->compileStringX(libStdArraySource);
 			};
 
-
 		};
 	};
 };
-
-

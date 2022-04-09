@@ -90,10 +90,10 @@ namespace Quantum {
 			// Release extension context
 			//
 
-			if(extensionList) {
+			if (extensionList) {
 				TDoubleEndedQueue<Extension_>::Node *scan;
 				for (scan = extensionList->head; scan; scan = scan->next) {
-					if(scan->value.deleteContext) {
+					if (scan->value.deleteContext) {
 						(*scan->value.deleteContext)();
 					};
 				};
@@ -135,19 +135,18 @@ namespace Quantum {
 			assembler->linkProgramCounter(skipFiberExit, assembler->assemble(ParserAsm::Mark, "", 0, 0));
 
 			initExtension(LibStd::initExecutive);
-			if(applicationInitExecutive) {
+			if (applicationInitExecutive) {
 				(*applicationInitExecutive)(this);
 			};
 
 			instructionContext->configPrintStackTraceLimit = configPrintStackTraceLimit;
-
 		};
 
 		bool Executive::isExtensionLoaded(String extensionName) {
 			TDoubleEndedQueue<Extension_>::Node *scan;
 			extensionName = String::toLowerCaseAscii(extensionName);
 			for (scan = extensionList->head; scan; scan = scan->next) {
-				if(extensionName == String::toLowerCaseAscii(scan->value.name)) {
+				if (extensionName == String::toLowerCaseAscii(scan->value.name)) {
 					return true;
 				};
 			};
@@ -191,7 +190,7 @@ namespace Quantum {
 			TDoubleEndedQueue<InternalExtension_>::Node *scan;
 			String extensionName_ = String::toLowerCaseAscii(extensionName);
 			for (scan = internalExtensionList->head; scan; scan = scan->next) {
-				if(extensionName_ == String::toLowerCaseAscii(scan->value.name)) {
+				if (extensionName_ == String::toLowerCaseAscii(scan->value.name)) {
 					scan->value.extensionProc = extensionProc;
 					return;
 				};
@@ -203,7 +202,7 @@ namespace Quantum {
 		};
 
 		Variable *Executive::cloneVariable(SymbolList &inSymbolList, Variable *in) {
-			if(in == nullptr) {
+			if (in == nullptr) {
 				return VariableUndefined::newVariable();
 			};
 			return in->clone(inSymbolList);
@@ -213,32 +212,31 @@ namespace Quantum {
 			instructionContext->error = InstructionError::None;
 			instructionContext->contextStack->enter(instructionContext->pcContext);
 			instructionContext->instructionListExecutive = assembler->instructionList.value();
-			instructionContext->currentProgramCounter = reinterpret_cast<ProgramCounter *> (assembler->instructionList->head);
+			instructionContext->currentProgramCounter = reinterpret_cast<ProgramCounter *>(assembler->instructionList->head);
 
 			return execute_(instructionContext.value());
 		};
 
 		int Executive::execute_(InstructionContext *context) {
 
-			while(context->currentProgramCounter) {
+			while (context->currentProgramCounter) {
 
 				try {
-					while(context->currentProgramCounter) {
+					while (context->currentProgramCounter) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 						fflush(stdout);
 #endif
 
-						context->nextProgramCounter = reinterpret_cast<ProgramCounter *> (reinterpret_cast<InstructionList::Node *> (context->currentProgramCounter)->next);
-						(*reinterpret_cast<InstructionList::Node *> (context->currentProgramCounter)->value.procedure)(
-							context,
-							reinterpret_cast<InstructionList::Node *> (context->currentProgramCounter)->value.operand
-						);
+						context->nextProgramCounter = reinterpret_cast<ProgramCounter *>(reinterpret_cast<InstructionList::Node *>(context->currentProgramCounter)->next);
+						(*reinterpret_cast<InstructionList::Node *>(context->currentProgramCounter)->value.procedure)(
+						    context,
+						    reinterpret_cast<InstructionList::Node *>(context->currentProgramCounter)->value.operand);
 
 						context->currentProgramCounter = context->nextProgramCounter;
 					};
 					break;
 
-				} catch(const Error &e) {
+				} catch (const Error &e) {
 					context->push(context->newError((const_cast<Error &>(e)).getMessage()));
 					InstructionVmThrow(context, nullptr);
 				};
@@ -257,8 +255,7 @@ namespace Quantum {
 
 			retV = VmParserError::Compile;
 
-
-			if(Shell::realpath(fileName, fullFile, 4096)) {
+			if (Shell::realpath(fileName, fullFile, 4096)) {
 
 				if (in.openRead(fullFile)) {
 					if (input.init(&in)) {
@@ -295,18 +292,17 @@ namespace Quantum {
 
 			retV = VmParserError::Compile;
 
-
-			if(Shell::realpath(fileName, fullFile, 4096)) {
+			if (Shell::realpath(fileName, fullFile, 4096)) {
 
 				if (in.openRead(fullFile)) {
 					if (input.init(&in)) {
 
 						uint32_t lineNumber = input.lineNumber;
-						while(input.read()) {
-							if(input.lineNumber > lineNumber) {
+						while (input.read()) {
+							if (input.lineNumber > lineNumber) {
 								lineNumber = input.lineNumber;
 								--skipLines;
-								if(skipLines == 0) {
+								if (skipLines == 0) {
 									break;
 								};
 							};
@@ -381,8 +377,8 @@ namespace Quantum {
 			};
 
 			InstructionList instructionList;
-			TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (linkBegin);
-			TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (assembler->assemble(ParserAsm::Nop, "", 0, 0));
+			TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(linkBegin);
+			TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(assembler->assemble(ParserAsm::Nop, "", 0, 0));
 			context->instructionListExecutive->extractList(pcBegin, pcEnd);
 			instructionList.setList(pcBegin, pcEnd);
 			return retV;
@@ -433,8 +429,8 @@ namespace Quantum {
 			};
 
 			InstructionList instructionList;
-			TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (linkBegin);
-			TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (assembler->assemble(ParserAsm::Nop, "", 0, 0));
+			TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(linkBegin);
+			TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(assembler->assemble(ParserAsm::Nop, "", 0, 0));
 			context->instructionListExecutive->extractList(pcBegin, pcEnd);
 			instructionList.setList(pcBegin, pcEnd);
 			return retV;
@@ -480,11 +476,12 @@ namespace Quantum {
 				context->nextProgramCounter = linkStart;
 				return 0;
 
-			} catch(...) {};
+			} catch (...) {
+			};
 
 			InstructionList instructionList;
-			TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (linkBegin);
-			TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (assembler->assemble(ParserAsm::Nop, "", 0, 0));
+			TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(linkBegin);
+			TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(assembler->assemble(ParserAsm::Nop, "", 0, 0));
 			context->instructionListExecutive->extractList(pcBegin, pcEnd);
 			instructionList.setList(pcBegin, pcEnd);
 			return VmParserError::Compile;
@@ -530,16 +527,15 @@ namespace Quantum {
 				if (input.init(&in)) {
 
 					uint32_t lineNumber = input.lineNumber;
-					while(input.read()) {
-						if(input.lineNumber > lineNumber) {
+					while (input.read()) {
+						if (input.lineNumber > lineNumber) {
 							lineNumber = input.lineNumber;
 							--skipLines;
-							if(skipLines == 0) {
+							if (skipLines == 0) {
 								break;
 							};
 						};
 					};
-
 
 					String strSymbol("@");
 					strSymbol << data_;
@@ -600,8 +596,8 @@ namespace Quantum {
 			};
 
 			InstructionList instructionList;
-			TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (linkBegin);
-			TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (assembler->assemble(ParserAsm::Nop, "", 0, 0));
+			TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(linkBegin);
+			TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(assembler->assemble(ParserAsm::Nop, "", 0, 0));
 			context->instructionListExecutive->extractList(pcBegin, pcEnd);
 			instructionList.setList(pcBegin, pcEnd);
 			return retV;
@@ -648,13 +644,12 @@ namespace Quantum {
 			};
 
 			InstructionList instructionList;
-			TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (linkBegin);
-			TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (assembler->assemble(ParserAsm::Nop, "", 0, 0));
+			TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(linkBegin);
+			TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(assembler->assemble(ParserAsm::Nop, "", 0, 0));
 			context->instructionListExecutive->extractList(pcBegin, pcEnd);
 			instructionList.setList(pcBegin, pcEnd);
 			return retV;
 		};
-
 
 		void Executive::setVmFunction(const char *name, InstructionProcedure procedure, Variable *operand) {
 			ProgramCounter *linkFunctionBegin;
@@ -706,8 +701,7 @@ namespace Quantum {
 			linkFunctionEnd = assembler->assembleProgramCounter(ParserAsm::Goto, nullptr, 0, 0);
 
 			assembler->linkProgramCounter(linkFunctionBegin,
-				assembler->assemble(ParserAsm::Mark, "", 0, 0)
-			);
+			                              assembler->assemble(ParserAsm::Mark, "", 0, 0));
 
 			isEmpty = 0;
 			if (name[k] == '(') {
@@ -743,14 +737,12 @@ namespace Quantum {
 					bufx[0] = name[k];
 					buf << bufx;
 				};
-
 			};
 
 			assembler->assembleDirect(InstructionVmCallNative, VariableNativeVmFunction::newVariable(procedure, operand));
 
 			assembler->assemble(ParserAsm::PushUndefined, "", 0, 0);
 			assembler->linkProgramCounterEnd(linkFunctionBegin, assembler->assemble(ParserAsm::Return, "", 0, 0));
-
 
 			assembler->linkProgramCounter(linkFunctionEnd, assembler->assemble(ParserAsm::Assign, "", 0, 0));
 		};
@@ -807,8 +799,7 @@ namespace Quantum {
 			linkFunctionEnd = assembler->assembleProgramCounter(ParserAsm::Goto, nullptr, 0, 0);
 
 			assembler->linkProgramCounter(linkFunctionBegin,
-				assembler->assemble(ParserAsm::Mark, "", 0, 0)
-			);
+			                              assembler->assemble(ParserAsm::Mark, "", 0, 0));
 
 			String fnSource = "function(";
 
@@ -849,11 +840,10 @@ namespace Quantum {
 					bufx[0] = name[k];
 					buf << bufx;
 				};
-
 			};
 
 			String content;
-			if(!Shell::fileGetContents(fileName, content)) {
+			if (!Shell::fileGetContents(fileName, content)) {
 				return VmParserError::FileNotFound;
 			};
 
@@ -868,8 +858,7 @@ namespace Quantum {
 			assembler->linkProgramCounterEnd(linkFunctionBegin, assembler->assemble(ParserAsm::Return, "", 0, 0));
 
 			assembler->linkProgramCounter(linkFunctionEnd,
-				assembler->assemble(ParserAsm::Assign, "", 0, 0)
-			);
+			                              assembler->assemble(ParserAsm::Assign, "", 0, 0));
 
 			return retV;
 		};
@@ -889,7 +878,6 @@ namespace Quantum {
 			int retV;
 			int level;
 			char sLevel[32];
-
 
 			isFirst = 1;
 			bufx[1] = 0;
@@ -927,8 +915,7 @@ namespace Quantum {
 			linkFunctionEnd = assembler->assembleProgramCounter(ParserAsm::Goto, nullptr, 0, 0);
 
 			assembler->linkProgramCounter(linkFunctionBegin,
-				assembler->assemble(ParserAsm::Mark, "", 0, 0)
-			);
+			                              assembler->assemble(ParserAsm::Mark, "", 0, 0));
 
 			isEmpty = 0;
 			if (name[k] == '(') {
@@ -966,7 +953,6 @@ namespace Quantum {
 					bufx[0] = name[k];
 					buf << bufx;
 				};
-
 			};
 
 			fnSource << "{" << data << "}";
@@ -976,13 +962,11 @@ namespace Quantum {
 			uint32_t fnSourceSymbol = Context::getSymbol(fnSource);
 			assembler->linkProgramCounterSource(linkFunctionBegin, fnSourceSymbol, 0);
 
-
 			assembler->assemble(ParserAsm::PushUndefined, "", 0, 0);
 			assembler->linkProgramCounterEnd(linkFunctionBegin, assembler->assemble(ParserAsm::Return, "", 0, 0));
 
 			assembler->linkProgramCounter(linkFunctionEnd,
-				assembler->assemble(ParserAsm::Assign, "", 0, 0)
-			);
+			                              assembler->assemble(ParserAsm::Assign, "", 0, 0));
 
 			return retV;
 		};
@@ -1028,8 +1012,8 @@ namespace Quantum {
 			};
 
 			InstructionList instructionList;
-			TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (linkBegin);
-			TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (assembler->assemble(ParserAsm::Nop, "", 0, 0));
+			TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(linkBegin);
+			TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(assembler->assemble(ParserAsm::Nop, "", 0, 0));
 			context->instructionListExecutive->extractList(pcBegin, pcEnd);
 			instructionList.setList(pcBegin, pcEnd);
 			return retV;
@@ -1076,28 +1060,28 @@ namespace Quantum {
 			};
 
 			InstructionList instructionList;
-			TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (linkBegin);
-			TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (assembler->assemble(ParserAsm::Nop, "", 0, 0));
+			TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(linkBegin);
+			TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(assembler->assemble(ParserAsm::Nop, "", 0, 0));
 			context->instructionListExecutive->extractList(pcBegin, pcEnd);
 			instructionList.setList(pcBegin, pcEnd);
 			return retV;
 		};
 
 		TPointer<Variable> Executive::callVmFunction(Variable *fnProcedure, Variable *fnThis, Variable *fnParameters) {
-			if(currentContextExit == nullptr) {
+			if (currentContextExit == nullptr) {
 				return nullptr;
 			};
-			if(fnProcedure) {
-				if(TIsType<VariableVmFunction>(fnProcedure)) {
+			if (fnProcedure) {
+				if (TIsType<VariableVmFunction>(fnProcedure)) {
 					TPointer<Variable> fnParametersX(fnParameters);
-					if(fnParameters) {
-						if(TIsTypeExact<VariableUndefined>(fnParameters)) {
+					if (fnParameters) {
+						if (TIsTypeExact<VariableUndefined>(fnParameters)) {
 							fnParametersX = VariableArray::newVariable();
 						};
 					} else {
-						fnParametersX=VariableArray::newVariable();
+						fnParametersX = VariableArray::newVariable();
 					};
-					if(TIsType<VariableArray>(fnParametersX)) {
+					if (TIsType<VariableArray>(fnParametersX)) {
 						TPointer<InstructionContext> fnContext;
 						fnContext.newMemory();
 
@@ -1116,12 +1100,12 @@ namespace Quantum {
 						fnContext->nextProgramCounter = currentContextExit;
 
 						TPointer<Variable> functionArguments;
-						functionArguments=VariableArray::newVariable();
+						functionArguments = VariableArray::newVariable();
 						(*(((VariableArray *)(functionArguments.value()))->value))[0] = fnParameters;
 
 						TPointer<Variable> fnThisX(fnThis);
 
-						if(fnThis) {
+						if (fnThis) {
 						} else {
 							fnThisX = VariableUndefined::newVariable();
 						};
@@ -1134,14 +1118,14 @@ namespace Quantum {
 
 						// -- executor
 						int error = Executive::execute_(fnContext.value());
-						if(error == InstructionError::None) {
+						if (error == InstructionError::None) {
 							return fnContext->returnValue;
 						};
-						if(error == InstructionError::Throw) {
+						if (error == InstructionError::Throw) {
 							TPointer<Variable> throwValue;
 							fnContext->pop(throwValue);
 							// catch, native throw
-							if(fnContext->stackTrace) {
+							if (fnContext->stackTrace) {
 								fnContext->stackTrace->pop();
 							};
 							TPointer<VariableStackTrace> stackTrace((VariableStackTrace *)VariableStackTrace::newVariable(fnContext->stackTrace, fnContext));
@@ -1150,10 +1134,8 @@ namespace Quantum {
 							ExecutiveX::setStackTrace(stackTrace->toString());
 							stackTrace.deleteMemory();
 							throw Error(
-								(throwValue->getPropertyBySymbol(Context::getSymbol("message")))->toString()
-							);
+							    (throwValue->getPropertyBySymbol(Context::getSymbol("message")))->toString());
 						};
-
 					};
 				};
 			};
@@ -1161,7 +1143,7 @@ namespace Quantum {
 		};
 
 		void Executive::setFunction(const char *name, Variable *nativeFunction) {
-			if(TIsType<VariableVmFunction>(nativeFunction)) {
+			if (TIsType<VariableVmFunction>(nativeFunction)) {
 				throw Error("setFunction require native function");
 			};
 
@@ -1211,7 +1193,7 @@ namespace Quantum {
 		};
 
 		void Executive::compileStringX(const char *source) {
-			if(compileString(source) != 0) {
+			if (compileString(source) != 0) {
 				throw Error("Compile error");
 			};
 		};
@@ -1266,9 +1248,9 @@ namespace Quantum {
 			// not really required
 			//
 			Context::initMemory();
-			TMemory<TDoubleEndedQueue<String > >::initMemory();
+			TMemory<TDoubleEndedQueue<String>>::initMemory();
 			TMemory<InstructionContext>::initMemory();
-			TMemory<TDoubleEndedQueue<TPointer<InstructionContext> > >::initMemory();
+			TMemory<TDoubleEndedQueue<TPointer<InstructionContext>>>::initMemory();
 			TMemory<InstructionList>::initMemory();
 			Parser::initMemory();
 			TMemory<ArrayIteratorKey>::initMemory();
@@ -1304,7 +1286,7 @@ namespace Quantum {
 		};
 
 		void Executive::endProcessing() {
-			if(assembler) {
+			if (assembler) {
 				assembler->endProcessing();
 			};
 			assembler.deleteMemory();
@@ -1312,10 +1294,10 @@ namespace Quantum {
 			//
 			//
 			//
-			if(extensionList) {
-				TDoubleEndedQueue<Extension_ >::Node *scan;
+			if (extensionList) {
+				TDoubleEndedQueue<Extension_>::Node *scan;
 				for (scan = extensionList->head; scan; scan = scan->next) {
-					if(scan->value.deleteContext) {
+					if (scan->value.deleteContext) {
 						(*scan->value.deleteContext)();
 					};
 				};
@@ -1331,10 +1313,5 @@ namespace Quantum {
 			Context::deleteContext();
 		};
 
-
 	};
 };
-
-
-
-

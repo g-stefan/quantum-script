@@ -17,7 +17,6 @@
 namespace Quantum {
 	namespace Script {
 
-
 		bool Parser::statementVar() {
 			if (token.isSymbolX("var")) {
 				while (!token.isEof()) {
@@ -29,23 +28,23 @@ namespace Quantum {
 					} else if (token.isSymbol()) {
 						int index, level;
 						bool found = false;
-						if(isFunctionArgument(token.value, index, level)) {
-							if(level == 0) {
+						if (isFunctionArgument(token.value, index, level)) {
+							if (level == 0) {
 								error = ParserError::Compile;
 								return false;
 							};
 						};
-						if(isFunctionLocalVariable(token.value, index, level)) {
-							if(level == 0) { // already defined
+						if (isFunctionLocalVariable(token.value, index, level)) {
+							if (level == 0) { // already defined
 								found = true;
 							};
 						};
-						if(found) {
-							if(functionLocalVariables.head) {
+						if (found) {
+							if (functionLocalVariables.head) {
 								(functionHint.head)->value |= ParserFunctionHint::LocalVariables;
 							};
 						} else {
-							if(functionLocalVariables.head) {
+							if (functionLocalVariables.head) {
 								char buf[32];
 								(functionLocalVariables.head)->value.set(token.value, (functionLocalVariableLevel.head)->value);
 								sprintf(buf, "%d", (functionLocalVariableLevel.head)->value);
@@ -71,23 +70,23 @@ namespace Quantum {
 			bool found;
 			if (hasSymbol) {
 				found = false;
-				if(isFunctionArgument(token.value, index, level)) {
-					if(level == 0) {
+				if (isFunctionArgument(token.value, index, level)) {
+					if (level == 0) {
 						error = ParserError::Compile;
 						return false;
 					};
 				};
-				if(isFunctionLocalVariable(token.value, index, level)) {
-					if(level == 0) { // already defined
+				if (isFunctionLocalVariable(token.value, index, level)) {
+					if (level == 0) { // already defined
 						found = true;
 					};
 				};
-				if(found) {
-					if(functionLocalVariables.head) {
+				if (found) {
+					if (functionLocalVariables.head) {
 						(functionHint.head)->value |= ParserFunctionHint::LocalVariables;
 					};
 				} else {
-					if(functionLocalVariables.head) {
+					if (functionLocalVariables.head) {
 						char buf[32];
 						(functionLocalVariables.head)->value.set(token.value, (functionLocalVariableLevel.head)->value);
 						sprintf(buf, "%d", (functionLocalVariableLevel.head)->value);
@@ -110,31 +109,30 @@ namespace Quantum {
 				} else if (token.isSymbol()) {
 
 					found = false;
-					if(isFunctionArgument(token.value, index, level)) {
-						if(level == 0) {
+					if (isFunctionArgument(token.value, index, level)) {
+						if (level == 0) {
 							error = ParserError::Compile;
 							return false;
 						};
 					};
-					if(isFunctionLocalVariable(token.value, index, level)) {
-						if(level == 0) { // already defined
+					if (isFunctionLocalVariable(token.value, index, level)) {
+						if (level == 0) { // already defined
 							found = true;
 						};
 					};
-					if(found) {
-						if(functionLocalVariables.head) {
+					if (found) {
+						if (functionLocalVariables.head) {
 							(functionHint.head)->value |= ParserFunctionHint::LocalVariables;
 						};
 					} else {
 
-						if(functionLocalVariables.head) {
+						if (functionLocalVariables.head) {
 							char buf[32];
 							(functionLocalVariables.head)->value.set(token.value, (functionLocalVariableLevel.head)->value);
 							sprintf(buf, "%d", (functionLocalVariableLevel.head)->value);
 							++(functionLocalVariableLevel.head)->value;
 							(functionHint.head)->value |= ParserFunctionHint::LocalVariables;
 						};
-
 					};
 
 					expression(1);
@@ -152,5 +150,3 @@ namespace Quantum {
 
 	};
 };
-
-

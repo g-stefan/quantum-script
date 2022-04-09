@@ -17,7 +17,6 @@
 namespace Quantum {
 	namespace Script {
 
-
 		bool Parser::statementFunctionArgument(int level) {
 			token.reset();
 			if (token.isSymbol()) {
@@ -61,7 +60,7 @@ namespace Quantum {
 					token.reset();
 					if (token.isSymbol()) {
 
-						if(functionLocalVariables.head) {
+						if (functionLocalVariables.head) {
 							char buf[32];
 							(functionLocalVariables.head)->value.set(token.value, (functionLocalVariableLevel.head)->value);
 							sprintf(buf, "%d", (functionLocalVariableLevel.head)->value);
@@ -129,13 +128,11 @@ namespace Quantum {
 							linkProgramCounter(linkFunctionEnd, assemble(ParserAsm::Mark));
 							linkProgramCounterEnd(linkFunctionBegin, linkFunctionDone);
 
-
 						} else {
 
 							linkFunctionDone = assemble(ParserAsm::Nop);
 							linkProgramCounter(linkFunctionEnd, assemble(ParserAsm::Assign));
 							linkProgramCounterEnd(linkFunctionBegin, linkFunctionDone);
-
 						};
 
 						String source = endCapture();
@@ -160,9 +157,7 @@ namespace Quantum {
 						functionVariablesLevelHint.pop();
 
 						return true;
-
 					};
-
 				};
 
 				endCapture();
@@ -173,7 +168,7 @@ namespace Quantum {
 		};
 
 		void Parser::setArgumentsLevelHint(int level) {
-			if(level > (functionArgumentsLevelHint.head)->value) {
+			if (level > (functionArgumentsLevelHint.head)->value) {
 				(functionArgumentsLevelHint.head)->value = level;
 			};
 		};
@@ -181,10 +176,10 @@ namespace Quantum {
 		void Parser::functionUpdateArgumentsLevelHint() {
 			TStack<int>::Node *hint;
 			int level = (functionArgumentsLevelHint.head)->value;
-			if(level) {
-				for(hint = functionHint.head; hint; hint = hint->next) {
+			if (level) {
+				for (hint = functionHint.head; hint; hint = hint->next) {
 					--level;
-					if(level == 0) {
+					if (level == 0) {
 						hint->value |= ParserFunctionHint::Arguments;
 						break;
 					} else {
@@ -195,9 +190,8 @@ namespace Quantum {
 			};
 		};
 
-
 		void Parser::setVariablesLevelHint(int level) {
-			if(level > (functionVariablesLevelHint.head)->value) {
+			if (level > (functionVariablesLevelHint.head)->value) {
 				(functionVariablesLevelHint.head)->value = level;
 			};
 		};
@@ -205,10 +199,10 @@ namespace Quantum {
 		void Parser::functionUpdateVariablesLevelHint() {
 			TStack<int>::Node *hint;
 			int level = (functionVariablesLevelHint.head)->value;
-			if(level) {
-				for(hint = functionHint.head; hint; hint = hint->next) {
+			if (level) {
+				for (hint = functionHint.head; hint; hint = hint->next) {
 					--level;
-					if(level == 0) {
+					if (level == 0) {
 						hint->value |= ParserFunctionHint::LocalVariables;
 						break;
 					} else {
@@ -219,8 +213,5 @@ namespace Quantum {
 			};
 		};
 
-
 	};
 };
-
-

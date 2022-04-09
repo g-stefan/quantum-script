@@ -32,13 +32,13 @@ namespace Quantum {
 #endif
 				size_t index_;
 				if (String::indexOf(
-						this_->toString(),
-						(arguments->index(0))->toString(),
-						(arguments->index(1))->toIndex(),
-						index_)) {
-					return VariableNumber::newVariable((Number) index_);
+				        this_->toString(),
+				        (arguments->index(0))->toString(),
+				        (arguments->index(1))->toIndex(),
+				        index_)) {
+					return VariableNumber::newVariable((Number)index_);
 				};
-				return VariableNumber::newVariable((Number) - 1);
+				return VariableNumber::newVariable((Number)-1);
 			};
 
 			static TPointer<Variable> lastIndexOf(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -48,13 +48,13 @@ namespace Quantum {
 
 				size_t index_;
 				if (String::indexOfFromEnd(
-						this_->toString(),
-						(arguments->index(0))->toString(),
-						(arguments->index(1))->toIndex(),
-						index_)) {
-					return VariableNumber::newVariable((Number) index_);
+				        this_->toString(),
+				        (arguments->index(0))->toString(),
+				        (arguments->index(1))->toIndex(),
+				        index_)) {
+					return VariableNumber::newVariable((Number)index_);
 				};
-				return VariableNumber::newVariable((Number) - 1);
+				return VariableNumber::newVariable((Number)-1);
 			};
 
 			static TPointer<Variable> substring(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -64,11 +64,10 @@ namespace Quantum {
 				String value = this_->toString();
 				Number ln = (arguments->index(1))->toNumber();
 				return VariableString::newVariable(
-						String::substring(
-							value,
-							(arguments->index(0))->toIndex(),
-							(isnan(ln)) ? value.length() : ((isinf(ln)) ? value.length() : ((Integer)ln))
-						));
+				    String::substring(
+				        value,
+				        (arguments->index(0))->toIndex(),
+				        (isnan(ln)) ? value.length() : ((isinf(ln)) ? value.length() : ((Integer)ln))));
 			};
 
 			static TPointer<Variable> toLowerCaseAscii(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -93,12 +92,10 @@ namespace Quantum {
 #endif
 
 				return VariableString::newVariable(
-						String::replace(
-							this_->toString(),
-							(arguments->index(0))->toString(),
-							(arguments->index(1))->toString()
-						)
-					);
+				    String::replace(
+				        this_->toString(),
+				        (arguments->index(0))->toString(),
+				        (arguments->index(1))->toString()));
 			};
 
 			static TPointer<Variable> matchAscii(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -107,8 +104,7 @@ namespace Quantum {
 #endif
 
 				return VariableBoolean::newVariable(
-						String::matchAscii(this_->toString(), (arguments->index(1))->toString())
-					);
+				    String::matchAscii(this_->toString(), (arguments->index(1))->toString()));
 			};
 
 			static TPointer<Variable> getElement(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -118,16 +114,15 @@ namespace Quantum {
 
 				Number x = (arguments->index(0))->toNumber();
 				String this__ = this_->toString();
-				if(isnan(x) || isinf(x) || signbit(x)) {
+				if (isnan(x) || isinf(x) || signbit(x)) {
 					return VariableNumber::newVariable(0);
 				};
-				if(x > this__.length()) {
+				if (x > this__.length()) {
 					return VariableNumber::newVariable(0);
 				};
 
 				return VariableNumber::newVariable(this__[(int)x]);
 			};
-
 
 			static TPointer<Variable> trim(VariableFunction *function, Variable *this_, VariableArray *arguments) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -147,14 +142,14 @@ namespace Quantum {
 				String src = this_->toString();
 				String sig = (arguments->index(0))->toString();
 				TPointer<Variable> retV(VariableArray::newVariable());
-				if((src.length() == 0) && (sig.length() == 0)) {
+				if ((src.length() == 0) && (sig.length() == 0)) {
 					return retV;
 				};
-				if(String::indexOf(src, sig, 0, index)) {
+				if (String::indexOf(src, sig, 0, index)) {
 					ln = 1;
 					retV->setPropertyByIndex(0, VariableString::newVariable(String::substring(src, 0, index)));
 					pos = index + 1;
-					while(String::indexOf(src, sig, pos, index)) {
+					while (String::indexOf(src, sig, pos, index)) {
 						retV->setPropertyByIndex(ln, VariableString::newVariable(String::substring(src, pos, index - pos)));
 						pos = index + 1;
 						++ln;
@@ -201,5 +196,3 @@ namespace Quantum {
 		};
 	};
 };
-
-

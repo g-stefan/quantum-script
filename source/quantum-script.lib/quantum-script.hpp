@@ -15,7 +15,7 @@
 #include "quantum-script-license.hpp"
 #include "quantum-script-copyright.hpp"
 #ifndef QUANTUM_SCRIPT_NO_VERSION
-#       include "quantum-script-version.hpp"
+#	include "quantum-script-version.hpp"
 #endif
 
 #include "quantum-script-variable.hpp"
@@ -32,4 +32,3 @@
 #include "quantum-script-executivex.hpp"
 
 #endif
-

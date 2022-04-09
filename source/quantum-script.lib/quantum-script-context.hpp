@@ -11,15 +11,15 @@
 #define QUANTUM_SCRIPT_CONTEXT_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLE_HPP
-#include "quantum-script-variable.hpp"
+#	include "quantum-script-variable.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_PROTOTYPE_HPP
-#include "quantum-script-prototype.hpp"
+#	include "quantum-script-prototype.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_SYMBOLLIST_HPP
-#include "quantum-script-symbollist.hpp"
+#	include "quantum-script-symbollist.hpp"
 #endif
 
 namespace Quantum {
@@ -75,6 +75,5 @@ namespace Quantum {
 
 	};
 };
-
 
 #endif

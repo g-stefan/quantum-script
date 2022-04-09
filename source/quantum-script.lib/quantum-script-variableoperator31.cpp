@@ -25,7 +25,7 @@ namespace Quantum {
 		};
 
 		Variable *VariableOperator31::newVariable() {
-			return (Variable *) TMemory<VariableOperator31>::newMemory();
+			return (Variable *)TMemory<VariableOperator31>::newMemory();
 		};
 
 		bool VariableOperator31::toBoolean() {
@@ -39,5 +39,3 @@ namespace Quantum {
 	};
 
 };
-
-

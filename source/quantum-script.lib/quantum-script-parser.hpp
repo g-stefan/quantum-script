@@ -11,34 +11,32 @@
 #define QUANTUM_SCRIPT_PARSER_HPP
 
 #ifndef QUANTUM_SCRIPT__DEPENDENCY_HPP
-#include "quantum-script--dependency.hpp"
+#	include "quantum-script--dependency.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_INPUT_HPP
-#include "quantum-script-input.hpp"
+#	include "quantum-script-input.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_TOKEN_HPP
-#include "quantum-script-token.hpp"
+#	include "quantum-script-token.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_ASM_HPP
-#include "quantum-script-asm.hpp"
+#	include "quantum-script-asm.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_PARSERFUNCTIONHINT_HPP
-#include "quantum-script-parserfunctionhint.hpp"
+#	include "quantum-script-parserfunctionhint.hpp"
 #endif
 
 namespace Quantum {
 	namespace Script {
 
-
 #define QUANTUM_SCRIPT_PARSER_TOKEN_STACK_SIZE 8
 
 		class ParserError {
 			public:
-
 				enum {
 					None,
 					Compile
@@ -47,9 +45,9 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class ParserContext:
-			public Object {
+		class ParserContext : public Object {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(ParserContext);
+
 			public:
 				bool isLoop;
 				TStack<ProgramCounter *> pcBreak;
@@ -61,13 +59,12 @@ namespace Quantum {
 				};
 		};
 
-		class Parser :
-			public Object {
+		class Parser : public Object {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(Parser);
-			protected:
 
-				TStack<TRedBlackTree<String, int > > functionArguments;
-				TStack<TRedBlackTree<String, int > > functionLocalVariables;
+			protected:
+				TStack<TRedBlackTree<String, int>> functionArguments;
+				TStack<TRedBlackTree<String, int>> functionLocalVariables;
 				TStack<int> functionLocalVariableLevel;
 				TStack<int> functionHint;
 				TStack<int> functionArgumentsLevelHint;
@@ -83,7 +80,7 @@ namespace Quantum {
 				int tokenLastIndex;
 				int tokenLastLevel;
 
-				TStack<TPointer<ParserContext> > parserContext;
+				TStack<TPointer<ParserContext>> parserContext;
 
 				inline void parserEnterContext() {
 					TPointer<ParserContext> context;
@@ -96,7 +93,6 @@ namespace Quantum {
 				};
 
 			public:
-
 				int error;
 
 				QUANTUM_SCRIPT_EXPORT Parser();
@@ -165,7 +161,5 @@ namespace Quantum {
 
 	};
 };
-
-
 
 #endif

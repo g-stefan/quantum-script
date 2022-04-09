@@ -24,22 +24,17 @@ namespace Quantum {
 			XYO_DYNAMIC_TYPE_PUSH(VariableOperator21);
 		};
 
-
 		Variable *VariableOperator21::newVariable() {
-			return (Variable *) TMemory<VariableOperator21>::newMemory();
+			return (Variable *)TMemory<VariableOperator21>::newMemory();
 		};
 
 		bool VariableOperator21::toBoolean() {
 			return true;
 		};
 
-
 		String VariableOperator21::toString() {
 			return strTypeUndefined;
 		};
 
-
 	};
 };
-
-

@@ -26,8 +26,7 @@ namespace Quantum {
 			doCapture = false;
 		};
 
-		Input::~Input() {
-		};
+		Input::~Input(){};
 
 		bool Input::init(IRead *input_) {
 			input = input_;
@@ -63,8 +62,8 @@ namespace Quantum {
 				inputChar = 0;
 				return false;
 			};
-			if (input->read(&inputChar, sizeof (uint8_t))) {
-				if(doCapture) {
+			if (input->read(&inputChar, sizeof(uint8_t))) {
+				if (doCapture) {
 					capture += inputChar;
 				};
 				if (inputChar == '\n') {
@@ -90,15 +89,12 @@ namespace Quantum {
 			if (name[k] == 0) {
 				return true;
 			};
-			for ( --k; k >= 0; --k) {
+			for (--k; k >= 0; --k) {
 				push();
 				inputChar = name[k];
 			};
 			return false;
 		};
 
-
 	};
 };
-
-

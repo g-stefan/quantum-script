@@ -11,7 +11,7 @@
 #define QUANTUM_SCRIPT_VARIABLEARRAY_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLE_HPP
-#include "quantum-script-variable.hpp"
+#	include "quantum-script-variable.hpp"
 #endif
 
 namespace Quantum {
@@ -21,12 +21,10 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::VariableArray>:
-			public TMemoryPoolActive<Quantum::Script::VariableArray> {};
+		template <>
+		class TMemory<Quantum::Script::VariableArray> : public TMemoryPoolActive<Quantum::Script::VariableArray> {};
 	};
 };
 
@@ -35,12 +33,13 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class VariableArray :
-			public Variable {
+		class VariableArray : public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableArray);
 				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableArray);
+
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeArray;
+
 			public:
 				TPointerX<Array> value;
 
@@ -68,8 +67,8 @@ namespace Quantum {
 
 				inline TPointerX<Variable> &index(uint32_t index_) {
 					TPointerX<Variable> &retV = (*value)[index_];
-					if(!retV) {
-						retV=VariableUndefined::newVariable();
+					if (!retV) {
+						retV = VariableUndefined::newVariable();
 					};
 					return retV;
 				};
@@ -87,12 +86,9 @@ namespace Quantum {
 				QUANTUM_SCRIPT_EXPORT String toString();
 
 				QUANTUM_SCRIPT_EXPORT String join(String with_);
-
 		};
 
 	};
 };
-
-
 
 #endif

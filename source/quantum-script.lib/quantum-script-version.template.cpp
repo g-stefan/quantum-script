@@ -9,7 +9,6 @@
 
 #include "quantum-script-version.hpp"
 
-
 namespace Quantum {
 	namespace Script {
 		namespace Version {

@@ -38,35 +38,31 @@ namespace Quantum {
 			return *(TSingletonThread<SymbolList>::getValue());
 		};
 
-		class XValueUndefined:
-			public Object {
+		class XValueUndefined : public Object {
 			public:
 				TPointer<Variable> valueUndefined;
 				XValueUndefined();
 				static void initMemory();
 		};
 
-		XValueUndefined::XValueUndefined() {
-		};
+		XValueUndefined::XValueUndefined(){};
 
 		void XValueUndefined::initMemory() {
 			TMemory<Variable>::initMemory();
 		};
 
 		TPointer<Variable> Context::getValueUndefined() {
-			return  (TSingletonThread<XValueUndefined>::getValue())->valueUndefined;
+			return (TSingletonThread<XValueUndefined>::getValue())->valueUndefined;
 		};
 
-		class XGlobalObject:
-			public Object {
+		class XGlobalObject : public Object {
 			public:
 				TPointer<Variable> globalObject;
 				XGlobalObject();
 				static void initMemory();
 		};
 
-		XGlobalObject::XGlobalObject() {
-		};
+		XGlobalObject::XGlobalObject(){};
 
 		void XGlobalObject::initMemory() {
 			TMemory<Variable>::initMemory();
@@ -74,13 +70,11 @@ namespace Quantum {
 		};
 
 		TPointer<Variable> Context::getGlobalObject() {
-			return  (TSingletonThread<XGlobalObject>::getValue())->globalObject;
+			return (TSingletonThread<XGlobalObject>::getValue())->globalObject;
 		};
 
-		class XContext:
-			public Object {
+		class XContext : public Object {
 			public:
-
 				TPointer<Prototype> prototypeBoolean;
 				TPointer<Prototype> prototypeNumber;
 				TPointer<Prototype> prototypeString;
@@ -112,8 +106,7 @@ namespace Quantum {
 				static void initMemory();
 		};
 
-		XContext::XContext() {
-		};
+		XContext::XContext(){};
 
 		static TPointer<Variable> functionBoolean(VariableFunction *function, Variable *this_, VariableArray *arguments) {
 			return VariableBoolean::newVariable((arguments->index(0))->toBoolean());
@@ -343,5 +336,3 @@ namespace Quantum {
 
 	};
 };
-
-

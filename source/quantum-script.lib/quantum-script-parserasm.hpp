@@ -13,10 +13,8 @@
 namespace Quantum {
 	namespace Script {
 
-
 		class ParserAsm {
 			public:
-
 				enum {
 					Unknown,
 					Nop,

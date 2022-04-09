@@ -11,11 +11,11 @@
 #define QUANTUM_SCRIPT_VARIABLEREFERENCESYMBOL_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLE_HPP
-#include "quantum-script-variable.hpp"
+#	include "quantum-script-variable.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_SYMBOLLIST_HPP
-#include "quantum-script-symbollist.hpp"
+#	include "quantum-script-symbollist.hpp"
 #endif
 
 namespace Quantum {
@@ -25,12 +25,10 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::VariableReferenceSymbol>:
-			public TMemoryPoolActive<Quantum::Script::VariableReferenceSymbol> {};
+		template <>
+		class TMemory<Quantum::Script::VariableReferenceSymbol> : public TMemoryPoolActive<Quantum::Script::VariableReferenceSymbol> {};
 	};
 };
 
@@ -39,18 +37,18 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class VariableReferenceSymbol :
-			public Variable {
+		class VariableReferenceSymbol : public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableReferenceSymbol);
 				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableReferenceSymbol);
+
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeReferenceObjectSymbol;
-			public:
 
+			public:
 				TPointer<Variable> object;
 				Symbol symbol;
 
-				QUANTUM_SCRIPT_EXPORT  VariableReferenceSymbol();
+				QUANTUM_SCRIPT_EXPORT VariableReferenceSymbol();
 
 				inline void activeDestructor() {
 					object.deleteMemory();
@@ -69,11 +67,9 @@ namespace Quantum {
 				QUANTUM_SCRIPT_EXPORT String referenceToString();
 				QUANTUM_SCRIPT_EXPORT TPointer<Variable> referenceOperatorPlus(Variable *b);
 				QUANTUM_SCRIPT_EXPORT void referenceSetA1(Variable *value);
-
 		};
 
 	};
 };
-
 
 #endif

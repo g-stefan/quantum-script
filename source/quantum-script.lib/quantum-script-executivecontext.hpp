@@ -11,11 +11,11 @@
 #define QUANTUM_SCRIPT_EXECUTIVECONTEXT_HPP
 
 #ifndef QUANTUM_SCRIPT_EXECUTIVECONTEXTPC_HPP
-#include "quantum-script-executivecontextpc.hpp"
+#	include "quantum-script-executivecontextpc.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_EXECUTIVECONTEXTFUNCTION_HPP
-#include "quantum-script-executivecontextfunction.hpp"
+#	include "quantum-script-executivecontextfunction.hpp"
 #endif
 
 namespace Quantum {
@@ -25,12 +25,10 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::ExecutiveContext>:
-			public TMemoryPoolActive<Quantum::Script::ExecutiveContext> {};
+		template <>
+		class TMemory<Quantum::Script::ExecutiveContext> : public TMemoryPoolActive<Quantum::Script::ExecutiveContext> {};
 	};
 };
 
@@ -39,12 +37,11 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class ExecutiveContext :
-			public TStackPointerUnsafe<ExecutiveContextPc, TMemoryPoolActive> {
+		class ExecutiveContext : public TStackPointerUnsafe<ExecutiveContextPc, TMemoryPoolActive> {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(ExecutiveContext);
-			public:
 
-				inline ExecutiveContext() {};
+			public:
+				inline ExecutiveContext(){};
 
 				inline void enter(ExecutiveContextPc *&out) {
 					out = TMemory<ExecutiveContextPc>::newMemory();
@@ -69,7 +66,7 @@ namespace Quantum {
 				};
 
 				inline static void initMemory() {
-					TMemory<TStackPointerUnsafe<ExecutiveContextPc, TMemoryPoolActive> >::initMemory();
+					TMemory<TStackPointerUnsafe<ExecutiveContextPc, TMemoryPoolActive>>::initMemory();
 					TMemory<ExecutiveContextFunction>::initMemory();
 				};
 
@@ -80,6 +77,5 @@ namespace Quantum {
 
 	};
 };
-
 
 #endif

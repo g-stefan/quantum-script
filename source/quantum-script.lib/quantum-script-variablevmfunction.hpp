@@ -11,25 +11,24 @@
 #define QUANTUM_SCRIPT_VARIABLEVMFUNCTION_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLE_HPP
-#include "quantum-script-variable.hpp"
+#	include "quantum-script-variable.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_VARIABLEFUNCTION_HPP
-#include "quantum-script-variablefunction.hpp"
+#	include "quantum-script-variablefunction.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_EXECUTIVECONTEXT_HPP
-#include "quantum-script-executivecontext.hpp"
+#	include "quantum-script-executivecontext.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_PARSERFUNCTIONHINT_HPP
-#include "quantum-script-parserfunctionhint.hpp"
+#	include "quantum-script-parserfunctionhint.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_INSTRUCTIONX_HPP
-#include "quantum-script-instructionx.hpp"
+#	include "quantum-script-instructionx.hpp"
 #endif
-
 
 namespace Quantum {
 	namespace Script {
@@ -38,12 +37,10 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::VariableVmFunction>:
-			public TMemoryPoolActive<Quantum::Script::VariableVmFunction> {};
+		template <>
+		class TMemory<Quantum::Script::VariableVmFunction> : public TMemoryPoolActive<Quantum::Script::VariableVmFunction> {};
 	};
 };
 
@@ -52,12 +49,13 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class VariableVmFunction :
-			public Variable {
+		class VariableVmFunction : public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableVmFunction);
 				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableVmFunction);
+
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeVmFunction;
+
 			public:
 				TPointerX<Property> object;
 				TPointerX<Prototype> prototype;
@@ -70,7 +68,7 @@ namespace Quantum {
 
 				// coroutine
 				ProgramCounter *originalValue;
-				TPointerX<TStack<TPointerX<ExecutiveContextPc> > > coroutineContext;
+				TPointerX<TStack<TPointerX<ExecutiveContextPc>>> coroutineContext;
 
 				TPointerX<FunctionParent> functionParent;
 
@@ -81,7 +79,7 @@ namespace Quantum {
 				inline void activeConstructor() {
 					object.newMemory();
 					prototype.newMemory();
-					prototype->prototype=VariableObject::newVariable();
+					prototype->prototype = VariableObject::newVariable();
 				};
 
 				inline void activeDestructor() {
@@ -93,7 +91,6 @@ namespace Quantum {
 				};
 
 				QUANTUM_SCRIPT_EXPORT static Variable *newVariable(ProgramCounter *value);
-
 
 				QUANTUM_SCRIPT_EXPORT String getVariableType();
 
@@ -125,6 +122,5 @@ namespace Quantum {
 
 	};
 };
-
 
 #endif

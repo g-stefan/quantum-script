@@ -25,12 +25,11 @@ namespace Quantum {
 			XYO_DYNAMIC_TYPE_PUSH(VariableVmProgramCounter);
 		};
 
-
 		Variable *VariableVmProgramCounter::newVariable(ProgramCounter *value) {
 			VariableVmProgramCounter *retV;
 			retV = TMemory<VariableVmProgramCounter>::newMemory();
 			retV->value = value;
-			return (Variable *) retV;
+			return (Variable *)retV;
 		};
 
 		String VariableVmProgramCounter::getVariableType() {
@@ -47,5 +46,3 @@ namespace Quantum {
 
 	};
 };
-
-

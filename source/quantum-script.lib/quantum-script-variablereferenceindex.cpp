@@ -34,7 +34,7 @@ namespace Quantum {
 			retV = TMemory<VariableReferenceIndex>::newMemory();
 			retV->object = object;
 			retV->index = index;
-			return (Variable *) retV;
+			return (Variable *)retV;
 		};
 
 		bool VariableReferenceIndex::toBoolean() {
@@ -74,5 +74,3 @@ namespace Quantum {
 
 	};
 };
-
-

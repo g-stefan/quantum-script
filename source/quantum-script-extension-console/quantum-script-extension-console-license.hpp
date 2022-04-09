@@ -11,7 +11,7 @@
 #define QUANTUM_SCRIPT_EXTENSION_CONSOLE_LICENSE_HPP
 
 #ifndef QUANTUM_SCRIPT_EXTENSION_CONSOLE__EXPORT_HPP
-#include "quantum-script-extension-console--export.hpp"
+#	include "quantum-script-extension-console--export.hpp"
 #endif
 
 namespace Quantum {

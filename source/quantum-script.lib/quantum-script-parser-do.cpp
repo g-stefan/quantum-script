@@ -17,7 +17,6 @@
 namespace Quantum {
 	namespace Script {
 
-
 		bool Parser::statementDo() {
 			if (token.isSymbolX("do")) {
 				ProgramCounter *linkDo;
@@ -44,14 +43,12 @@ namespace Quantum {
 
 								assembleProgramCounter(ParserAsm::IfTrueGoto, linkDo);
 								linkProgramCounter(
-									linkDoBreak,
-									assemble(ParserAsm::Mark)
-								);
+								    linkDoBreak,
+								    assemble(ParserAsm::Mark));
 
 								return true;
 							};
 						};
-
 					};
 				};
 
@@ -61,8 +58,5 @@ namespace Quantum {
 			return false;
 		};
 
-
 	};
 };
-
-

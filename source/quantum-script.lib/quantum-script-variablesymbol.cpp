@@ -35,7 +35,7 @@ namespace Quantum {
 		};
 
 		TPointer<Variable> VariableSymbol::getPropertyBySymbol(Symbol symbolId) {
-			if(symbolId == Context::getSymbolLength()) {
+			if (symbolId == Context::getSymbolLength()) {
 				return VariableNumber::newVariable((Number)((toString()).length()));
 			};
 			return Variable::getPropertyBySymbol(symbolId);
@@ -45,7 +45,7 @@ namespace Quantum {
 			VariableSymbol *retV;
 			retV = TMemory<VariableSymbol>::newMemory();
 			retV->value = value;
-			return (Variable *) retV;
+			return (Variable *)retV;
 		};
 
 		Variable *VariableSymbol::instancePrototype() {
@@ -66,7 +66,7 @@ namespace Quantum {
 
 		Number VariableSymbol::toNumber() {
 			Number retV;
-			if(sscanf(toString(), QUANTUM_SCRIPT_FORMAT_NUMBER_INPUT, &retV) == 1) {
+			if (sscanf(toString(), QUANTUM_SCRIPT_FORMAT_NUMBER_INPUT, &retV) == 1) {
 				return retV;
 			};
 			return NAN;
@@ -76,9 +76,5 @@ namespace Quantum {
 			return true;
 		};
 
-
 	};
 };
-
-
-

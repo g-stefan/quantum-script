@@ -20,7 +20,6 @@
 #include "quantum-script-associativearrayiteratorkey.hpp"
 #include "quantum-script-associativearrayiteratorvalue.hpp"
 
-
 namespace Quantum {
 	namespace Script {
 
@@ -36,7 +35,7 @@ namespace Quantum {
 		};
 
 		Variable *VariableAssociativeArray::newVariable() {
-			return (Variable *) TMemory<VariableAssociativeArray>::newMemory();
+			return (Variable *)TMemory<VariableAssociativeArray>::newMemory();
 		};
 
 		String VariableAssociativeArray::getVariableType() {
@@ -44,7 +43,7 @@ namespace Quantum {
 		};
 
 		TPointer<Variable> VariableAssociativeArray::getPropertyBySymbol(Symbol symbolId) {
-			if(symbolId == Context::getSymbolLength()) {
+			if (symbolId == Context::getSymbolLength()) {
 				return VariableNumber::newVariable((Number)value->length());
 			};
 			return Variable::getPropertyBySymbol(symbolId);
@@ -56,15 +55,15 @@ namespace Quantum {
 		};
 
 		TPointer<Variable> VariableAssociativeArray::getPropertyByVariable(Variable *index) {
-			if(TIsType<VariableSymbol>(index)) {
-				if((static_cast<VariableSymbol *>(index))->value == Context::getSymbolLength()) {
+			if (TIsType<VariableSymbol>(index)) {
+				if ((static_cast<VariableSymbol *>(index))->value == Context::getSymbolLength()) {
 					return VariableNumber::newVariable((Number)value->length());
 				};
 			};
 
 			AssociativeArray::MapKey::Node *x;
 			x = value->mapKey->find(index);
-			if(x) {
+			if (x) {
 				return (*(value->arrayValue))[x->value];
 			};
 
@@ -79,12 +78,12 @@ namespace Quantum {
 		void VariableAssociativeArray::setPropertyByVariable(Variable *index, Variable *valueToSet) {
 			AssociativeArray::MapKey::Node *x;
 			x = value->mapKey->find(index);
-			if(x) {
-				(*(value->arrayValue))[x->value]=valueToSet;
+			if (x) {
+				(*(value->arrayValue))[x->value] = valueToSet;
 			};
 			value->mapKey->set(index, value->length_);
-			(*(value->arrayKey))[value->length_]=index;
-			(*(value->arrayValue))[value->length_]=valueToSet;
+			(*(value->arrayKey))[value->length_] = index;
+			(*(value->arrayValue))[value->length_] = valueToSet;
 			++value->length_;
 		};
 
@@ -126,11 +125,11 @@ namespace Quantum {
 			uint32_t k;
 			VariableAssociativeArray *out = (VariableAssociativeArray *)newVariable();
 			Variable *newKey;
-			for(k = 0; k < value->length(); ++k) {
+			for (k = 0; k < value->length(); ++k) {
 				newKey = ((*(value->arrayKey))[k])->clone(inSymbolList);
 				out->value->mapKey->set(newKey, k);
-				((*(out->value->arrayKey))[k])=newKey;
-				((*(out->value->arrayValue))[k])=((*(value->arrayValue))[k])->clone(inSymbolList);
+				((*(out->value->arrayKey))[k]) = newKey;
+				((*(out->value->arrayValue))[k]) = ((*(value->arrayValue))[k])->clone(inSymbolList);
 			};
 			return out;
 		};
@@ -145,6 +144,3 @@ namespace Quantum {
 
 	};
 };
-
-
-

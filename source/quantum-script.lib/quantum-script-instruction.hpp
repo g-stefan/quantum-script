@@ -11,11 +11,11 @@
 #define QUANTUM_SCRIPT_INSTRUCTION_HPP
 
 #ifndef QUANTUM_SCRIPT_INSTRUCTIONCONTEXT_HPP
-#include "quantum-script-instructioncontext.hpp"
+#	include "quantum-script-instructioncontext.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_INSTRUCTIONX_HPP
-#include "quantum-script-instructionx.hpp"
+#	include "quantum-script-instructionx.hpp"
 #endif
 
 namespace Quantum {
@@ -24,10 +24,10 @@ namespace Quantum {
 		using namespace XYO;
 
 #define QUANTUM_SCRIPT_INSTRUCTION_DEFINE(Name) \
-	void Instruction##Name(InstructionContext *context,Variable *operand)
+	void Instruction##Name(InstructionContext *context, Variable *operand)
 
 #define QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(Name) \
-	void Instruction##Name(InstructionContext *context,Variable *operand)
+	void Instruction##Name(InstructionContext *context, Variable *operand)
 
 		QUANTUM_SCRIPT_EXPORT QUANTUM_SCRIPT_INSTRUCTION_DEFINE(VmPushUndefined);
 		QUANTUM_SCRIPT_EXPORT QUANTUM_SCRIPT_INSTRUCTION_DEFINE(VmPushSymbol);
@@ -110,14 +110,12 @@ namespace Quantum {
 		QUANTUM_SCRIPT_EXPORT QUANTUM_SCRIPT_INSTRUCTION_DEFINE(VmOperatorInstanceOf);
 		QUANTUM_SCRIPT_EXPORT QUANTUM_SCRIPT_INSTRUCTION_DEFINE(VmOperatorTypeOf);
 
-
 		QUANTUM_SCRIPT_EXPORT QUANTUM_SCRIPT_INSTRUCTION_DEFINE(VmOperatorReferenceReference);
 
 		QUANTUM_SCRIPT_EXPORT QUANTUM_SCRIPT_INSTRUCTION_DEFINE(VmOperatorPlusPlusLeft);
 		QUANTUM_SCRIPT_EXPORT QUANTUM_SCRIPT_INSTRUCTION_DEFINE(VmOperatorPlusPlusRight);
 		QUANTUM_SCRIPT_EXPORT QUANTUM_SCRIPT_INSTRUCTION_DEFINE(VmOperatorMinusMinusLeft);
 		QUANTUM_SCRIPT_EXPORT QUANTUM_SCRIPT_INSTRUCTION_DEFINE(VmOperatorMinusMinusRight);
-
 
 		QUANTUM_SCRIPT_EXPORT QUANTUM_SCRIPT_INSTRUCTION_DEFINE(VmXPushNewArray);
 		QUANTUM_SCRIPT_EXPORT QUANTUM_SCRIPT_INSTRUCTION_DEFINE(VmXArrayPushWithTransfer);
@@ -197,6 +195,5 @@ namespace Quantum {
 
 	};
 };
-
 
 #endif

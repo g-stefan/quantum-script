@@ -47,7 +47,6 @@
 namespace Quantum {
 	namespace Script {
 
-
 		class ExecutiveX_ {
 			public:
 				Executive executive;
@@ -93,7 +92,7 @@ namespace Quantum {
 
 			executive.mainCmdN = cmdN;
 			executive.mainCmdS = cmdS;
-			if(!Shell::realPath(pathMain, executive.pathExecutable)) {
+			if (!Shell::realPath(pathMain, executive.pathExecutable)) {
 				return false;
 			};
 			executive.applicationInitExecutive = applicationInitExecutive;
@@ -109,7 +108,7 @@ namespace Quantum {
 					return false;
 				};
 
-			} catch(const Error &e) {
+			} catch (const Error &e) {
 				error = "Error: ";
 				error << (const_cast<Error &>(e)).getMessage();
 			} catch (const std::exception &e) {
@@ -143,11 +142,11 @@ namespace Quantum {
 
 			try {
 				TPointer<VariableArray> arguments(VariableArray::newArray());
-				(arguments->index(0))=VariableString::newVariable(fileName);
+				(arguments->index(0)) = VariableString::newVariable(fileName);
 				TPointer<Variable> script_((Context::getGlobalObject())->getPropertyBySymbol(Context::getSymbol("Script")));
 				(TSingletonThread<ExecutiveX_>::getValue())->returnValue = (script_->getPropertyBySymbol(Context::getSymbol("include")))->functionApply(script_, arguments);
 				return true;
-			} catch(const Error &e) {
+			} catch (const Error &e) {
 				error = "Error: ";
 				error << (const_cast<Error &>(e)).getMessage();
 			} catch (const std::exception &e) {
@@ -163,19 +162,19 @@ namespace Quantum {
 		bool ExecutiveX::executeString(const char *strSource) {
 			String &error = (TSingletonThread<ExecutiveX_>::getValue())->error;
 
-			if(strSource == nullptr) {
+			if (strSource == nullptr) {
 				error = "Error: Invalid source\n";
 				return false;
 			};
 
 			try {
 				TPointer<VariableArray> arguments(VariableArray::newArray());
-				(arguments->index(0))=VariableString::newVariable(strSource);
+				(arguments->index(0)) = VariableString::newVariable(strSource);
 				TPointer<Variable> script_((Context::getGlobalObject())->getPropertyBySymbol(Context::getSymbol("Script")));
 				(TSingletonThread<ExecutiveX_>::getValue())->returnValue = (script_->getPropertyBySymbol(Context::getSymbol("execute")))->functionApply(script_, arguments);
 				return true;
 
-			} catch(const Error &e) {
+			} catch (const Error &e) {
 				error = "Error: ";
 				error << (const_cast<Error &>(e)).getMessage();
 			} catch (const std::exception &e) {
@@ -186,7 +185,6 @@ namespace Quantum {
 			};
 
 			return false;
-
 		};
 
 		TPointer<Variable> ExecutiveX::returnValue() {
@@ -207,19 +205,18 @@ namespace Quantum {
 			executive.removeIncludeSource(fileName);
 		};
 
-
 		bool ExecutiveX::executeFileSkipLines(const char *fileName, size_t skipLines) {
 			String &error = (TSingletonThread<ExecutiveX_>::getValue())->error;
 
 			try {
 				TPointer<VariableArray> arguments(VariableArray::newArray());
-				(arguments->index(0))=VariableString::newVariable(fileName);
-				(arguments->index(1))=Context::getValueUndefined();
-				(arguments->index(2))=VariableNumber::newVariable(skipLines);
+				(arguments->index(0)) = VariableString::newVariable(fileName);
+				(arguments->index(1)) = Context::getValueUndefined();
+				(arguments->index(2)) = VariableNumber::newVariable(skipLines);
 				TPointer<Variable> script_((Context::getGlobalObject())->getPropertyBySymbol(Context::getSymbol("Script")));
 				(TSingletonThread<ExecutiveX_>::getValue())->returnValue = (script_->getPropertyBySymbol(Context::getSymbol("includeSkipLines")))->functionApply(script_, arguments);
 				return true;
-			} catch(const Error &e) {
+			} catch (const Error &e) {
 				error = "Error: ";
 				error << (const_cast<Error &>(e)).getMessage();
 			} catch (const std::exception &e) {
@@ -235,21 +232,21 @@ namespace Quantum {
 		bool ExecutiveX::executeStringSkipLines(const char *strSource, size_t skipLines) {
 			String &error = (TSingletonThread<ExecutiveX_>::getValue())->error;
 
-			if(strSource == nullptr) {
+			if (strSource == nullptr) {
 				error = "Error: Invalid source\n";
 				return false;
 			};
 
 			try {
 				TPointer<VariableArray> arguments(VariableArray::newArray());
-				(arguments->index(0))=VariableString::newVariable(strSource);
-				(arguments->index(1))=Context::getValueUndefined();
-				(arguments->index(2))=VariableNumber::newVariable(skipLines);
+				(arguments->index(0)) = VariableString::newVariable(strSource);
+				(arguments->index(1)) = Context::getValueUndefined();
+				(arguments->index(2)) = VariableNumber::newVariable(skipLines);
 				TPointer<Variable> script_((Context::getGlobalObject())->getPropertyBySymbol(Context::getSymbol("Script")));
 				(TSingletonThread<ExecutiveX_>::getValue())->returnValue = (script_->getPropertyBySymbol(Context::getSymbol("executeSkipLines")))->functionApply(script_, arguments);
 				return true;
 
-			} catch(const Error &e) {
+			} catch (const Error &e) {
 				error = "Error: ";
 				error << (const_cast<Error &>(e)).getMessage();
 			} catch (const std::exception &e) {
@@ -268,6 +265,3 @@ namespace Quantum {
 
 	};
 };
-
-
-

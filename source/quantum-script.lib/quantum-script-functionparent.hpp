@@ -11,7 +11,7 @@
 #define QUANTUM_SCRIPT_FUNCTIONPARENT_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLEARRAY_HPP
-#include "quantum-script-variablearray.hpp"
+#	include "quantum-script-variablearray.hpp"
 #endif
 
 namespace Quantum {
@@ -22,26 +22,22 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::FunctionParent>:
-			public TMemoryPoolActive<Quantum::Script::FunctionParent> {};
+		template <>
+		class TMemory<Quantum::Script::FunctionParent> : public TMemoryPoolActive<Quantum::Script::FunctionParent> {};
 	};
 };
-
 
 namespace Quantum {
 	namespace Script {
 
 		using namespace XYO;
 
-		class FunctionParent:
-			public Object {
+		class FunctionParent : public Object {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(FunctionParent);
-			public:
 
+			public:
 				TPointerX<FunctionParent> functionParent;
 				TPointerX<VariableArray> variables;
 				TPointerX<VariableArray> arguments;
@@ -57,11 +53,9 @@ namespace Quantum {
 					variables.deleteMemory();
 					arguments.deleteMemory();
 				};
-
 		};
 
 	};
 };
-
 
 #endif

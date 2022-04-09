@@ -22,7 +22,7 @@ namespace Quantum {
 
 		bool ObjectIteratorValue::next(Variable *out) {
 			PropertyNode *next_;
-			if(value) {
+			if (value) {
 				out->referenceSet(value->value);
 				value = value->successor();
 				return true;
@@ -33,6 +33,3 @@ namespace Quantum {
 
 	};
 };
-
-
-

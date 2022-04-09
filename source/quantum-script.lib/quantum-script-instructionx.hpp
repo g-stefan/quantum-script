@@ -11,13 +11,12 @@
 #define QUANTUM_SCRIPT_INSTRUCTIONX_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLE_HPP
-#include "quantum-script-variable.hpp"
+#	include "quantum-script-variable.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_PARSERASM_HPP
-#include "quantum-script-parserasm.hpp"
+#	include "quantum-script-parserasm.hpp"
 #endif
-
 
 namespace Quantum {
 	namespace Script {
@@ -27,15 +26,12 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::InstructionX>:
-			public TMemoryPoolActive<Quantum::Script::InstructionX> {};
+		template <>
+		class TMemory<Quantum::Script::InstructionX> : public TMemoryPoolActive<Quantum::Script::InstructionX> {};
 	};
 };
-
 
 namespace Quantum {
 	namespace Script {
@@ -80,11 +76,9 @@ namespace Quantum {
 					procedure = value.procedure;
 					return *this;
 				};
-
 		};
 
 	};
 };
-
 
 #endif

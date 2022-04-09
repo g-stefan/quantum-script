@@ -35,21 +35,20 @@ namespace Quantum {
 			prototype.pointerLink(this);
 
 			prototype.newMemory();
-			prototype->prototype=VariableObject::newVariable();
+			prototype->prototype = VariableObject::newVariable();
 
 			functionParent.pointerLink(this);
 			yieldVariables.pointerLink(this);
 			functionProcedure = nullptr;
 			yieldStep = 0;
-			yieldVariables=VariableArray::newVariable();
+			yieldVariables = VariableArray::newVariable();
 			valueSuper = nullptr;
-
 		};
 
 		Variable *VariableFunctionWithYield::newVariable(FunctionParent *functionParent, VariableArray *parentVariables, VariableArray *parentArguments, FunctionProcedureWithYield functionProcedure, Object *super, void *valueSuper) {
 			VariableFunctionWithYield *retV;
 			retV = TMemory<VariableFunctionWithYield>::newMemory();
-			if(functionParent || parentVariables || parentArguments) {
+			if (functionParent || parentVariables || parentArguments) {
 				retV->functionParent.newMemory();
 				retV->functionParent->functionParent = functionParent;
 				retV->functionParent->variables = parentVariables;
@@ -58,7 +57,7 @@ namespace Quantum {
 			retV->functionProcedure = functionProcedure;
 			retV->super = super;
 			retV->valueSuper = valueSuper;
-			return (Variable *) retV;
+			return (Variable *)retV;
 		};
 
 		String VariableFunctionWithYield::getVariableType() {
@@ -66,7 +65,7 @@ namespace Quantum {
 		};
 
 		TPointer<Variable> VariableFunctionWithYield::getPropertyBySymbol(Symbol symbolId) {
-			if(symbolId == Context::getSymbolPrototype()) {
+			if (symbolId == Context::getSymbolPrototype()) {
 				return prototype->prototype;
 			};
 
@@ -76,7 +75,7 @@ namespace Quantum {
 				return outX->value;
 			};
 
-			return Variable::getPropertyBySymbol(symbolId);			
+			return Variable::getPropertyBySymbol(symbolId);
 		};
 
 		TPointer<Variable> VariableFunctionWithYield::getPropertyByIndex(size_t index) {
@@ -87,13 +86,13 @@ namespace Quantum {
 
 		TPointer<Variable> VariableFunctionWithYield::getPropertyByVariable(Variable *index) {
 			if (TIsType<VariableSymbol>(index)) {
-				return getPropertyBySymbol(((VariableSymbol *) index)->value);
+				return getPropertyBySymbol(((VariableSymbol *)index)->value);
 			};
 			return getPropertyBySymbol(Context::getSymbol(index->toString()));
 		};
 
 		void VariableFunctionWithYield::setPropertyBySymbol(Symbol symbolId, Variable *valueToSet) {
-			if(symbolId == Context::getSymbolPrototype()) {
+			if (symbolId == Context::getSymbolPrototype()) {
 				prototype->prototype = valueToSet;
 				return;
 			};
@@ -101,7 +100,7 @@ namespace Quantum {
 			PropertyNode *node;
 			node = object->find(symbolId);
 			if (node) {
-				node->value=valueToSet;
+				node->value = valueToSet;
 				return;
 			};
 			node = Property::newNode();
@@ -119,7 +118,7 @@ namespace Quantum {
 
 		void VariableFunctionWithYield::setPropertyByVariable(Variable *index, Variable *valueToSet) {
 			if (TIsType<VariableSymbol>(index)) {
-				return setPropertyBySymbol(((VariableSymbol *) index)->value, valueToSet);
+				return setPropertyBySymbol(((VariableSymbol *)index)->value, valueToSet);
 			};
 			return setPropertyBySymbol(Context::getSymbol(index->toString()), valueToSet);
 		};
@@ -137,21 +136,21 @@ namespace Quantum {
 
 		bool VariableFunctionWithYield::deletePropertyByVariable(Variable *index) {
 			if (TIsType<VariableSymbol>(index)) {
-				return deletePropertyBySymbol(((VariableSymbol *) index)->value);
+				return deletePropertyBySymbol(((VariableSymbol *)index)->value);
 			};
 			return deletePropertyBySymbol(Context::getSymbol(index->toString()));
 		};
 
 		TPointer<Variable> VariableFunctionWithYield::functionApply(Variable *this_, VariableArray *arguments) {
-			if(yieldStep) {
+			if (yieldStep) {
 				return (*functionProcedure)(this, this_, arguments);
 			};
-			yieldVariables=VariableArray::newVariable();
+			yieldVariables = VariableArray::newVariable();
 			TPointer<Variable> retV = (*functionProcedure)(this, this_, arguments);
-			if(yieldStep) {
+			if (yieldStep) {
 				return retV;
 			};
-			yieldVariables=VariableArray::newVariable();
+			yieldVariables = VariableArray::newVariable();
 			return retV;
 		};
 
@@ -196,5 +195,3 @@ namespace Quantum {
 
 	};
 };
-
-

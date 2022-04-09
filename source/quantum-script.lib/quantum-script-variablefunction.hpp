@@ -11,23 +11,23 @@
 #define QUANTUM_SCRIPT_VARIABLEFUNCTION_HPP
 
 #ifndef QUANTUM_SCRIPT_CONTEXT_HPP
-#include "quantum-script-context.hpp"
+#	include "quantum-script-context.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_PROTOTYPE_HPP
-#include "quantum-script-prototype.hpp"
+#	include "quantum-script-prototype.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_FUNCTIONPARENT_HPP
-#include "quantum-script-functionparent.hpp"
+#	include "quantum-script-functionparent.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_VARIABLEOBJECT_HPP
-#include "quantum-script-variableobject.hpp"
+#	include "quantum-script-variableobject.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_VARIABLEARRAY_HPP
-#include "quantum-script-variablearray.hpp"
+#	include "quantum-script-variablearray.hpp"
 #endif
 
 namespace Quantum {
@@ -38,12 +38,10 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::VariableFunction>:
-			public TMemoryPoolActive<Quantum::Script::VariableFunction> {};
+		template <>
+		class TMemory<Quantum::Script::VariableFunction> : public TMemoryPoolActive<Quantum::Script::VariableFunction> {};
 	};
 };
 
@@ -55,14 +53,14 @@ namespace Quantum {
 		class VariableFunction;
 		typedef TPointer<Variable> (*FunctionProcedure)(VariableFunction *function, Variable *this_, VariableArray *arguments);
 
-		class VariableFunction :
-			public Variable {
+		class VariableFunction : public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableFunction);
 				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableFunction);
+
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeFunction;
-			public:
 
+			public:
 				TPointerX<Object> super;
 				void *valueSuper;
 
@@ -72,13 +70,13 @@ namespace Quantum {
 				TPointerX<FunctionParent> functionParent;
 				FunctionProcedure functionProcedure;
 
-				QUANTUM_SCRIPT_EXPORT  VariableFunction();
+				QUANTUM_SCRIPT_EXPORT VariableFunction();
 
-				inline void activeConstructor() {					
+				inline void activeConstructor() {
 					valueSuper = nullptr;
 					object.newMemory();
 					prototype.newMemory();
-					prototype->prototype=VariableObject::newVariable();
+					prototype->prototype = VariableObject::newVariable();
 				};
 
 				inline void activeDestructor() {
@@ -87,7 +85,6 @@ namespace Quantum {
 					prototype.deleteMemory();
 					super.deleteMemory();
 				};
-
 
 				QUANTUM_SCRIPT_EXPORT static Variable *newVariable(FunctionParent *functionParent, VariableArray *parentVariables, VariableArray *parentArguments, FunctionProcedure functionProcedure, Object *super, void *valueSuper);
 
@@ -109,7 +106,7 @@ namespace Quantum {
 				QUANTUM_SCRIPT_EXPORT bool instanceOfPrototype(Prototype *&out);
 
 				QUANTUM_SCRIPT_EXPORT TPointer<Iterator> getIteratorKey();
-				QUANTUM_SCRIPT_EXPORT TPointer<Iterator> getIteratorValue();				
+				QUANTUM_SCRIPT_EXPORT TPointer<Iterator> getIteratorValue();
 
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT String toString();
@@ -120,8 +117,4 @@ namespace Quantum {
 	};
 };
 
-
-
 #endif
-
-

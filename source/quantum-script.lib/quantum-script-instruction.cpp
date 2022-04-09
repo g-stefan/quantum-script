@@ -53,22 +53,22 @@ namespace Quantum {
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmPushSymbol) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-#ifdef XYO_OBJECT_COUNTING_DEBUG
-			printf(">%p    push-symbol %d\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value);
+#	ifdef XYO_OBJECT_COUNTING_DEBUG
+			printf(">%p    push-symbol %d\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value);
 			fflush(stdout);
-#else
-			String symbolName = Context::getSymbolMirror(((VariableSymbol *) operand)->value);
-			printf(">%p    push-symbol %u : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
+#	else
+			String symbolName = Context::getSymbolMirror(((VariableSymbol *)operand)->value);
+			printf(">%p    push-symbol %u : %s\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value, symbolName.value());
 			fflush(stdout);
-#endif
+#	endif
 #endif
 
-			context->push((Context::getGlobalObject())->getPropertyBySymbol(((VariableSymbol *) operand)->value));
+			context->push((Context::getGlobalObject())->getPropertyBySymbol(((VariableSymbol *)operand)->value));
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmPushBoolean) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    push-boolean %u\n", context->currentProgramCounter, (uint16_t)((VariableBoolean *) operand)->value);
+			printf(">%p    push-boolean %u\n", context->currentProgramCounter, (uint16_t)((VariableBoolean *)operand)->value);
 			fflush(stdout);
 #endif
 			context->push(operand);
@@ -76,17 +76,16 @@ namespace Quantum {
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmPushNumber) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    push-number %g\n", context->currentProgramCounter, ((VariableNumber *) operand)->value);
+			printf(">%p    push-number %g\n", context->currentProgramCounter, ((VariableNumber *)operand)->value);
 			fflush(stdout);
 #endif
 
 			context->push(operand);
 		};
 
-
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmPushString) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    push-string \"%s\"\n", context->currentProgramCounter, ((VariableString *) operand)->value.value());
+			printf(">%p    push-string \"%s\"\n", context->currentProgramCounter, ((VariableString *)operand)->value.value());
 			fflush(stdout);
 #endif
 
@@ -130,10 +129,8 @@ namespace Quantum {
 			TPointer<Variable> operand1(context->popTransfer());
 
 			context->push(operand1->referenceSet(VariableNumber::newVariable(
-						((operand1)->referenceToNumber()) - ((operand2)->toNumber())
-					)));
+			    ((operand1)->referenceToNumber()) - ((operand2)->toNumber()))));
 		};
-
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorAssignMul) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -145,10 +142,8 @@ namespace Quantum {
 			TPointer<Variable> operand1(context->popTransfer());
 
 			context->push(operand1->referenceSet(VariableNumber::newVariable(
-						((operand1)->referenceToNumber()) * ((operand2)->toNumber())
-					)));
+			    ((operand1)->referenceToNumber()) * ((operand2)->toNumber()))));
 		};
-
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorAssignDiv) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -160,11 +155,8 @@ namespace Quantum {
 			TPointer<Variable> operand1(context->popTransfer());
 
 			context->push(operand1->referenceSet(VariableNumber::newVariable(
-						((operand1)->referenceToNumber()) / ((operand2)->toNumber())
-					)));
-
+			    ((operand1)->referenceToNumber()) / ((operand2)->toNumber()))));
 		};
-
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorAssignMod) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -177,18 +169,15 @@ namespace Quantum {
 			Number value = operand1->referenceToNumber();
 			Number x = operand2->toNumber();
 
-			if(isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
+			if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
 				context->push(operand1->referenceSet(VariableNumber::newVariable(
-							NAN
-						)));
+				    NAN)));
 				return;
 			};
 
 			context->push(operand1->referenceSet(VariableNumber::newVariable(
-						((Integer)value) % ((Integer)x)
-					)));
+			    ((Integer)value) % ((Integer)x))));
 		};
-
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorAssignBitwiseOr) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -202,19 +191,16 @@ namespace Quantum {
 			Number value = operand1->referenceToNumber();
 			Number x = operand2->toNumber();
 
-			if(isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
+			if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
 
 				context->push(operand1->referenceSet(VariableNumber::newVariable(
-							NAN
-						)));
+				    NAN)));
 				return;
 			};
 
 			context->push(operand1->referenceSet(VariableNumber::newVariable(
-						((Integer)value) | ((Integer)x)
-					)));
+			    ((Integer)value) | ((Integer)x))));
 		};
-
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorAssignBitwiseAnd) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -228,17 +214,15 @@ namespace Quantum {
 			Number value = operand1->referenceToNumber();
 			Number x = operand2->toNumber();
 
-			if(isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
+			if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
 
 				context->push(operand1->referenceSet(VariableNumber::newVariable(
-							NAN
-						)));
+				    NAN)));
 				return;
 			};
 
 			context->push(operand1->referenceSet(VariableNumber::newVariable(
-						((Integer)value) & ((Integer)x)
-					)));
+			    ((Integer)value) & ((Integer)x))));
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorAssignBitwiseLeftShift) {
@@ -253,17 +237,15 @@ namespace Quantum {
 			Number value = operand1->referenceToNumber();
 			Number x = operand2->toNumber();
 
-			if(isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
+			if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
 
 				context->push(operand1->referenceSet(VariableNumber::newVariable(
-							NAN
-						)));
+				    NAN)));
 				return;
 			};
 
 			context->push(operand1->referenceSet(VariableNumber::newVariable(
-						((Integer)value) << ((Integer)x)
-					)));
+			    ((Integer)value) << ((Integer)x))));
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorAssignBitwiseRightShift) {
@@ -278,18 +260,15 @@ namespace Quantum {
 			Number value = operand1->referenceToNumber();
 			Number x = operand2->toNumber();
 
-			if(isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
+			if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
 
 				context->push(operand1->referenceSet(VariableNumber::newVariable(
-							NAN
-						)));
+				    NAN)));
 				return;
 			};
 
 			context->push(operand1->referenceSet(VariableNumber::newVariable(
-						((Integer)value) >> ((Integer)x)
-					)));
-
+			    ((Integer)value) >> ((Integer)x))));
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorAssignBitwiseRightShiftZero) {
@@ -304,18 +283,15 @@ namespace Quantum {
 			Number value = operand1->referenceToNumber();
 			Number x = operand2->toNumber();
 
-			if(isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
+			if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
 
 				context->push(operand1->referenceSet(VariableNumber::newVariable(
-							NAN
-						)));
+				    NAN)));
 				return;
 			};
 
-
 			context->push(operand1->referenceSet(VariableNumber::newVariable(
-						((UInteger)value) >> ((Integer)x)
-					)));
+			    ((UInteger)value) >> ((Integer)x))));
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorAssignBitwiseXor) {
@@ -327,23 +303,19 @@ namespace Quantum {
 			TPointer<Variable> operand2(context->popTransfer());
 			TPointer<Variable> operand1(context->popTransfer());
 
-
 			Number value = operand1->referenceToNumber();
 			Number x = operand2->toNumber();
 
-			if(isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
+			if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
 
 				context->push(operand1->referenceSet(VariableNumber::newVariable(
-							NAN
-						)));
+				    NAN)));
 				return;
 			};
 
 			context->push(operand1->referenceSet(VariableNumber::newVariable(
-						((Integer)value) ^ ((Integer)x)
-					)));
+			    ((Integer)value) ^ ((Integer)x))));
 		};
-
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorEqual) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -367,7 +339,6 @@ namespace Quantum {
 			context->push(VariableBoolean::newVariable(operand1->isEqualStrict(operand2)));
 		};
 
-
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorPlus) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 			printf(">%p    operator-plus\n", context->currentProgramCounter);
@@ -379,7 +350,6 @@ namespace Quantum {
 
 			context->push(operand1->operatorPlus(operand2));
 		};
-
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorUnaryPlus) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -466,7 +436,6 @@ namespace Quantum {
 			context->push(VariableBoolean::newVariable(!(operand1->isEqualStrict(operand2))));
 		};
 
-
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorNot) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 			printf(">%p    operator-not\n", context->currentProgramCounter);
@@ -474,7 +443,6 @@ namespace Quantum {
 #endif
 
 			TPointer<Variable> operand1(context->popTransfer());
-
 
 			context->push(VariableBoolean::newVariable(!operand1->toBoolean()));
 		};
@@ -536,11 +504,11 @@ namespace Quantum {
 			TPointer<Variable> operand2(context->popTransfer());
 			TPointer<Variable> operand1(context->popTransfer());
 
-			if(operand1->toBoolean()) {
+			if (operand1->toBoolean()) {
 				context->push(VariableBoolean::newVariable(true));
 				return;
 			};
-			if(operand2->toBoolean()) {
+			if (operand2->toBoolean()) {
 				context->push(VariableBoolean::newVariable(true));
 				return;
 			};
@@ -558,7 +526,7 @@ namespace Quantum {
 
 			Number value = operand1->toNumber();
 			Number x = operand2->toNumber();
-			if(isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
+			if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
 				context->push(VariableNumber::newVariable(NAN));
 				return;
 			};
@@ -574,14 +542,13 @@ namespace Quantum {
 			TPointer<Variable> operand2(context->popTransfer());
 			TPointer<Variable> operand1(context->popTransfer());
 
-			if(operand1->toBoolean()) {
-				if(operand2->toBoolean()) {
+			if (operand1->toBoolean()) {
+				if (operand2->toBoolean()) {
 					context->push(VariableBoolean::newVariable(true));
 					return;
 				};
 			};
 			context->push(VariableBoolean::newVariable(false));
-
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorBitwiseAnd) {
@@ -595,7 +562,7 @@ namespace Quantum {
 
 			Number value = operand1->toNumber();
 			Number x = operand2->toNumber();
-			if(isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
+			if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
 				context->push(VariableNumber::newVariable(NAN));
 				return;
 			};
@@ -611,7 +578,7 @@ namespace Quantum {
 			TPointer<Variable> operand1(context->popTransfer());
 
 			Number value = operand1->toNumber();
-			if(isnan(value) || isinf(value)) {
+			if (isnan(value) || isinf(value)) {
 				context->push(VariableNumber::newVariable(NAN));
 				return;
 			};
@@ -628,7 +595,7 @@ namespace Quantum {
 
 			Number value = operand1->toNumber();
 			Number x = operand2->toNumber();
-			if(isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
+			if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
 				context->push(VariableNumber::newVariable(NAN));
 				return;
 			};
@@ -646,7 +613,7 @@ namespace Quantum {
 
 			Number value = operand1->toNumber();
 			Number x = operand2->toNumber();
-			if(isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
+			if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
 				context->push(VariableNumber::newVariable(NAN));
 				return;
 			};
@@ -663,7 +630,7 @@ namespace Quantum {
 
 			Number value = operand1->toNumber();
 			Number x = operand2->toNumber();
-			if(isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
+			if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
 				context->push(VariableNumber::newVariable(NAN));
 				return;
 			};
@@ -681,13 +648,12 @@ namespace Quantum {
 
 			Number value = operand1->toNumber();
 			Number x = operand2->toNumber();
-			if(isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
+			if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
 				context->push(VariableNumber::newVariable(NAN));
 				return;
 			};
 			context->push(VariableNumber::newVariable(((Integer)value) ^ ((Integer)x)));
 		};
-
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorIn) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -700,7 +666,6 @@ namespace Quantum {
 
 			context->push(VariableBoolean::newVariable(operand2->hasPropertyByVariable(operand1)));
 		};
-
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmNop) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -718,19 +683,19 @@ namespace Quantum {
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmReference) { //  ... x.y
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-#ifdef XYO_OBJECT_COUNTING_DEBUG
-			printf(">%p    reference %d\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value);
+#	ifdef XYO_OBJECT_COUNTING_DEBUG
+			printf(">%p    reference %d\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value);
 			fflush(stdout);
-#else
-			String symbolName = Context::getSymbolMirror(((VariableSymbol *) operand)->value);
+#	else
+			String symbolName = Context::getSymbolMirror(((VariableSymbol *)operand)->value);
 
-			printf(">%p    reference %u : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
+			printf(">%p    reference %u : %s\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value, symbolName.value());
 			fflush(stdout);
-#endif
+#	endif
 #endif
 			TPointer<Variable> operand1(context->popTransfer());
 
-			context->push(operand1->getPropertyBySymbol(((VariableSymbol *) operand)->value));
+			context->push(operand1->getPropertyBySymbol(((VariableSymbol *)operand)->value));
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmEnterContext) {
@@ -760,7 +725,7 @@ namespace Quantum {
 			ProgramCounter *tryBreak_;
 
 			do {
-				if(context->pcContext == nullptr) {
+				if (context->pcContext == nullptr) {
 					break;
 				};
 
@@ -798,7 +763,7 @@ namespace Quantum {
 			TPointer<Variable> pc;
 
 			do {
-				if(context->pcContext == nullptr) {
+				if (context->pcContext == nullptr) {
 					break;
 				};
 
@@ -836,7 +801,6 @@ namespace Quantum {
 			context->peek(operand1);
 
 			context->push(VariableBoolean::newVariable(operand1->isEqual(operand2)));
-
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmPop1) {
@@ -856,7 +820,6 @@ namespace Quantum {
 			context->push(VariableNull::newVariable());
 		};
 
-
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmReturn) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 			printf(">%p    return\n", context->currentProgramCounter);
@@ -867,14 +830,14 @@ namespace Quantum {
 			ProgramCounter *finally_;
 			ProgramCounter *tryReturn_;
 
-			//coroutine - reset this function
-			if(context->functionContext->thisFunction_) {
+			// coroutine - reset this function
+			if (context->functionContext->thisFunction_) {
 				((VariableVmFunction *)(context->functionContext->thisFunction_.value()))->coroutineContext->empty();
 				((VariableVmFunction *)(context->functionContext->thisFunction_.value()))->value = ((VariableVmFunction *)(context->functionContext->thisFunction_.value()))->originalValue;
 			};
 
 			do {
-				if(context->pcContext == nullptr) {
+				if (context->pcContext == nullptr) {
 					break;
 				};
 
@@ -922,10 +885,10 @@ namespace Quantum {
 			context->stackTrace->push(tracePoint);
 
 			do {
-				if(context->pcContext == nullptr) {
+				if (context->pcContext == nullptr) {
 					break;
 				};
-				if(context->pcContext->pc_) {
+				if (context->pcContext->pc_) {
 					tracePoint.sourceSymbol = (reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(context->pcContext->pc_))->value.sourceSymbol;
 					tracePoint.sourceLineNumber = (reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(context->pcContext->pc_))->value.sourceLineNumber;
 					context->stackTrace->push(tracePoint);
@@ -935,9 +898,9 @@ namespace Quantum {
 				tryThrow_ = context->pcContext->tryThrow_;
 
 				// reset context stack if set ...
-				if(context->pcContext->stackLink_) {
-					while(context->pcContext->stackLink_ != context->head) {
-						if(context->isEmpty()) {
+				if (context->pcContext->stackLink_) {
+					while (context->pcContext->stackLink_ != context->head) {
+						if (context->isEmpty()) {
 							break;
 						};
 						context->pop();
@@ -958,7 +921,6 @@ namespace Quantum {
 						context->pcContext->pc_ = tryThrow_;
 						context->nextProgramCounter = finally_;
 						return;
-
 					};
 				};
 			} while (catch_ == nullptr);
@@ -994,45 +956,44 @@ namespace Quantum {
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmIfFalseGoto) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    if-false-goto %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *) operand)->value);
+			printf(">%p    if-false-goto %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *)operand)->value);
 			fflush(stdout);
 #endif
 
 			TPointer<Variable> operand1(context->popTransfer());
 
 			if (!operand1->toBoolean()) {
-				context->nextProgramCounter = ((VariableVmProgramCounter *) operand)->value;
+				context->nextProgramCounter = ((VariableVmProgramCounter *)operand)->value;
 			};
-
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmGoto) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    goto %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *) operand)->value);
+			printf(">%p    goto %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *)operand)->value);
 			fflush(stdout);
 #endif
-			context->nextProgramCounter = ((VariableVmProgramCounter *) operand)->value;
+			context->nextProgramCounter = ((VariableVmProgramCounter *)operand)->value;
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmContextSetBreak) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    context-set-break %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *) operand)->value);
+			printf(">%p    context-set-break %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *)operand)->value);
 			fflush(stdout);
 #endif
-			context->pcContext->break_ = (((VariableVmProgramCounter *) operand)->value);
+			context->pcContext->break_ = (((VariableVmProgramCounter *)operand)->value);
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmContextSetContinue) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    context-set-continue %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *) operand)->value);
+			printf(">%p    context-set-continue %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *)operand)->value);
 			fflush(stdout);
 #endif
-			context->pcContext->continue_ = (((VariableVmProgramCounter *) operand)->value);
+			context->pcContext->continue_ = (((VariableVmProgramCounter *)operand)->value);
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmIfTrueGoto) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    if-true-goto %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *) operand)->value);
+			printf(">%p    if-true-goto %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *)operand)->value);
 			fflush(stdout);
 #endif
 
@@ -1041,58 +1002,56 @@ namespace Quantum {
 			bool retV;
 
 			if (operand1->toBoolean()) {
-				context->nextProgramCounter = ((VariableVmProgramCounter *) operand)->value;
+				context->nextProgramCounter = ((VariableVmProgramCounter *)operand)->value;
 			};
-
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmContextSetCatch) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    context-set-catch %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *) operand)->value);
+			printf(">%p    context-set-catch %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *)operand)->value);
 			fflush(stdout);
 #endif
-			context->pcContext->catch_ = (((VariableVmProgramCounter *) operand)->value);
+			context->pcContext->catch_ = (((VariableVmProgramCounter *)operand)->value);
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmContextSetFinally) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    context-set-finally %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *) operand)->value);
+			printf(">%p    context-set-finally %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *)operand)->value);
 			fflush(stdout);
 #endif
-			context->pcContext->finally_ = (((VariableVmProgramCounter *) operand)->value);
+			context->pcContext->finally_ = (((VariableVmProgramCounter *)operand)->value);
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmContextSetTryBreak) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    context-set-try-break %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *) operand)->value);
+			printf(">%p    context-set-try-break %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *)operand)->value);
 			fflush(stdout);
 #endif
-			context->pcContext->tryBreak_ = (((VariableVmProgramCounter *) operand)->value);
+			context->pcContext->tryBreak_ = (((VariableVmProgramCounter *)operand)->value);
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmContextSetTryContinue) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    context-set-try-continue %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *) operand)->value);
+			printf(">%p    context-set-try-continue %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *)operand)->value);
 			fflush(stdout);
 #endif
-			context->pcContext->tryContinue_ = (((VariableVmProgramCounter *) operand)->value);
+			context->pcContext->tryContinue_ = (((VariableVmProgramCounter *)operand)->value);
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmContextSetTryReturn) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    context-set-try-return %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *) operand)->value);
+			printf(">%p    context-set-try-return %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *)operand)->value);
 			fflush(stdout);
 #endif
-			context->pcContext->tryReturn_ = (((VariableVmProgramCounter *) operand)->value);
+			context->pcContext->tryReturn_ = (((VariableVmProgramCounter *)operand)->value);
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmContextSetTryThrow) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    context-set-try-throw %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *) operand)->value);
+			printf(">%p    context-set-try-throw %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *)operand)->value);
 			fflush(stdout);
 #endif
-			context->pcContext->tryThrow_ = (((VariableVmProgramCounter *) operand)->value);
-
+			context->pcContext->tryThrow_ = (((VariableVmProgramCounter *)operand)->value);
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmEnterFirstContext) {
@@ -1118,13 +1077,12 @@ namespace Quantum {
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmCallNative) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    call-native %p\n", context->currentProgramCounter, ((VariableNativeVmFunction *) operand)->procedure);
+			printf(">%p    call-native %p\n", context->currentProgramCounter, ((VariableNativeVmFunction *)operand)->procedure);
 			fflush(stdout);
 #endif
-			(*((VariableNativeVmFunction *) operand)->procedure)(
-				context,
-				((VariableNativeVmFunction *) operand)->operand
-			);
+			(*((VariableNativeVmFunction *)operand)->procedure)(
+			    context,
+			    ((VariableNativeVmFunction *)operand)->operand);
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorReference) { // ... = x[y]
@@ -1146,7 +1104,6 @@ namespace Quantum {
 			context->push(VariableArray::newVariable());
 		};
 
-
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmArrayPush) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 			printf(">%p    array-push\n", context->currentProgramCounter);
@@ -1157,7 +1114,7 @@ namespace Quantum {
 
 			context->peek(operand1);
 
-			(*((VariableArray *) operand1)->value)[((VariableArray *) operand1)->value->length()] = operand2;
+			(*((VariableArray *)operand1)->value)[((VariableArray *)operand1)->value->length()] = operand2;
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorArrayPush) {
@@ -1168,40 +1125,40 @@ namespace Quantum {
 			TPointer<Variable> operand2(context->popTransfer());
 			TPointer<Variable> operand1(context->popTransfer());
 
-			(*((VariableArray *) operand1.value())->value)[((VariableArray *) operand1.value())->value->length()] = operand2;
+			(*((VariableArray *)operand1.value())->value)[((VariableArray *)operand1.value())->value->length()] = operand2;
 			context->push(operand2);
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmPushObjectReference) { // x= ... (global.x= ...)
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-#ifdef XYO_OBJECT_COUNTING_DEBUG
-			printf(">%p    push-object-reference %d\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value);
+#	ifdef XYO_OBJECT_COUNTING_DEBUG
+			printf(">%p    push-object-reference %d\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value);
 			fflush(stdout);
-#else
-			String symbolName = Context::getSymbolMirror(((VariableSymbol *) operand)->value);
+#	else
+			String symbolName = Context::getSymbolMirror(((VariableSymbol *)operand)->value);
 
-			printf(">%p    push-object-reference %u : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
+			printf(">%p    push-object-reference %u : %s\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value, symbolName.value());
 			fflush(stdout);
+#	endif
 #endif
-#endif
-			context->push(VariableReferenceSymbol::newVariable(Context::getGlobalObject(), ((VariableSymbol *) operand)->value));
+			context->push(VariableReferenceSymbol::newVariable(Context::getGlobalObject(), ((VariableSymbol *)operand)->value));
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmReferenceObjectReference) { // x.y= ...
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-#ifdef XYO_OBJECT_COUNTING_DEBUG
-			printf(">%p    reference-object-reference %d\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value);
+#	ifdef XYO_OBJECT_COUNTING_DEBUG
+			printf(">%p    reference-object-reference %d\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value);
 			fflush(stdout);
-#else
-			String symbolName = Context::getSymbolMirror(((VariableSymbol *) operand)->value);
+#	else
+			String symbolName = Context::getSymbolMirror(((VariableSymbol *)operand)->value);
 
-			printf(">%p    reference-object-reference %u : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
+			printf(">%p    reference-object-reference %u : %s\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value, symbolName.value());
 			fflush(stdout);
-#endif
+#	endif
 #endif
 			TPointer<Variable> operand1(context->popTransfer());
 
-			context->push(VariableReferenceSymbol::newVariable(operand1, ((VariableSymbol *) operand)->value));
+			context->push(VariableReferenceSymbol::newVariable(operand1, ((VariableSymbol *)operand)->value));
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorInstanceOf) {
@@ -1225,7 +1182,6 @@ namespace Quantum {
 			context->push(VariableString::newVariable(operand1->getVariableType()));
 		};
 
-
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorReferenceReference) { // x[y]= ...
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 			printf(">%p    operator-reference-reference\n", context->currentProgramCounter);
@@ -1246,7 +1202,7 @@ namespace Quantum {
 
 			TPointer<Variable> operand1(context->popTransfer());
 
-			context->push(operand1->referenceSet(VariableNumber::newVariable(operand1->referenceToNumber()+1)));
+			context->push(operand1->referenceSet(VariableNumber::newVariable(operand1->referenceToNumber() + 1)));
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorPlusPlusRight) {
@@ -1257,9 +1213,8 @@ namespace Quantum {
 
 			TPointer<Variable> operand1(context->popTransfer());
 
-
 			context->push(operand1->referenceGet());
-			operand1->referenceSet(VariableNumber::newVariable(operand1->referenceToNumber()+1));
+			operand1->referenceSet(VariableNumber::newVariable(operand1->referenceToNumber() + 1));
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorMinusMinusLeft) {
@@ -1269,7 +1224,7 @@ namespace Quantum {
 #endif
 			TPointer<Variable> operand1(context->popTransfer());
 
-			context->push(operand1->referenceSet(VariableNumber::newVariable(operand1->referenceToNumber()-1)));
+			context->push(operand1->referenceSet(VariableNumber::newVariable(operand1->referenceToNumber() - 1)));
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorMinusMinusRight) {
@@ -1280,8 +1235,7 @@ namespace Quantum {
 			TPointer<Variable> operand1(context->popTransfer());
 
 			context->push(operand1->referenceGet());
-			operand1->referenceSet(VariableNumber::newVariable(operand1->referenceToNumber()-1));
-
+			operand1->referenceSet(VariableNumber::newVariable(operand1->referenceToNumber() - 1));
 		};
 
 		//
@@ -1307,54 +1261,50 @@ namespace Quantum {
 				return;
 			};
 
-			if(!(((VariableVmFunction *) operand1.value())->coroutineContext->isEmpty())) {
+			if (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
 				TPointer<ExecutiveContextPc> contextTemp;
-				((VariableVmFunction *) operand1.value())->coroutineContext->pop(contextTemp);
+				((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 				context->contextStack->push(contextTemp);
 				(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
-				(context->contextStack->head)->value->functionContext->functionArguments=functionArguments;
-				while(!(((VariableVmFunction *) operand1.value())->coroutineContext->isEmpty())) {
-					((VariableVmFunction *) operand1.value())->coroutineContext->pop(contextTemp);
+				(context->contextStack->head)->value->functionContext->functionArguments = functionArguments;
+				while (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
+					((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 					context->contextStack->push(contextTemp);
 				};
-				context->nextProgramCounter = ((VariableVmFunction *) operand1.value())->value;
+				context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 
 				context->pcContext = (context->contextStack->head)->value;
 				context->functionContext = context->pcContext->functionContext;
 				return;
-
 			};
 
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    - function-hint %04X\n", context->currentProgramCounter, ((VariableVmFunction *) operand1.value())->functionHint);
+			printf(">%p    - function-hint %04X\n", context->currentProgramCounter, ((VariableVmFunction *)operand1.value())->functionHint);
 			fflush(stdout);
 #endif
 			context->contextStack->enterMaster(context->functionContext);
 			context->pcContext = context->functionContext;
 			context->pcContext->pc_ = context->nextProgramCounter;
 
-
-			if(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::This) {
-				context->functionContext->this_=VariableUndefined::newVariable();
+			if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::This) {
+				context->functionContext->this_ = VariableUndefined::newVariable();
 			};
-			if((((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Yield) ||
-				(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Self)) {
-				context->functionContext->thisFunction_=operand1;
+			if ((((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Yield) ||
+			    (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Self)) {
+				context->functionContext->thisFunction_ = operand1;
 			};
-			if(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Arguments) {
-				context->functionContext->functionArguments=functionArguments;
+			if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Arguments) {
+				context->functionContext->functionArguments = functionArguments;
 			};
-			if(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::LocalVariables) {
-				context->functionContext->functionLocalVariables=VariableArray::newArray();
+			if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::LocalVariables) {
+				context->functionContext->functionLocalVariables = VariableArray::newArray();
 			};
 
 #ifndef QUANTUM_SCRIPT_DISABLE_CLOSURE
-			context->functionContext->functionParent = ((VariableVmFunction *) operand1.value())->functionParent;
+			context->functionContext->functionParent = ((VariableVmFunction *)operand1.value())->functionParent;
 #endif
-			context->nextProgramCounter = ((VariableVmFunction *) operand1.value())->value;
-
+			context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 		};
-
 
 		//
 		// 1. EnterContext
@@ -1367,65 +1317,64 @@ namespace Quantum {
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmXCallSymbol) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			String symbolName = Context::getSymbolMirror(((VariableSymbol *) operand)->value);
+			String symbolName = Context::getSymbolMirror(((VariableSymbol *)operand)->value);
 
-			printf(">%p    x-call-symbol %u : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
+			printf(">%p    x-call-symbol %u : %s\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value, symbolName.value());
 			fflush(stdout);
 #endif
 			TPointer<Variable> operand1;
 
 			TPointer<VariableArray> functionArguments(TTransfer<VariableArray, Variable>::cast(context->popTransfer()));
 
-			operand1 = (Context::getGlobalObject())->getPropertyBySymbol(((VariableSymbol *) operand)->value);
+			operand1 = (Context::getGlobalObject())->getPropertyBySymbol(((VariableSymbol *)operand)->value);
 
 			if (!TIsType<VariableVmFunction>(operand1)) {
 				context->push(operand1->functionApply(Context::getValueUndefined(), functionArguments));
 				return;
 			};
 
-			if(!(((VariableVmFunction *) operand1.value())->coroutineContext->isEmpty())) {
+			if (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
 				TPointer<ExecutiveContextPc> contextTemp;
-				((VariableVmFunction *) operand1.value())->coroutineContext->pop(contextTemp);
+				((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 				context->contextStack->push(contextTemp);
 				(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
-				(context->contextStack->head)->value->functionContext->functionArguments=functionArguments;
-				while(!(((VariableVmFunction *) operand1.value())->coroutineContext->isEmpty())) {
-					((VariableVmFunction *) operand1.value())->coroutineContext->pop(contextTemp);
+				(context->contextStack->head)->value->functionContext->functionArguments = functionArguments;
+				while (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
+					((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 					context->contextStack->push(contextTemp);
 				};
-				context->nextProgramCounter = ((VariableVmFunction *) operand1.value())->value;
+				context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 
 				context->pcContext = (context->contextStack->head)->value;
 				context->functionContext = context->pcContext->functionContext;
 				return;
-
 			};
 
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    - function-hint %04X\n", context->currentProgramCounter, ((VariableVmFunction *) operand1.value())->functionHint);
+			printf(">%p    - function-hint %04X\n", context->currentProgramCounter, ((VariableVmFunction *)operand1.value())->functionHint);
 			fflush(stdout);
 #endif
 			context->contextStack->enterMaster(context->functionContext);
 			context->pcContext = context->functionContext;
 			context->pcContext->pc_ = context->nextProgramCounter;
 
-			if(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::This) {
-				context->functionContext->this_=VariableUndefined::newVariable();
+			if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::This) {
+				context->functionContext->this_ = VariableUndefined::newVariable();
 			};
-			if((((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Yield) ||
-				(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Self)) {
-				context->functionContext->thisFunction_=operand1;
+			if ((((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Yield) ||
+			    (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Self)) {
+				context->functionContext->thisFunction_ = operand1;
 			};
-			if(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Arguments) {
-				context->functionContext->functionArguments=functionArguments;
+			if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Arguments) {
+				context->functionContext->functionArguments = functionArguments;
 			};
-			if(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::LocalVariables) {
-				context->functionContext->functionLocalVariables=VariableArray::newArray();
+			if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::LocalVariables) {
+				context->functionContext->functionLocalVariables = VariableArray::newArray();
 			};
 #ifndef QUANTUM_SCRIPT_DISABLE_CLOSURE
-			context->functionContext->functionParent = ((VariableVmFunction *) operand1.value())->functionParent;
+			context->functionContext->functionParent = ((VariableVmFunction *)operand1.value())->functionParent;
 #endif
-			context->nextProgramCounter = ((VariableVmFunction *) operand1.value())->value;
+			context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 		};
 
 		//
@@ -1453,23 +1402,22 @@ namespace Quantum {
 				return;
 			};
 
-
-			if(!(((VariableVmFunction *) operand1.value())->coroutineContext->isEmpty())) {
+			if (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
 				TPointer<ExecutiveContextPc> contextTemp;
 
-				((VariableVmFunction *) operand1.value())->coroutineContext->pop(contextTemp);
+				((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 				context->contextStack->push(contextTemp);
 
 				context->functionContext->this_ = operand2;
 
 				(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
-				(context->contextStack->head)->value->functionContext->functionArguments=functionArguments;
-				while(!(((VariableVmFunction *) operand1.value())->coroutineContext->isEmpty())) {
-					((VariableVmFunction *) operand1.value())->coroutineContext->pop(contextTemp);
+				(context->contextStack->head)->value->functionContext->functionArguments = functionArguments;
+				while (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
+					((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 					context->contextStack->push(contextTemp);
 				};
 
-				context->nextProgramCounter = ((VariableVmFunction *) operand1.value())->value;
+				context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 
 				context->pcContext = (context->contextStack->head)->value;
 				context->functionContext = context->pcContext->functionContext;
@@ -1478,40 +1426,36 @@ namespace Quantum {
 			};
 
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    - function-hint %04X\n", context->currentProgramCounter, ((VariableVmFunction *) operand1.value())->functionHint);
+			printf(">%p    - function-hint %04X\n", context->currentProgramCounter, ((VariableVmFunction *)operand1.value())->functionHint);
 			fflush(stdout);
 #endif
 
 			context->contextStack->enterMaster(context->functionContext);
 			context->pcContext = context->functionContext;
 
-
 			context->functionContext->this_ = operand2;
 
 			context->pcContext->pc_ = context->nextProgramCounter;
 
-			if((((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Yield) ||
-				(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Self)) {
-				context->functionContext->thisFunction_=operand1;
+			if ((((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Yield) ||
+			    (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Self)) {
+				context->functionContext->thisFunction_ = operand1;
 			};
 
-			if(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Arguments) {
-				context->functionContext->functionArguments=functionArguments;
+			if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Arguments) {
+				context->functionContext->functionArguments = functionArguments;
 			};
 
-			if(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::LocalVariables) {
-				context->functionContext->functionLocalVariables=VariableArray::newArray();
+			if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::LocalVariables) {
+				context->functionContext->functionLocalVariables = VariableArray::newArray();
 			};
 
 #ifndef QUANTUM_SCRIPT_DISABLE_CLOSURE
-			context->functionContext->functionParent = ((VariableVmFunction *) operand1.value())->functionParent;
+			context->functionContext->functionParent = ((VariableVmFunction *)operand1.value())->functionParent;
 #endif
 
-			context->nextProgramCounter = ((VariableVmFunction *) operand1.value())->value;
+			context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 		};
-
-
-
 
 		//
 		// 1. EnterFirstContext
@@ -1538,22 +1482,22 @@ namespace Quantum {
 				return;
 			};
 
-			if(!(((VariableVmFunction *) operand1.value())->coroutineContext->isEmpty())) {
+			if (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
 				TPointer<ExecutiveContextPc> contextTemp;
 
-				((VariableVmFunction *) operand1.value())->coroutineContext->pop(contextTemp);
+				((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 				context->contextStack->push(contextTemp);
 
 				context->functionContext->this_ = operand2;
 				(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
-				(context->contextStack->head)->value->functionContext->functionArguments=functionArguments;
+				(context->contextStack->head)->value->functionContext->functionArguments = functionArguments;
 
-				while(!(((VariableVmFunction *) operand1.value())->coroutineContext->isEmpty())) {
-					((VariableVmFunction *) operand1.value())->coroutineContext->pop(contextTemp);
+				while (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
+					((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 					context->contextStack->push(contextTemp);
 				};
 
-				context->nextProgramCounter = ((VariableVmFunction *) operand1.value())->value;
+				context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 
 				context->pcContext = (context->contextStack->head)->value;
 				context->functionContext = context->pcContext->functionContext;
@@ -1561,7 +1505,7 @@ namespace Quantum {
 			};
 
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    - function-hint %04X\n", context->currentProgramCounter, ((VariableVmFunction *) operand1.value())->functionHint);
+			printf(">%p    - function-hint %04X\n", context->currentProgramCounter, ((VariableVmFunction *)operand1.value())->functionHint);
 			fflush(stdout);
 #endif
 
@@ -1570,23 +1514,23 @@ namespace Quantum {
 			context->functionContext->this_ = operand2;
 			context->pcContext->pc_ = context->nextProgramCounter;
 
-			if((((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Yield) ||
-				(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Self)) {
-				context->functionContext->thisFunction_=operand1;
+			if ((((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Yield) ||
+			    (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Self)) {
+				context->functionContext->thisFunction_ = operand1;
 			};
 
-			if(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Arguments) {
-				context->functionContext->functionArguments=functionArguments;
+			if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Arguments) {
+				context->functionContext->functionArguments = functionArguments;
 			};
 
-			if(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::LocalVariables) {
-				context->functionContext->functionLocalVariables=VariableArray::newArray();
+			if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::LocalVariables) {
+				context->functionContext->functionLocalVariables = VariableArray::newArray();
 			};
 
 #ifndef QUANTUM_SCRIPT_DISABLE_CLOSURE
-			context->functionContext->functionParent = ((VariableVmFunction *) operand1.value())->functionParent;
+			context->functionContext->functionParent = ((VariableVmFunction *)operand1.value())->functionParent;
 #endif
-			context->nextProgramCounter = ((VariableVmFunction *) operand1.value())->value;
+			context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmXCallThisModeApply) {
@@ -1601,34 +1545,32 @@ namespace Quantum {
 			TPointer<Variable> operand2(context->popTransfer());
 			TPointer<Variable> operand1(context->popTransfer());
 
-
 			TPointerX<Variable> &operandX = (*(((VariableArray *)(functionArguments.value()))->value))[0];
-			if(TIsType<VariableArray>(operandX)) {
+			if (TIsType<VariableArray>(operandX)) {
 
 				if (!TIsType<VariableVmFunction>(operand1)) {
 					context->push(operand1->functionApply(operand2, static_cast<VariableArray *>(operandX.value())));
 					return;
 				};
 
-
-				if(!(((VariableVmFunction *) operand1.value())->coroutineContext->isEmpty())) {
+				if (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
 					TPointer<ExecutiveContextPc> contextTemp;
 
-					((VariableVmFunction *) operand1.value())->coroutineContext->pop(contextTemp);
+					((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 					context->contextStack->push(contextTemp);
 
 					context->functionContext->this_ = operand2;
 					(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
-					(context->contextStack->head)->value->functionContext->functionArguments=static_cast<VariableArray *>(operandX.value());
+					(context->contextStack->head)->value->functionContext->functionArguments = static_cast<VariableArray *>(operandX.value());
 
-					while(!(((VariableVmFunction *) operand1.value())->coroutineContext->isEmpty())) {
-						((VariableVmFunction *) operand1.value())->coroutineContext->pop(contextTemp);
+					while (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
+						((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 						context->contextStack->push(contextTemp);
 					};
 
-					context->nextProgramCounter = ((VariableVmFunction *) operand1.value())->value;
+					context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 
-					//functionArguments->decReferenceCount();
+					// functionArguments->decReferenceCount();
 
 					context->pcContext = (context->contextStack->head)->value;
 					context->functionContext = context->pcContext->functionContext;
@@ -1640,15 +1582,15 @@ namespace Quantum {
 
 				context->functionContext->this_ = operand2;
 				context->pcContext->pc_ = context->nextProgramCounter;
-				context->functionContext->thisFunction_=operand1;
+				context->functionContext->thisFunction_ = operand1;
 
-				context->functionContext->functionArguments=static_cast<VariableArray *>(operandX.value());
+				context->functionContext->functionArguments = static_cast<VariableArray *>(operandX.value());
 
-				context->functionContext->functionLocalVariables=VariableArray::newArray();
+				context->functionContext->functionLocalVariables = VariableArray::newArray();
 #ifndef QUANTUM_SCRIPT_DISABLE_CLOSURE
-				context->functionContext->functionParent = ((VariableVmFunction *) operand1.value())->functionParent;
+				context->functionContext->functionParent = ((VariableVmFunction *)operand1.value())->functionParent;
 #endif
-				context->nextProgramCounter = ((VariableVmFunction *) operand1.value())->value;
+				context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 				return;
 			};
 
@@ -1656,7 +1598,6 @@ namespace Quantum {
 			InstructionVmThrow(context, nullptr);
 			return;
 		};
-
 
 		//
 		// 1. EnterFirstContext
@@ -1672,9 +1613,9 @@ namespace Quantum {
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmXCallWithThisReference) { //  x.fn()
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			String symbolName = Context::getSymbolMirror(((VariableSymbol *) operand)->value);
+			String symbolName = Context::getSymbolMirror(((VariableSymbol *)operand)->value);
 
-			printf(">%p    x-call-with-this-reference %u : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
+			printf(">%p    x-call-with-this-reference %u : %s\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value, symbolName.value());
 			fflush(stdout);
 #endif
 			TPointer<Variable> operand1;
@@ -1684,7 +1625,7 @@ namespace Quantum {
 			TPointer<VariableArray> functionArguments(TTransfer<VariableArray, Variable>::cast(context->popTransfer()));
 
 			context->pop(operand1);
-			result = operand1->getPropertyBySymbol(((VariableSymbol *) operand)->value);
+			result = operand1->getPropertyBySymbol(((VariableSymbol *)operand)->value);
 
 			if (result) {
 
@@ -1693,25 +1634,22 @@ namespace Quantum {
 					return;
 				};
 
-
-				if(!(((VariableVmFunction *) result.value())->coroutineContext->isEmpty())) {
+				if (!(((VariableVmFunction *)result.value())->coroutineContext->isEmpty())) {
 					TPointer<ExecutiveContextPc> contextTemp;
 
-					((VariableVmFunction *) result.value())->coroutineContext->pop(contextTemp);
+					((VariableVmFunction *)result.value())->coroutineContext->pop(contextTemp);
 					context->contextStack->push(contextTemp);
-
 
 					context->functionContext->this_ = operand1;
 					(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
-					(context->contextStack->head)->value->functionContext->functionArguments=functionArguments;
+					(context->contextStack->head)->value->functionContext->functionArguments = functionArguments;
 
-					while(!(((VariableVmFunction *) result.value())->coroutineContext->isEmpty())) {
-						((VariableVmFunction *) result.value())->coroutineContext->pop(contextTemp);
+					while (!(((VariableVmFunction *)result.value())->coroutineContext->isEmpty())) {
+						((VariableVmFunction *)result.value())->coroutineContext->pop(contextTemp);
 						context->contextStack->push(contextTemp);
 					};
 
-					context->nextProgramCounter = ((VariableVmFunction *) result.value())->value;
-
+					context->nextProgramCounter = ((VariableVmFunction *)result.value())->value;
 
 					context->pcContext = (context->contextStack->head)->value;
 					context->functionContext = context->pcContext->functionContext;
@@ -1724,13 +1662,13 @@ namespace Quantum {
 				context->functionContext->this_ = operand1;
 				context->pcContext->pc_ = context->nextProgramCounter;
 				context->functionContext->thisFunction_ = result;
-				context->functionContext->functionArguments=functionArguments;
+				context->functionContext->functionArguments = functionArguments;
 
-				context->functionContext->functionLocalVariables=VariableArray::newArray();
+				context->functionContext->functionLocalVariables = VariableArray::newArray();
 #ifndef QUANTUM_SCRIPT_DISABLE_CLOSURE
-				context->functionContext->functionParent = ((VariableVmFunction *) result.value())->functionParent;
+				context->functionContext->functionParent = ((VariableVmFunction *)result.value())->functionParent;
 #endif
-				context->nextProgramCounter = ((VariableVmFunction *) result.value())->value;
+				context->nextProgramCounter = ((VariableVmFunction *)result.value())->value;
 				return;
 			};
 
@@ -1749,7 +1687,7 @@ namespace Quantum {
 
 			context->peek(operand1);
 
-			((((VariableArray *) operand1)->value)->push()).setExecutive(operand2);
+			((((VariableArray *)operand1)->value)->push()).setExecutive(operand2);
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmAssignReverse) {
@@ -1784,9 +1722,9 @@ namespace Quantum {
 			context->peek(operand1); // new object
 			Prototype *prototype = nullptr;
 
-			if(operand2->instanceOfPrototype(prototype)) {
+			if (operand2->instanceOfPrototype(prototype)) {
 				if (TIsType<VariableObject>(operand1)) {
-					((VariableObject *) operand1)->prototype = prototype;
+					((VariableObject *)operand1)->prototype = prototype;
 					context->push(operand2);
 					return;
 				};
@@ -1798,22 +1736,21 @@ namespace Quantum {
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmArgumentsPushObjectReference) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    arguments-object-reference %lu\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value);
+			printf(">%p    arguments-object-reference %lu\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value);
 			fflush(stdout);
 #endif
 
-			context->push(VariableReferenceIndex::newVariable(context->functionContext->functionArguments, ((VariableSymbol *) operand)->value));
+			context->push(VariableReferenceIndex::newVariable(context->functionContext->functionArguments, ((VariableSymbol *)operand)->value));
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmArgumentsPushSymbol) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    arguments-push-symbol %lu\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value);
+			printf(">%p    arguments-push-symbol %lu\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value);
 			fflush(stdout);
 #endif
 
-			context->push(((VariableArray *) (context->functionContext->functionArguments.value()))->index(((VariableSymbol *) operand)->value));
+			context->push(((VariableArray *)(context->functionContext->functionArguments.value()))->index(((VariableSymbol *)operand)->value));
 		};
-
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmAssignNewObject) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -1843,67 +1780,64 @@ namespace Quantum {
 				Variable *retV = VariableStackTrace::newVariable(context->stackTrace, context);
 				context->stackTrace.deleteMemory();
 				((VariableStackTrace *)retV)->configPrintStackTraceLimit = context->configPrintStackTraceLimit;
-				((VariableObject *) operand1)->value->set(context->symbolStackTrace__, retV);
+				((VariableObject *)operand1)->value->set(context->symbolStackTrace__, retV);
 				return;
 			};
 		};
 
-
 		// -> VmXPushFunctionActive, to permit compiled code garbage collect
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmXPushFunction) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    x-push-function %p\n", context->currentProgramCounter, ((VariableVmFunction *) operand)->value);
+			printf(">%p    x-push-function %p\n", context->currentProgramCounter, ((VariableVmFunction *)operand)->value);
 			fflush(stdout);
 #endif
 			// extract,relink,modify
-			TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (((VariableVmFunction *) operand)->value);
-			TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (((VariableVmFunction *) operand)->valueEnd);
+			TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(((VariableVmFunction *)operand)->value);
+			TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(((VariableVmFunction *)operand)->valueEnd);
 			context->instructionListExecutive->extractList(pcBegin, pcEnd);
-			((VariableVmFunction *) operand)->instructionList.newMemory();
-			((VariableVmFunction *) operand)->instructionList->setList(pcBegin, pcEnd);
-			(reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (context->currentProgramCounter))->value.procedure = InstructionVmXPushFunctionActive;
-			((VariableVmFunction *) operand)->fnSource = (reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (context->currentProgramCounter))->value.sourceSymbol;
+			((VariableVmFunction *)operand)->instructionList.newMemory();
+			((VariableVmFunction *)operand)->instructionList->setList(pcBegin, pcEnd);
+			(reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(context->currentProgramCounter))->value.procedure = InstructionVmXPushFunctionActive;
+			((VariableVmFunction *)operand)->fnSource = (reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(context->currentProgramCounter))->value.sourceSymbol;
 			//
 
-			Variable *pc = VariableVmFunction::newVariable(((VariableVmFunction *) operand)->value);
-			((VariableVmFunction *)pc)->instructionList = ((VariableVmFunction *) operand)->instructionList;
-			((VariableVmFunction *)pc)->valueEnd = ((VariableVmFunction *) operand)->valueEnd;
-			((VariableVmFunction *)pc)->functionHint = ((VariableVmFunction *) operand)->functionHint;
-			((VariableVmFunction *)pc)->fnSource = ((VariableVmFunction *) operand)->fnSource;
+			Variable *pc = VariableVmFunction::newVariable(((VariableVmFunction *)operand)->value);
+			((VariableVmFunction *)pc)->instructionList = ((VariableVmFunction *)operand)->instructionList;
+			((VariableVmFunction *)pc)->valueEnd = ((VariableVmFunction *)operand)->valueEnd;
+			((VariableVmFunction *)pc)->functionHint = ((VariableVmFunction *)operand)->functionHint;
+			((VariableVmFunction *)pc)->fnSource = ((VariableVmFunction *)operand)->fnSource;
 #ifndef QUANTUM_SCRIPT_DISABLE_CLOSURE
 			((VariableVmFunction *)pc)->functionParent.newMemory();
 			((VariableVmFunction *)pc)->functionParent->functionParent = context->functionContext->functionParent;
 #endif
 
-
 #ifndef QUANTUM_SCRIPT_DISABLE_CLOSURE
 
-			if(context->functionContext->functionArguments) {
-				((VariableVmFunction *) pc)->functionParent->arguments = context->functionContext->functionArguments;
+			if (context->functionContext->functionArguments) {
+				((VariableVmFunction *)pc)->functionParent->arguments = context->functionContext->functionArguments;
 			};
 
-
-			if(context->functionContext->functionLocalVariables) {
-				((VariableVmFunction *) pc)->functionParent->variables = context->functionContext->functionLocalVariables;
+			if (context->functionContext->functionLocalVariables) {
+				((VariableVmFunction *)pc)->functionParent->variables = context->functionContext->functionLocalVariables;
 			};
 
 #endif
 			((VariableVmFunction *)pc)->prototype.newMemory();
-			((VariableVmFunction *)pc)->prototype->prototype=VariableObject::newVariable();
+			((VariableVmFunction *)pc)->prototype->prototype = VariableObject::newVariable();
 			context->push(pc);
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmArgumentsLevelPushObjectReference) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    arguments-level-object-reference %d:%d\n", context->currentProgramCounter, ((VariableArgumentLevel *) operand)->value, ((VariableArgumentLevel *) operand)->level);
+			printf(">%p    arguments-level-object-reference %d:%d\n", context->currentProgramCounter, ((VariableArgumentLevel *)operand)->value, ((VariableArgumentLevel *)operand)->level);
 			fflush(stdout);
 #endif
 			TPointer<Variable> functionArguments;
 
 #ifndef QUANTUM_SCRIPT_DISABLE_CLOSURE
-			functionArguments = context->getFunctionArgumentsLevel(((VariableArgumentLevel *) operand)->level);
+			functionArguments = context->getFunctionArgumentsLevel(((VariableArgumentLevel *)operand)->level);
 			if (functionArguments) {
-				context->push(VariableReferenceIndex::newVariable(context->functionContext->functionArguments, ((VariableArgumentLevel *) operand)->value));
+				context->push(VariableReferenceIndex::newVariable(context->functionContext->functionArguments, ((VariableArgumentLevel *)operand)->value));
 				return;
 			};
 #endif
@@ -1914,16 +1848,16 @@ namespace Quantum {
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmArgumentsLevelPushSymbol) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    arguments-level-push-symbol %d:%d\n", context->currentProgramCounter, ((VariableArgumentLevel *) operand)->value, ((VariableArgumentLevel *) operand)->level);
+			printf(">%p    arguments-level-push-symbol %d:%d\n", context->currentProgramCounter, ((VariableArgumentLevel *)operand)->value, ((VariableArgumentLevel *)operand)->level);
 			fflush(stdout);
 #endif
 
 			TPointer<Variable> functionArguments;
 
 #ifndef QUANTUM_SCRIPT_DISABLE_CLOSURE
-			functionArguments = context->getFunctionArgumentsLevel(((VariableArgumentLevel *) operand)->level);
+			functionArguments = context->getFunctionArgumentsLevel(((VariableArgumentLevel *)operand)->level);
 			if (functionArguments) {
-				context->push(((VariableArray *)(functionArguments.value()))->value->getValue(((VariableArgumentLevel *) operand)->value, Context::getValueUndefined()));
+				context->push(((VariableArray *)(functionArguments.value()))->value->getValue(((VariableArgumentLevel *)operand)->value, Context::getValueUndefined()));
 				return;
 			};
 #endif
@@ -1932,39 +1866,36 @@ namespace Quantum {
 			InstructionVmThrow(context, nullptr);
 		};
 
-
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmLocalVariablesPushObjectReference) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    local-variables-object-reference %lu\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value);
+			printf(">%p    local-variables-object-reference %lu\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value);
 			fflush(stdout);
 #endif
-			context->push(VariableReferenceIndex::newVariable(context->functionContext->functionLocalVariables, ((VariableSymbol *) operand)->value));
+			context->push(VariableReferenceIndex::newVariable(context->functionContext->functionLocalVariables, ((VariableSymbol *)operand)->value));
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmLocalVariablesPushSymbol) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    local-variables-push-symbol %lu\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value);
+			printf(">%p    local-variables-push-symbol %lu\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value);
 			fflush(stdout);
 #endif
-			context->push(((VariableArray *) (context->functionContext->functionLocalVariables.value()))->index(((VariableSymbol *) operand)->value));
+			context->push(((VariableArray *)(context->functionContext->functionLocalVariables.value()))->index(((VariableSymbol *)operand)->value));
 		};
-
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmLocalVariablesLevelPushObjectReference) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    local-variables-level-object-reference %d:%d\n", context->currentProgramCounter, ((VariableArgumentLevel *) operand)->value, ((VariableArgumentLevel *) operand)->level);
+			printf(">%p    local-variables-level-object-reference %d:%d\n", context->currentProgramCounter, ((VariableArgumentLevel *)operand)->value, ((VariableArgumentLevel *)operand)->level);
 			fflush(stdout);
 #endif
 			TPointer<Variable> functionLocalVariables;
 
 #ifndef QUANTUM_SCRIPT_DISABLE_CLOSURE
-			functionLocalVariables = context->getFunctionLocalVariablesLevel(((VariableArgumentLevel *) operand)->level);
+			functionLocalVariables = context->getFunctionLocalVariablesLevel(((VariableArgumentLevel *)operand)->level);
 			if (functionLocalVariables) {
-				context->push(VariableReferenceIndex::newVariable(functionLocalVariables, ((VariableArgumentLevel *) operand)->value));
+				context->push(VariableReferenceIndex::newVariable(functionLocalVariables, ((VariableArgumentLevel *)operand)->value));
 				return;
 			};
 #endif
-
 
 			context->push(context->newError("variables reference"));
 			InstructionVmThrow(context, nullptr);
@@ -1972,23 +1903,22 @@ namespace Quantum {
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmLocalVariablesLevelPushSymbol) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    local-variables-level-push-symbol %d:%d\n", context->currentProgramCounter, ((VariableArgumentLevel *) operand)->value, ((VariableArgumentLevel *) operand)->level);
+			printf(">%p    local-variables-level-push-symbol %d:%d\n", context->currentProgramCounter, ((VariableArgumentLevel *)operand)->value, ((VariableArgumentLevel *)operand)->level);
 			fflush(stdout);
 #endif
 
 			TPointer<Variable> functionLocalVariables;
 
 #ifndef QUANTUM_SCRIPT_DISABLE_CLOSURE
-			functionLocalVariables = context->getFunctionLocalVariablesLevel(((VariableArgumentLevel *) operand)->level);
+			functionLocalVariables = context->getFunctionLocalVariablesLevel(((VariableArgumentLevel *)operand)->level);
 			if (functionLocalVariables) {
-				context->push(((VariableArray *)(functionLocalVariables.value()))->value->getValue(((VariableArgumentLevel *) operand)->value, Context::getValueUndefined()));
+				context->push(((VariableArray *)(functionLocalVariables.value()))->value->getValue(((VariableArgumentLevel *)operand)->value, Context::getValueUndefined()));
 				return;
 			};
 #endif
 
 			context->push(context->newError("variables symbol"));
 			InstructionVmThrow(context, nullptr);
-
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmEndExecution) {
@@ -2002,79 +1932,73 @@ namespace Quantum {
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmIfArgumentsSymbolNotEqualNumberGoto) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 			printf(">%p    if-arguments-symbol-not-equal-number-goto %lu %g %p\n", context->currentProgramCounter,
-				((VariableOperator31 *) operand)->symbol, ((VariableOperator31 *) operand)->value, ((VariableOperator31 *) operand)->pc);
+			       ((VariableOperator31 *)operand)->symbol, ((VariableOperator31 *)operand)->value, ((VariableOperator31 *)operand)->pc);
 			fflush(stdout);
 #endif
 			Variable *symbolValue;
 			bool retV;
 
-			symbolValue = (((VariableArray *) (context->functionContext->functionArguments.value()))->index(((VariableOperator31 *) operand)->symbol)).value();
-			if (symbolValue->toNumber() != ((VariableOperator31 *) operand)->value) {
-				context->nextProgramCounter = ((VariableOperator31 *) operand)->pc;
+			symbolValue = (((VariableArray *)(context->functionContext->functionArguments.value()))->index(((VariableOperator31 *)operand)->symbol)).value();
+			if (symbolValue->toNumber() != ((VariableOperator31 *)operand)->value) {
+				context->nextProgramCounter = ((VariableOperator31 *)operand)->pc;
 			};
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorMinusArgumentsSymbolXNumber) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 			printf(">%p    operator-minus-arguments-symbol-x-number %lu %g\n", context->currentProgramCounter,
-				((VariableOperator21 *) operand)->symbol, ((VariableOperator21 *) operand)->value);
+			       ((VariableOperator21 *)operand)->symbol, ((VariableOperator21 *)operand)->value);
 			fflush(stdout);
 #endif
 			context->push(VariableNumber::newVariable(
-					((((VariableArray *) (context->functionContext->functionArguments.value()))->index(((VariableOperator21 *) operand)->symbol))->toNumber())
-					- (((VariableOperator21 *) operand)->value)
-				));
+			    ((((VariableArray *)(context->functionContext->functionArguments.value()))->index(((VariableOperator21 *)operand)->symbol))->toNumber()) - (((VariableOperator21 *)operand)->value)));
 		};
-
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmSymbolPlusPlus) { // ++x  or x++ no operator
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-#ifdef XYO_OBJECT_COUNTING_DEBUG
-			printf(">%p    symbol-plus-plus %lu\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value);
+#	ifdef XYO_OBJECT_COUNTING_DEBUG
+			printf(">%p    symbol-plus-plus %lu\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value);
 			fflush(stdout);
-#else
-			String symbolName = Context::getSymbolMirror(((VariableSymbol *) operand)->value);
+#	else
+			String symbolName = Context::getSymbolMirror(((VariableSymbol *)operand)->value);
 
-			printf(">%p    symbol-plus-plus %lu : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
+			printf(">%p    symbol-plus-plus %lu : %s\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value, symbolName.value());
 			fflush(stdout);
+#	endif
 #endif
-#endif
-			TPointer<Variable> value_ = (Context::getGlobalObject())->getPropertyBySymbol(((VariableSymbol *) operand)->value);
-			(Context::getGlobalObject())->setPropertyBySymbol(((VariableSymbol *) operand)->value, VariableNumber::newVariable((value_->toNumber()) + 1));
+			TPointer<Variable> value_ = (Context::getGlobalObject())->getPropertyBySymbol(((VariableSymbol *)operand)->value);
+			(Context::getGlobalObject())->setPropertyBySymbol(((VariableSymbol *)operand)->value, VariableNumber::newVariable((value_->toNumber()) + 1));
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmIfSymbolNotLessNumberGoto) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 			printf(">%p    if-symbol-not-less-number-goto %lu " QUANTUM_SCRIPT_FORMAT_NUMBER " %p\n", context->currentProgramCounter,
-				((VariableOperator31 *) operand)->symbol, ((VariableOperator31 *) operand)->value, ((VariableOperator31 *) operand)->pc);
+			       ((VariableOperator31 *)operand)->symbol, ((VariableOperator31 *)operand)->value, ((VariableOperator31 *)operand)->pc);
 			fflush(stdout);
 #endif
 			TPointer<Variable> symbolValue;
 			int retV;
-			symbolValue = (Context::getGlobalObject())->getPropertyBySymbol(((VariableOperator31 *) operand)->symbol);
-			if (!((symbolValue->toNumber()) < ((VariableOperator31 *) operand)->value)) {
-				context->nextProgramCounter = ((VariableOperator31 *) operand)->pc;
+			symbolValue = (Context::getGlobalObject())->getPropertyBySymbol(((VariableOperator31 *)operand)->symbol);
+			if (!((symbolValue->toNumber()) < ((VariableOperator31 *)operand)->value)) {
+				context->nextProgramCounter = ((VariableOperator31 *)operand)->pc;
 			};
-
 		};
-
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmIfArgumentsSymbolNotLessNumberGoto) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 			printf(">%p    if-arguments-symbol-not-less-number-goto %lu " QUANTUM_SCRIPT_FORMAT_NUMBER " %p\n", context->currentProgramCounter,
-				((VariableOperator31 *) operand)->symbol, ((VariableOperator31 *) operand)->value, ((VariableOperator31 *) operand)->pc);
+			       ((VariableOperator31 *)operand)->symbol, ((VariableOperator31 *)operand)->value, ((VariableOperator31 *)operand)->pc);
 			fflush(stdout);
 #endif
 			Variable *symbolValue;
 			int retV;
 
-			symbolValue = (((VariableArray *) (context->functionContext->functionArguments.value()))->index(((VariableOperator31 *) operand)->symbol)).value();
+			symbolValue = (((VariableArray *)(context->functionContext->functionArguments.value()))->index(((VariableOperator31 *)operand)->symbol)).value();
 
-			if (!((symbolValue->toNumber()) < ((VariableOperator31 *) operand)->value)) {
-				context->nextProgramCounter = ((VariableOperator31 *) operand)->pc;
+			if (!((symbolValue->toNumber()) < ((VariableOperator31 *)operand)->value)) {
+				context->nextProgramCounter = ((VariableOperator31 *)operand)->pc;
 			};
 		};
-
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmYield) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -2086,18 +2010,17 @@ namespace Quantum {
 			ProgramCounter *finally_;
 			ProgramCounter *tryReturn_;
 
-			//coroutine - yield this function
-			if(context->functionContext->thisFunction_) {
+			// coroutine - yield this function
+			if (context->functionContext->thisFunction_) {
 				TPointer<ExecutiveContextPc> contextTemp;
 				TPointer<Variable> thisFunction;
-
 
 				thisFunction = context->functionContext->thisFunction_;
 				((VariableVmFunction *)(thisFunction.value()))->coroutineContext->empty();
 
 				((VariableVmFunction *)(thisFunction.value()))->value = context->nextProgramCounter;
 
-				while((context->contextStack->head)->value->pc_ == nullptr) {
+				while ((context->contextStack->head)->value->pc_ == nullptr) {
 					context->contextStack->pop(contextTemp);
 					((VariableVmFunction *)(thisFunction.value()))->coroutineContext->push(contextTemp);
 				};
@@ -2114,7 +2037,6 @@ namespace Quantum {
 			context->push(context->newError("yield"));
 			InstructionVmThrow(context, nullptr);
 		};
-
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmContextSetReference) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -2136,10 +2058,8 @@ namespace Quantum {
 
 			context->pcContext->iteratorValue = operand1->getIteratorKey();
 			context->push(VariableBoolean::newVariable(
-					context->pcContext->iteratorValue->next(context->pcContext->referenceValue)
-				));
+			    context->pcContext->iteratorValue->next(context->pcContext->referenceValue)));
 		};
-
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorNextReferenceIndex) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -2148,9 +2068,7 @@ namespace Quantum {
 #endif
 
 			context->push(VariableBoolean::newVariable(
-					context->pcContext->iteratorValue->next(context->pcContext->referenceValue)
-				));
-
+			    context->pcContext->iteratorValue->next(context->pcContext->referenceValue)));
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorSetReferenceIndexValue) {
@@ -2163,10 +2081,8 @@ namespace Quantum {
 
 			context->pcContext->iteratorValue = operand1->getIteratorValue();
 			context->push(VariableBoolean::newVariable(
-					context->pcContext->iteratorValue->next(context->pcContext->referenceValue)
-				));
+			    context->pcContext->iteratorValue->next(context->pcContext->referenceValue)));
 		};
-
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmContextSetRegisterValue) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -2174,7 +2090,7 @@ namespace Quantum {
 			fflush(stdout);
 #endif
 			TPointer<Variable> operand1(context->popTransfer());
-			context->pcContext->registerValue=operand1;
+			context->pcContext->registerValue = operand1;
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmContextPushRegisterValue) {
@@ -2188,41 +2104,39 @@ namespace Quantum {
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorMulLocalVariablesSymbol2) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 			printf(">%p    operator-mul-local-variables-symbol-2 %lu %lu\n", context->currentProgramCounter,
-				((VariableOperator22 *) operand)->symbol1, ((VariableOperator22 *) operand)->symbol2);
+			       ((VariableOperator22 *)operand)->symbol1, ((VariableOperator22 *)operand)->symbol2);
 			fflush(stdout);
 #endif
 
 			Variable *operand1;
 			Variable *operand2;
 
-			operand2 = (((VariableArray *) (context->functionContext->functionLocalVariables.value()))->index(((VariableOperator22 *) operand)->symbol1)).value();
-			operand1 = (((VariableArray *) (context->functionContext->functionLocalVariables.value()))->index(((VariableOperator22 *) operand)->symbol2)).value();
+			operand2 = (((VariableArray *)(context->functionContext->functionLocalVariables.value()))->index(((VariableOperator22 *)operand)->symbol1)).value();
+			operand1 = (((VariableArray *)(context->functionContext->functionLocalVariables.value()))->index(((VariableOperator22 *)operand)->symbol2)).value();
 
 			context->push(VariableNumber::newVariable((operand1->toNumber()) * (operand2->toNumber())));
-
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorMinusLocalVariablesSymbol2) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 			printf(">%p    operator-minus-local-variables-symbol-2 %lu %lu\n", context->currentProgramCounter,
-				((VariableOperator22 *) operand)->symbol1, ((VariableOperator22 *) operand)->symbol2);
+			       ((VariableOperator22 *)operand)->symbol1, ((VariableOperator22 *)operand)->symbol2);
 			fflush(stdout);
 #endif
 
 			Variable *operand1;
 			Variable *operand2;
 
-			operand2 = (((VariableArray *) (context->functionContext->functionLocalVariables.value()))->index(((VariableOperator22 *) operand)->symbol1)).value();
-			operand1 = (((VariableArray *) (context->functionContext->functionLocalVariables.value()))->index(((VariableOperator22 *) operand)->symbol2)).value();
+			operand2 = (((VariableArray *)(context->functionContext->functionLocalVariables.value()))->index(((VariableOperator22 *)operand)->symbol1)).value();
+			operand1 = (((VariableArray *)(context->functionContext->functionLocalVariables.value()))->index(((VariableOperator22 *)operand)->symbol2)).value();
 
 			context->push(VariableNumber::newVariable((operand1->toNumber()) - (operand2->toNumber())));
 		};
 
-
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorPlusLocalVariablesSymbol2) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 			printf(">%p    operator-plus-local-variables-symbol-2 %lu %lu\n", context->currentProgramCounter,
-				((VariableOperator22 *) operand)->symbol1, ((VariableOperator22 *) operand)->symbol2);
+			       ((VariableOperator22 *)operand)->symbol1, ((VariableOperator22 *)operand)->symbol2);
 			fflush(stdout);
 #endif
 
@@ -2230,8 +2144,8 @@ namespace Quantum {
 			Variable *operand2;
 			Variable *result;
 
-			operand2 = (((VariableArray *) (context->functionContext->functionLocalVariables.value()))->index(((VariableOperator22 *) operand)->symbol1)).value();
-			operand1 = (((VariableArray *) (context->functionContext->functionLocalVariables.value()))->index(((VariableOperator22 *) operand)->symbol2)).value();
+			operand2 = (((VariableArray *)(context->functionContext->functionLocalVariables.value()))->index(((VariableOperator22 *)operand)->symbol1)).value();
+			operand1 = (((VariableArray *)(context->functionContext->functionLocalVariables.value()))->index(((VariableOperator22 *)operand)->symbol2)).value();
 			context->push(operand1->operatorPlus(operand2));
 		};
 
@@ -2269,7 +2183,6 @@ namespace Quantum {
 			context->push(context->functionContext->functionArguments.value());
 		};
 
-
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmSetFunction) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 			printf(">%p    set-function\n", context->currentProgramCounter);
@@ -2282,65 +2195,63 @@ namespace Quantum {
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmIfNotGreaterGoto) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    if-not-greater-goto %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *) operand)->value);
+			printf(">%p    if-not-greater-goto %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *)operand)->value);
 			fflush(stdout);
 #endif
 
 			TPointer<Variable> operand2(context->popTransfer());
 			TPointer<Variable> operand1(context->popTransfer());
 
-			if (! operand1->isGreater(operand2) ) {
-				context->nextProgramCounter = ((VariableVmProgramCounter *) operand)->value;
+			if (!operand1->isGreater(operand2)) {
+				context->nextProgramCounter = ((VariableVmProgramCounter *)operand)->value;
 			};
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmXPushFunctionActive) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    x-push-function-active %p\n", context->currentProgramCounter, ((VariableVmFunction *) operand)->value);
+			printf(">%p    x-push-function-active %p\n", context->currentProgramCounter, ((VariableVmFunction *)operand)->value);
 			fflush(stdout);
 #endif
-			Variable *pc = VariableVmFunction::newVariable(((VariableVmFunction *) operand)->value);
-			((VariableVmFunction *)pc)->instructionList = ((VariableVmFunction *) operand)->instructionList;
-			((VariableVmFunction *)pc)->valueEnd = ((VariableVmFunction *) operand)->valueEnd;
-			((VariableVmFunction *)pc)->functionHint = ((VariableVmFunction *) operand)->functionHint;
-			((VariableVmFunction *)pc)->fnSource = ((VariableVmFunction *) operand)->fnSource;
+			Variable *pc = VariableVmFunction::newVariable(((VariableVmFunction *)operand)->value);
+			((VariableVmFunction *)pc)->instructionList = ((VariableVmFunction *)operand)->instructionList;
+			((VariableVmFunction *)pc)->valueEnd = ((VariableVmFunction *)operand)->valueEnd;
+			((VariableVmFunction *)pc)->functionHint = ((VariableVmFunction *)operand)->functionHint;
+			((VariableVmFunction *)pc)->fnSource = ((VariableVmFunction *)operand)->fnSource;
 #ifndef QUANTUM_SCRIPT_DISABLE_CLOSURE
 			((VariableVmFunction *)pc)->functionParent.newMemory();
 			((VariableVmFunction *)pc)->functionParent->functionParent = context->functionContext->functionParent;
 #endif
 
-
 #ifndef QUANTUM_SCRIPT_DISABLE_CLOSURE
 
-			if(context->functionContext->functionArguments) {
-				((VariableVmFunction *) pc)->functionParent->arguments = context->functionContext->functionArguments;
+			if (context->functionContext->functionArguments) {
+				((VariableVmFunction *)pc)->functionParent->arguments = context->functionContext->functionArguments;
 			};
 
-
-			if(context->functionContext->functionLocalVariables) {
-				((VariableVmFunction *) pc)->functionParent->variables = context->functionContext->functionLocalVariables;
+			if (context->functionContext->functionLocalVariables) {
+				((VariableVmFunction *)pc)->functionParent->variables = context->functionContext->functionLocalVariables;
 			};
 
 #endif
 			((VariableVmFunction *)pc)->prototype.newMemory();
-			((VariableVmFunction *)pc)->prototype->prototype=VariableObject::newVariable();
+			((VariableVmFunction *)pc)->prototype->prototype = VariableObject::newVariable();
 			context->push(pc);
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmInstructionListExtractAndDelete) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    instruction-list-extract-and-delete %p %p and goto %p\n", context->currentProgramCounter, ((VariableOperator23 *) operand)->linkBegin, context->currentProgramCounter, ((VariableOperator23 *) operand)->pc);
+			printf(">%p    instruction-list-extract-and-delete %p %p and goto %p\n", context->currentProgramCounter, ((VariableOperator23 *)operand)->linkBegin, context->currentProgramCounter, ((VariableOperator23 *)operand)->pc);
 			fflush(stdout);
 #endif
 			InstructionList instructionList;
-			TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (((VariableOperator23 *) operand)->linkBegin);
-			TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *> (context->currentProgramCounter);
-			context->nextProgramCounter = ((VariableOperator23 *) operand)->pc;
+			TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(((VariableOperator23 *)operand)->linkBegin);
+			TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(context->currentProgramCounter);
+			context->nextProgramCounter = ((VariableOperator23 *)operand)->pc;
 			context->instructionListExecutive->extractList(pcBegin, pcEnd);
 			instructionList.setList(pcBegin, pcEnd);
 		};
 
-		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorReferenceDeleteIndex) {   // delete x[y]
+		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorReferenceDeleteIndex) { // delete x[y]
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 			printf(">%p    operator-reference-delete-index\n", context->currentProgramCounter);
 			fflush(stdout);
@@ -2355,19 +2266,19 @@ namespace Quantum {
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorReferenceDeleteReference) { // delete x.y
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-#ifdef XYO_OBJECT_COUNTING_DEBUG
-			printf(">%p    operator-reference-delete-reference %d\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value);
+#	ifdef XYO_OBJECT_COUNTING_DEBUG
+			printf(">%p    operator-reference-delete-reference %d\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value);
 			fflush(stdout);
-#else
-			String symbolName = Context::getSymbolMirror(((VariableSymbol *) operand)->value);
+#	else
+			String symbolName = Context::getSymbolMirror(((VariableSymbol *)operand)->value);
 
-			printf(">%p    operator-reference-delete-reference %u : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
+			printf(">%p    operator-reference-delete-reference %u : %s\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value, symbolName.value());
 			fflush(stdout);
-#endif
+#	endif
 #endif
 			TPointer<Variable> operand1;
 			context->pop(operand1);
-			context->push(VariableBoolean::newVariable(operand1->deletePropertyBySymbol(((VariableSymbol *) operand)->value)));
+			context->push(VariableBoolean::newVariable(operand1->deletePropertyBySymbol(((VariableSymbol *)operand)->value)));
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmContextSetStack) {
@@ -2390,17 +2301,16 @@ namespace Quantum {
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorPow2LocalVariablesSymbol) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 			printf(">%p    operator-pow2-local-variables-symbol %lu\n", context->currentProgramCounter,
-				((VariableSymbol *) operand)->value);
+			       ((VariableSymbol *)operand)->value);
 			fflush(stdout);
 #endif
 
 			Variable *operandX;
 
-			operandX = (((VariableArray *) (context->functionContext->functionLocalVariables.value()))->index(((VariableSymbol *) operand)->value)).value();
+			operandX = (((VariableArray *)(context->functionContext->functionLocalVariables.value()))->index(((VariableSymbol *)operand)->value)).value();
 
 			context->push(VariableNumber::newVariable((operandX->toNumber()) * (operandX->toNumber())));
 		};
-
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmXTailCall) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
@@ -2408,7 +2318,6 @@ namespace Quantum {
 			fflush(stdout);
 #endif
 			TPointer<VariableArray> functionArguments(TTransfer<VariableArray, Variable>::cast(context->popTransfer()));
-
 
 			TPointer<Variable> operand1(context->popTransfer());
 
@@ -2418,63 +2327,60 @@ namespace Quantum {
 				return;
 			};
 
-			if(!(((VariableVmFunction *) operand1.value())->coroutineContext->isEmpty())) {
+			if (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
 				TPointer<ExecutiveContextPc> contextTemp;
-				((VariableVmFunction *) operand1.value())->coroutineContext->pop(contextTemp);
+				((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 				context->contextStack->push(contextTemp);
 				(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
-				(context->contextStack->head)->value->functionContext->functionArguments=functionArguments;
-				while(!(((VariableVmFunction *) operand1.value())->coroutineContext->isEmpty())) {
-					((VariableVmFunction *) operand1.value())->coroutineContext->pop(contextTemp);
+				(context->contextStack->head)->value->functionContext->functionArguments = functionArguments;
+				while (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
+					((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 					context->contextStack->push(contextTemp);
 				};
-				context->nextProgramCounter = ((VariableVmFunction *) operand1.value())->value;
+				context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 
 				context->pcContext = (context->contextStack->head)->value;
 				context->functionContext = context->pcContext->functionContext;
 				return;
-
 			};
 
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    - function-hint %04X\n", context->currentProgramCounter, ((VariableVmFunction *) operand1.value())->functionHint);
+			printf(">%p    - function-hint %04X\n", context->currentProgramCounter, ((VariableVmFunction *)operand1.value())->functionHint);
 			fflush(stdout);
 #endif
 
-			if(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::This) {
-				context->functionContext->this_=VariableUndefined::newVariable();
+			if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::This) {
+				context->functionContext->this_ = VariableUndefined::newVariable();
 			};
-			if((((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Yield) ||
-				(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Self)) {
-				context->functionContext->thisFunction_=operand1;
+			if ((((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Yield) ||
+			    (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Self)) {
+				context->functionContext->thisFunction_ = operand1;
 			};
-			if(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Arguments) {
-				context->functionContext->functionArguments=functionArguments;
+			if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Arguments) {
+				context->functionContext->functionArguments = functionArguments;
 			};
-			if(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::LocalVariables) {
-				context->functionContext->functionLocalVariables=VariableArray::newArray();
+			if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::LocalVariables) {
+				context->functionContext->functionLocalVariables = VariableArray::newArray();
 			};
 
 #ifndef QUANTUM_SCRIPT_DISABLE_CLOSURE
-			context->functionContext->functionParent = ((VariableVmFunction *) operand1.value())->functionParent;
+			context->functionContext->functionParent = ((VariableVmFunction *)operand1.value())->functionParent;
 #endif
-			context->nextProgramCounter = ((VariableVmFunction *) operand1.value())->value;
-
+			context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 		};
-
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmXTailCallSymbol) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			String symbolName = Context::getSymbolMirror(((VariableSymbol *) operand)->value);
+			String symbolName = Context::getSymbolMirror(((VariableSymbol *)operand)->value);
 
-			printf(">%p    x-tail-call-symbol %u : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
+			printf(">%p    x-tail-call-symbol %u : %s\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value, symbolName.value());
 			fflush(stdout);
 #endif
 			TPointer<Variable> operand1;
 
 			TPointer<VariableArray> functionArguments(TTransfer<VariableArray, Variable>::cast(context->popTransfer()));
 
-			operand1 = (Context::getGlobalObject())->getPropertyBySymbol(((VariableSymbol *) operand)->value);
+			operand1 = (Context::getGlobalObject())->getPropertyBySymbol(((VariableSymbol *)operand)->value);
 
 			if (!TIsType<VariableVmFunction>(operand1)) {
 				context->push(operand1->functionApply(Context::getValueUndefined(), functionArguments));
@@ -2482,17 +2388,17 @@ namespace Quantum {
 				return;
 			};
 
-			if(!(((VariableVmFunction *) operand1.value())->coroutineContext->isEmpty())) {
+			if (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
 				TPointer<ExecutiveContextPc> contextTemp;
-				((VariableVmFunction *) operand1.value())->coroutineContext->pop(contextTemp);
+				((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 				context->contextStack->push(contextTemp);
 				(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
-				(context->contextStack->head)->value->functionContext->functionArguments=functionArguments;
-				while(!(((VariableVmFunction *) operand1.value())->coroutineContext->isEmpty())) {
-					((VariableVmFunction *) operand1.value())->coroutineContext->pop(contextTemp);
+				(context->contextStack->head)->value->functionContext->functionArguments = functionArguments;
+				while (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
+					((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 					context->contextStack->push(contextTemp);
 				};
-				context->nextProgramCounter = ((VariableVmFunction *) operand1.value())->value;
+				context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 
 				context->pcContext = (context->contextStack->head)->value;
 				context->functionContext = context->pcContext->functionContext;
@@ -2500,27 +2406,27 @@ namespace Quantum {
 			};
 
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    - function-hint %04X\n", context->currentProgramCounter, ((VariableVmFunction *) operand1.value())->functionHint);
+			printf(">%p    - function-hint %04X\n", context->currentProgramCounter, ((VariableVmFunction *)operand1.value())->functionHint);
 			fflush(stdout);
 #endif
 
-			if(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::This) {
-				context->functionContext->this_=VariableUndefined::newVariable();
+			if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::This) {
+				context->functionContext->this_ = VariableUndefined::newVariable();
 			};
-			if((((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Yield) ||
-				(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Self)) {
-				context->functionContext->thisFunction_=operand1;
+			if ((((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Yield) ||
+			    (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Self)) {
+				context->functionContext->thisFunction_ = operand1;
 			};
-			if(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Arguments) {
-				context->functionContext->functionArguments=functionArguments;
+			if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Arguments) {
+				context->functionContext->functionArguments = functionArguments;
 			};
-			if(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::LocalVariables) {
-				context->functionContext->functionLocalVariables=VariableArray::newArray();
+			if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::LocalVariables) {
+				context->functionContext->functionLocalVariables = VariableArray::newArray();
 			};
 #ifndef QUANTUM_SCRIPT_DISABLE_CLOSURE
-			context->functionContext->functionParent = ((VariableVmFunction *) operand1.value())->functionParent;
+			context->functionContext->functionParent = ((VariableVmFunction *)operand1.value())->functionParent;
 #endif
-			context->nextProgramCounter = ((VariableVmFunction *) operand1.value())->value;
+			context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmXTailCallThis) {
@@ -2539,23 +2445,22 @@ namespace Quantum {
 				return;
 			};
 
-
-			if(!(((VariableVmFunction *) operand1.value())->coroutineContext->isEmpty())) {
+			if (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
 				TPointer<ExecutiveContextPc> contextTemp;
 
-				((VariableVmFunction *) operand1.value())->coroutineContext->pop(contextTemp);
+				((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 				context->contextStack->push(contextTemp);
 
 				context->functionContext->this_ = operand2;
 
 				(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
-				(context->contextStack->head)->value->functionContext->functionArguments=functionArguments;
-				while(!(((VariableVmFunction *) operand1.value())->coroutineContext->isEmpty())) {
-					((VariableVmFunction *) operand1.value())->coroutineContext->pop(contextTemp);
+				(context->contextStack->head)->value->functionContext->functionArguments = functionArguments;
+				while (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
+					((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 					context->contextStack->push(contextTemp);
 				};
 
-				context->nextProgramCounter = ((VariableVmFunction *) operand1.value())->value;
+				context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 
 				context->pcContext = (context->contextStack->head)->value;
 				context->functionContext = context->pcContext->functionContext;
@@ -2564,30 +2469,30 @@ namespace Quantum {
 			};
 
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    - function-hint %04X\n", context->currentProgramCounter, ((VariableVmFunction *) operand1.value())->functionHint);
+			printf(">%p    - function-hint %04X\n", context->currentProgramCounter, ((VariableVmFunction *)operand1.value())->functionHint);
 			fflush(stdout);
 #endif
 
 			context->functionContext->this_ = operand2;
 
-			if((((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Yield) ||
-				(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Self)) {
-				context->functionContext->thisFunction_=operand1;
+			if ((((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Yield) ||
+			    (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Self)) {
+				context->functionContext->thisFunction_ = operand1;
 			};
 
-			if(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Arguments) {
-				context->functionContext->functionArguments=functionArguments;
+			if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Arguments) {
+				context->functionContext->functionArguments = functionArguments;
 			};
 
-			if(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::LocalVariables) {
-				context->functionContext->functionLocalVariables=VariableArray::newArray();
+			if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::LocalVariables) {
+				context->functionContext->functionLocalVariables = VariableArray::newArray();
 			};
 
 #ifndef QUANTUM_SCRIPT_DISABLE_CLOSURE
-			context->functionContext->functionParent = ((VariableVmFunction *) operand1.value())->functionParent;
+			context->functionContext->functionParent = ((VariableVmFunction *)operand1.value())->functionParent;
 #endif
 
-			context->nextProgramCounter = ((VariableVmFunction *) operand1.value())->value;
+			context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmXTailCallThisModeCall) {
@@ -2606,24 +2511,22 @@ namespace Quantum {
 				return;
 			};
 
-
-
-			if(!(((VariableVmFunction *) operand1.value())->coroutineContext->isEmpty())) {
+			if (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
 				TPointer<ExecutiveContextPc> contextTemp;
 
-				((VariableVmFunction *) operand1.value())->coroutineContext->pop(contextTemp);
+				((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 				context->contextStack->push(contextTemp);
 
 				context->functionContext->this_ = operand2;
 				(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
-				(context->contextStack->head)->value->functionContext->functionArguments=functionArguments;
+				(context->contextStack->head)->value->functionContext->functionArguments = functionArguments;
 
-				while(!(((VariableVmFunction *) operand1.value())->coroutineContext->isEmpty())) {
-					((VariableVmFunction *) operand1.value())->coroutineContext->pop(contextTemp);
+				while (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
+					((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 					context->contextStack->push(contextTemp);
 				};
 
-				context->nextProgramCounter = ((VariableVmFunction *) operand1.value())->value;
+				context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 
 				context->pcContext = (context->contextStack->head)->value;
 				context->functionContext = context->pcContext->functionContext;
@@ -2631,29 +2534,29 @@ namespace Quantum {
 			};
 
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    - function-hint %04X\n", context->currentProgramCounter, ((VariableVmFunction *) operand1.value())->functionHint);
+			printf(">%p    - function-hint %04X\n", context->currentProgramCounter, ((VariableVmFunction *)operand1.value())->functionHint);
 			fflush(stdout);
 #endif
 
 			context->functionContext->this_ = operand2;
 
-			if((((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Yield) ||
-				(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Self)) {
-				context->functionContext->thisFunction_=operand1;
+			if ((((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Yield) ||
+			    (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Self)) {
+				context->functionContext->thisFunction_ = operand1;
 			};
 
-			if(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::Arguments) {
-				context->functionContext->functionArguments=functionArguments;
+			if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Arguments) {
+				context->functionContext->functionArguments = functionArguments;
 			};
 
-			if(((VariableVmFunction *) operand1.value())->functionHint & ParserFunctionHint::LocalVariables) {
-				context->functionContext->functionLocalVariables=VariableArray::newArray();
+			if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::LocalVariables) {
+				context->functionContext->functionLocalVariables = VariableArray::newArray();
 			};
 
 #ifndef QUANTUM_SCRIPT_DISABLE_CLOSURE
-			context->functionContext->functionParent = ((VariableVmFunction *) operand1.value())->functionParent;
+			context->functionContext->functionParent = ((VariableVmFunction *)operand1.value())->functionParent;
 #endif
-			context->nextProgramCounter = ((VariableVmFunction *) operand1.value())->value;
+			context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmXTailCallThisModeApply) {
@@ -2668,9 +2571,8 @@ namespace Quantum {
 			TPointer<Variable> operand2(context->popTransfer());
 			TPointer<Variable> operand1(context->popTransfer());
 
-
 			TPointerX<Variable> &operandX = (*(((VariableArray *)(functionArguments.value()))->value))[0];
-			if(TIsType<VariableArray>(operandX)) {
+			if (TIsType<VariableArray>(operandX)) {
 
 				if (!TIsType<VariableVmFunction>(operand1)) {
 					context->push(operand1->functionApply(operand2, static_cast<VariableArray *>(operandX.value())));
@@ -2678,25 +2580,24 @@ namespace Quantum {
 					return;
 				};
 
-
-				if(!(((VariableVmFunction *) operand1.value())->coroutineContext->isEmpty())) {
+				if (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
 					TPointer<ExecutiveContextPc> contextTemp;
 
-					((VariableVmFunction *) operand1.value())->coroutineContext->pop(contextTemp);
+					((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 					context->contextStack->push(contextTemp);
 
 					context->functionContext->this_ = operand2;
 					(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
-					(context->contextStack->head)->value->functionContext->functionArguments=static_cast<VariableArray *>(operandX.value());
+					(context->contextStack->head)->value->functionContext->functionArguments = static_cast<VariableArray *>(operandX.value());
 
-					while(!(((VariableVmFunction *) operand1.value())->coroutineContext->isEmpty())) {
-						((VariableVmFunction *) operand1.value())->coroutineContext->pop(contextTemp);
+					while (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
+						((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 						context->contextStack->push(contextTemp);
 					};
 
-					context->nextProgramCounter = ((VariableVmFunction *) operand1.value())->value;
+					context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 
-					//functionArguments->decReferenceCount();
+					// functionArguments->decReferenceCount();
 
 					context->pcContext = (context->contextStack->head)->value;
 					context->functionContext = context->pcContext->functionContext;
@@ -2704,15 +2605,15 @@ namespace Quantum {
 				};
 
 				context->functionContext->this_ = operand2;
-				context->functionContext->thisFunction_=operand1;
+				context->functionContext->thisFunction_ = operand1;
 
-				context->functionContext->functionArguments=static_cast<VariableArray *>(operandX.value());
+				context->functionContext->functionArguments = static_cast<VariableArray *>(operandX.value());
 
-				context->functionContext->functionLocalVariables=VariableArray::newArray();
+				context->functionContext->functionLocalVariables = VariableArray::newArray();
 #ifndef QUANTUM_SCRIPT_DISABLE_CLOSURE
-				context->functionContext->functionParent = ((VariableVmFunction *) operand1.value())->functionParent;
+				context->functionContext->functionParent = ((VariableVmFunction *)operand1.value())->functionParent;
 #endif
-				context->nextProgramCounter = ((VariableVmFunction *) operand1.value())->value;
+				context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 				return;
 			};
 
@@ -2723,9 +2624,9 @@ namespace Quantum {
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmXTailCallWithThisReference) { //  x.fn()
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			String symbolName = Context::getSymbolMirror(((VariableSymbol *) operand)->value);
+			String symbolName = Context::getSymbolMirror(((VariableSymbol *)operand)->value);
 
-			printf(">%p    x-tail-call-with-this-reference %u : %s\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value, symbolName.value());
+			printf(">%p    x-tail-call-with-this-reference %u : %s\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value, symbolName.value());
 			fflush(stdout);
 #endif
 			TPointer<Variable> operand1;
@@ -2735,7 +2636,7 @@ namespace Quantum {
 			TPointer<VariableArray> functionArguments(TTransfer<VariableArray, Variable>::cast(context->popTransfer()));
 
 			context->pop(operand1);
-			result = operand1->getPropertyBySymbol(((VariableSymbol *) operand)->value);
+			result = operand1->getPropertyBySymbol(((VariableSymbol *)operand)->value);
 
 			if (result) {
 
@@ -2745,25 +2646,22 @@ namespace Quantum {
 					return;
 				};
 
-
-				if(!(((VariableVmFunction *) result.value())->coroutineContext->isEmpty())) {
+				if (!(((VariableVmFunction *)result.value())->coroutineContext->isEmpty())) {
 					TPointer<ExecutiveContextPc> contextTemp;
 
-					((VariableVmFunction *) result.value())->coroutineContext->pop(contextTemp);
+					((VariableVmFunction *)result.value())->coroutineContext->pop(contextTemp);
 					context->contextStack->push(contextTemp);
-
 
 					context->functionContext->this_ = operand1;
 					(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
-					(context->contextStack->head)->value->functionContext->functionArguments=functionArguments;
+					(context->contextStack->head)->value->functionContext->functionArguments = functionArguments;
 
-					while(!(((VariableVmFunction *) result.value())->coroutineContext->isEmpty())) {
-						((VariableVmFunction *) result.value())->coroutineContext->pop(contextTemp);
+					while (!(((VariableVmFunction *)result.value())->coroutineContext->isEmpty())) {
+						((VariableVmFunction *)result.value())->coroutineContext->pop(contextTemp);
 						context->contextStack->push(contextTemp);
 					};
 
-					context->nextProgramCounter = ((VariableVmFunction *) result.value())->value;
-
+					context->nextProgramCounter = ((VariableVmFunction *)result.value())->value;
 
 					context->pcContext = (context->contextStack->head)->value;
 					context->functionContext = context->pcContext->functionContext;
@@ -2772,13 +2670,13 @@ namespace Quantum {
 
 				context->functionContext->this_ = operand1;
 				context->functionContext->thisFunction_ = result;
-				context->functionContext->functionArguments=functionArguments;
+				context->functionContext->functionArguments = functionArguments;
 
-				context->functionContext->functionLocalVariables=VariableArray::newArray();
+				context->functionContext->functionLocalVariables = VariableArray::newArray();
 #ifndef QUANTUM_SCRIPT_DISABLE_CLOSURE
-				context->functionContext->functionParent = ((VariableVmFunction *) result.value())->functionParent;
+				context->functionContext->functionParent = ((VariableVmFunction *)result.value())->functionParent;
 #endif
-				context->nextProgramCounter = ((VariableVmFunction *) result.value())->value;
+				context->nextProgramCounter = ((VariableVmFunction *)result.value())->value;
 				return;
 			};
 
@@ -2786,28 +2684,25 @@ namespace Quantum {
 			InstructionVmThrow(context, nullptr);
 		};
 
-
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmAssignLocalVariablesObjectReferencePow2LocalVariablesSymbol) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 			printf(">%p    assign-local-variables-object-reference-pow2-local-variables-symbol %lu %lu\n", context->currentProgramCounter,
-				((VariableOperator22 *) operand)->symbol1,
-				((VariableOperator22 *) operand)->symbol2
-			);
+			       ((VariableOperator22 *)operand)->symbol1,
+			       ((VariableOperator22 *)operand)->symbol2);
 			fflush(stdout);
 #endif
 
-			Number value = (((VariableArray *) (context->functionContext->functionLocalVariables.value()))->index(((VariableOperator22 *) operand)->symbol2))->toNumber();
-			(((VariableArray *) (context->functionContext->functionLocalVariables.value()))->index(((VariableOperator22 *) operand)->symbol1))=VariableNumber::newVariable(value * value);
-
+			Number value = (((VariableArray *)(context->functionContext->functionLocalVariables.value()))->index(((VariableOperator22 *)operand)->symbol2))->toNumber();
+			(((VariableArray *)(context->functionContext->functionLocalVariables.value()))->index(((VariableOperator22 *)operand)->symbol1)) = VariableNumber::newVariable(value * value);
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmLocalVariablesPlusPlus) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    local-variables-plus-plus %lu\n", context->currentProgramCounter, ((VariableSymbol *) operand)->value);
+			printf(">%p    local-variables-plus-plus %lu\n", context->currentProgramCounter, ((VariableSymbol *)operand)->value);
 			fflush(stdout);
 #endif
-			TPointerX<Variable> &refObject = (((VariableArray *) (context->functionContext->functionLocalVariables.value()))->index(((VariableSymbol *) operand)->value));
-			refObject=VariableNumber::newVariable((refObject->toNumber()) + 1);
+			TPointerX<Variable> &refObject = (((VariableArray *)(context->functionContext->functionLocalVariables.value()))->index(((VariableSymbol *)operand)->value));
+			refObject = VariableNumber::newVariable((refObject->toNumber()) + 1);
 		};
 
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmPushGlobal) {
@@ -2818,17 +2713,13 @@ namespace Quantum {
 			context->push(Context::getGlobalObject());
 		};
 
-
 		QUANTUM_SCRIPT_INSTRUCTION_IMPLEMENT(VmContextSetPC) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
-			printf(">%p    context-set-pc %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *) operand)->value);
+			printf(">%p    context-set-pc %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *)operand)->value);
 			fflush(stdout);
 #endif
-			context->pcContext->pc_ = (((VariableVmProgramCounter *) operand)->value);
+			context->pcContext->pc_ = (((VariableVmProgramCounter *)operand)->value);
 		};
-
-
 
 	};
 };
-

@@ -11,7 +11,7 @@
 #define QUANTUM_SCRIPT_VARIABLENULL_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLE_HPP
-#include "quantum-script-variable.hpp"
+#	include "quantum-script-variable.hpp"
 #endif
 
 namespace Quantum {
@@ -21,12 +21,10 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::VariableNull>:
-			public TMemoryPoolActive<Quantum::Script::VariableNull> {};
+		template <>
+		class TMemory<Quantum::Script::VariableNull> : public TMemoryPoolActive<Quantum::Script::VariableNull> {};
 	};
 };
 
@@ -35,15 +33,15 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class VariableNull :
-			public Variable {
+		class VariableNull : public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableNull);
 				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableNull);
+
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeNull;
-			public:
 
-				QUANTUM_SCRIPT_EXPORT  VariableNull();
+			public:
+				QUANTUM_SCRIPT_EXPORT VariableNull();
 
 				QUANTUM_SCRIPT_EXPORT static Variable *newVariable();
 
@@ -54,14 +52,9 @@ namespace Quantum {
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT Number toNumber();
 				QUANTUM_SCRIPT_EXPORT String toString();
-
 		};
-
 
 	};
 };
 
-
-
 #endif
-

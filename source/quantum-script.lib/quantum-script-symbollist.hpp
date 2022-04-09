@@ -11,7 +11,7 @@
 #define QUANTUM_SCRIPT_SYMBOLLIST_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLE_HPP
-#include "quantum-script-variable.hpp"
+#	include "quantum-script-variable.hpp"
 #endif
 
 namespace Quantum {
@@ -19,11 +19,10 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class SymbolList :
-			public Object {
+		class SymbolList : public Object {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(SymbolList);
-			public:
 
+			public:
 				typedef TRedBlackTree<String, Symbol, TMemoryPoolActive> XSymbolList;
 				typedef TRedBlackTree<Symbol, String, TMemoryPoolActive> XSymbolListMirror;
 
@@ -39,10 +38,7 @@ namespace Quantum {
 				QUANTUM_SCRIPT_EXPORT static void initMemory();
 		};
 
-
 	};
 };
-
-
 
 #endif

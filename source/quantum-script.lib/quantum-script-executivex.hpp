@@ -11,7 +11,7 @@
 #define QUANTUM_SCRIPT_EXECUTIVEX_HPP
 
 #ifndef QUANTUM_SCRIPT_EXECUTIVE_HPP
-#include "quantum-script-executive.hpp"
+#	include "quantum-script-executive.hpp"
 #endif
 
 namespace Quantum {
@@ -21,8 +21,10 @@ namespace Quantum {
 
 		class ExecutiveX {
 				friend class Executive;
+
 			protected:
 				QUANTUM_SCRIPT_EXPORT static void setStackTrace(String stackTrace);
+
 			public:
 				QUANTUM_SCRIPT_EXPORT static bool initExecutive(int cmdN, char **cmdS, QuantumScriptInitExecutiveProc applicationInitExecutive);
 				QUANTUM_SCRIPT_EXPORT static String getError();
@@ -42,6 +44,4 @@ namespace Quantum {
 	};
 };
 
-
 #endif
-

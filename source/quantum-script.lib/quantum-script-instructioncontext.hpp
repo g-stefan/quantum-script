@@ -11,23 +11,23 @@
 #define QUANTUM_SCRIPT_INSTRUCTIONCONTEXT_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLE_HPP
-#include "quantum-script-variable.hpp"
+#	include "quantum-script-variable.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_EXECUTIVECONTEXT_HPP
-#include "quantum-script-executivecontext.hpp"
+#	include "quantum-script-executivecontext.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_INSTRUCTIONX_HPP
-#include "quantum-script-instructionx.hpp"
+#	include "quantum-script-instructionx.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_VARIABLEVMFUNCTION_HPP
-#include "quantum-script-variablevmfunction.hpp"
+#	include "quantum-script-variablevmfunction.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_VARIABLEARRAY_HPP
-#include "quantum-script-variablearray.hpp"
+#	include "quantum-script-variablearray.hpp"
 #endif
 
 namespace Quantum {
@@ -37,13 +37,11 @@ namespace Quantum {
 
 		class InstructionError {
 			public:
-
 				enum {
 					None,
 					Error,
 					Throw
 				};
-
 		};
 
 		class InstructionTrace {
@@ -52,24 +50,23 @@ namespace Quantum {
 				uint32_t sourceLineNumber;
 		};
 
-		class InstructionContext :
-			public Stack {
+		class InstructionContext : public Stack {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(InstructionContext);
-			public:
 
+			public:
 				TStack<String> includedFile;
 
 				TPointer<ExecutiveContext> contextStack;
 
-				TPointer<TDoubleEndedQueue<InstructionTrace> > stackTrace;
+				TPointer<TDoubleEndedQueue<InstructionTrace>> stackTrace;
 				TRedBlackTree<String, bool> listIncludeOnce;
 
 				InstructionList *instructionListExecutive;
 				ProgramCounter *currentProgramCounter;
 				ProgramCounter *nextProgramCounter;
 
-				ExecutiveContextPc    *pcContext;
-				ExecutiveContextFunction  *functionContext;
+				ExecutiveContextPc *pcContext;
+				ExecutiveContextFunction *functionContext;
 
 				TPointer<Variable> returnValue;
 
@@ -127,15 +124,15 @@ namespace Quantum {
 #endif
 
 				inline TPointer<Variable> getLocalVariable(int index) {
-					if (index < ((int) ((VariableArray *) (functionContext->functionLocalVariables.value()))->value->length())) {
-						return (*(((VariableArray *) (functionContext->functionLocalVariables.value()))->value.value()))[index];
+					if (index < ((int)((VariableArray *)(functionContext->functionLocalVariables.value()))->value->length())) {
+						return (*(((VariableArray *)(functionContext->functionLocalVariables.value()))->value.value()))[index];
 					};
 					return VariableUndefined::newVariable();
 				};
 
 				inline TPointer<Variable> getArgument(int index) {
-					if (index < ((int) ((VariableArray *) (functionContext->functionArguments.value()))->value->length())) {
-						return (*(((VariableArray *) (functionContext->functionArguments.value()))->value.value()))[index];
+					if (index < ((int)((VariableArray *)(functionContext->functionArguments.value()))->value->length())) {
+						return (*(((VariableArray *)(functionContext->functionArguments.value()))->value.value()))[index];
 					};
 					return TPointer<Variable>(VariableUndefined::newVariable());
 				};
@@ -155,13 +152,9 @@ namespace Quantum {
 #endif
 
 				QUANTUM_SCRIPT_EXPORT static void initMemory();
-
 		};
-
 
 	};
 };
-
-
 
 #endif

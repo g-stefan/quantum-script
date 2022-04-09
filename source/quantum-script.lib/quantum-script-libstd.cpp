@@ -36,10 +36,8 @@ namespace Quantum {
 				executive->initExtension(LibStdString::initExecutive);
 				executive->initExtension(LibStdArray::initExecutive);
 #endif
-
 			};
 
 		};
 	};
 };
-

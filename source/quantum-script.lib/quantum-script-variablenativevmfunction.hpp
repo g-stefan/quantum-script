@@ -11,11 +11,11 @@
 #define QUANTUM_SCRIPT_VARIABLENATIVEFUNCTION_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLE_HPP
-#include "quantum-script-variable.hpp"
+#	include "quantum-script-variable.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_INSTRUCTIONX_HPP
-#include "quantum-script-instructionx.hpp"
+#	include "quantum-script-instructionx.hpp"
 #endif
 
 namespace Quantum {
@@ -25,12 +25,10 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::VariableNativeVmFunction>:
-			public TMemoryPoolActive<Quantum::Script::VariableNativeVmFunction> {};
+		template <>
+		class TMemory<Quantum::Script::VariableNativeVmFunction> : public TMemoryPoolActive<Quantum::Script::VariableNativeVmFunction> {};
 	};
 };
 
@@ -39,18 +37,18 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class VariableNativeVmFunction :
-			public Variable {
+		class VariableNativeVmFunction : public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableNativeVmFunction);
 				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableNativeVmFunction);
+
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeFunction;
-			public:
 
+			public:
 				InstructionProcedure procedure;
 				TPointer<Variable> operand;
 
-				QUANTUM_SCRIPT_EXPORT  VariableNativeVmFunction();
+				QUANTUM_SCRIPT_EXPORT VariableNativeVmFunction();
 
 				inline void activeDestructor() {
 					operand.deleteMemory();
@@ -62,11 +60,9 @@ namespace Quantum {
 
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT String toString();
-
 		};
 
 	};
 };
-
 
 #endif

@@ -75,4 +75,3 @@
 #include "quantum-script-variablevmfunction.cpp"
 #include "quantum-script-variablevmprogramcounter.cpp"
 #include "quantum-script-variableresource.cpp"
-

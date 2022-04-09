@@ -27,7 +27,7 @@ namespace Quantum {
 		using namespace XYO;
 
 		XYO_DYNAMIC_TYPE_IMPLEMENT(Variable, "{23C345C1-0835-4938-863D-C2B39B68A2CE}");
-		const char *Variable::strTypeUndefined="undefined";
+		const char *Variable::strTypeUndefined = "undefined";
 
 		Variable::Variable() {
 			XYO_DYNAMIC_TYPE_PUSH(Variable);
@@ -47,13 +47,13 @@ namespace Quantum {
 
 		size_t Variable::toIndex() {
 			Number nr = toNumber();
-			if(isnan(nr)) {
+			if (isnan(nr)) {
 				return 0;
 			};
-			if(isinf(nr)) {
+			if (isinf(nr)) {
 				return 0;
 			};
-			if(nr < 0) {
+			if (nr < 0) {
 				return 0;
 			};
 			return (size_t)(nr);
@@ -69,7 +69,7 @@ namespace Quantum {
 
 		TPointer<Variable> Variable::getPropertyBySymbol(Symbol symbolId) {
 			Variable *prototype_ = instancePrototype();
-			if(prototype_) {
+			if (prototype_) {
 				return prototype_->getPropertyBySymbol(symbolId);
 			};
 			return Context::getValueUndefined();
@@ -77,21 +77,21 @@ namespace Quantum {
 
 		TPointer<Variable> Variable::getPropertyByIndex(size_t index) {
 			Variable *prototype_ = instancePrototype();
-			if(prototype_) {
+			if (prototype_) {
 				return prototype_->getPropertyByIndex(index);
 			};
 			return Context::getValueUndefined();
 		};
 
 		TPointer<Variable> Variable::getPropertyByVariable(Variable *index) {
-			if(TIsType<VariableSymbol>(index)) {
+			if (TIsType<VariableSymbol>(index)) {
 				return getPropertyBySymbol((static_cast<VariableSymbol *>(index))->value);
 			};
-			if(TIsType<VariableNumber>(index)) {
+			if (TIsType<VariableNumber>(index)) {
 				return getPropertyByIndex(index->toIndex());
 			};
 			Variable *prototype_ = instancePrototype();
-			if(prototype_) {
+			if (prototype_) {
 				return prototype_->getPropertyByVariable(index);
 			};
 			return Context::getValueUndefined();
@@ -106,11 +106,11 @@ namespace Quantum {
 		};
 
 		void Variable::setPropertyByVariable(Variable *index, Variable *value) {
-			if(TIsType<VariableSymbol>(index)) {
+			if (TIsType<VariableSymbol>(index)) {
 				setPropertyBySymbol((static_cast<VariableSymbol *>(index))->value, value);
 				return;
 			};
-			if(TIsType<VariableNumber>(index)) {
+			if (TIsType<VariableNumber>(index)) {
 				setPropertyByIndex(index->toIndex(), value);
 				return;
 			};
@@ -126,10 +126,10 @@ namespace Quantum {
 		};
 
 		bool Variable::deletePropertyByVariable(Variable *index) {
-			if(TIsType<VariableSymbol>(index)) {
+			if (TIsType<VariableSymbol>(index)) {
 				return deletePropertyBySymbol((static_cast<VariableSymbol *>(index))->value);
 			};
-			if(TIsType<VariableNumber>(index)) {
+			if (TIsType<VariableNumber>(index)) {
 				return deletePropertyByIndex(index->toIndex());
 			};
 			return false;
@@ -174,9 +174,9 @@ namespace Quantum {
 		bool Variable::instanceOf(Variable *value) {
 			Variable *thisPrototype = instancePrototype();
 			Prototype *prototype_;
-			if(value->instanceOfPrototype(prototype_)) {
-				while(thisPrototype) {
-					if(thisPrototype == prototype_->prototype) {
+			if (value->instanceOfPrototype(prototype_)) {
+				while (thisPrototype) {
+					if (thisPrototype == prototype_->prototype) {
 						return true;
 					};
 					thisPrototype = thisPrototype->instancePrototype();
@@ -206,32 +206,30 @@ namespace Quantum {
 			return newVariable();
 		};
 
-
 		TPointer<Variable> Variable::newObjectFunctionApply(VariableArray *arguments) {
 			TPointer<Variable> this_(VariableObject::newVariable());
 			Prototype *prototype;
-			if(instanceOfPrototype(prototype)) {
-				((VariableObject *)this_.value())->prototype=prototype;
+			if (instanceOfPrototype(prototype)) {
+				((VariableObject *)this_.value())->prototype = prototype;
 				return functionApply(this_, arguments);
 			};
 			return VariableUndefined::newVariable();
 		};
 
-
 		bool Variable::isLess(Variable *b) {
-			if(isString() && b->isString()) {
+			if (isString() && b->isString()) {
 				return (toString() < b->toString());
 			};
 
 			Number na = toNumber();
 
-			if(isnan(na)) {
+			if (isnan(na)) {
 				return false;
 			};
 
 			Number nb = b->toNumber();
 
-			if(isnan(nb)) {
+			if (isnan(nb)) {
 				return false;
 			};
 
@@ -239,19 +237,19 @@ namespace Quantum {
 		};
 
 		bool Variable::isLessOrEqual(Variable *b) {
-			if(isString() && b->isString()) {
+			if (isString() && b->isString()) {
 				return (toString() <= b->toString());
 			};
 
 			Number na = toNumber();
 
-			if(isnan(na)) {
+			if (isnan(na)) {
 				return false;
 			};
 
 			Number nb = b->toNumber();
 
-			if(isnan(nb)) {
+			if (isnan(nb)) {
 				return false;
 			};
 
@@ -259,19 +257,19 @@ namespace Quantum {
 		};
 
 		bool Variable::isGreater(Variable *b) {
-			if(isString() && b->isString()) {
+			if (isString() && b->isString()) {
 				return (toString() > b->toString());
 			};
 
 			Number na = toNumber();
 
-			if(isnan(na)) {
+			if (isnan(na)) {
 				return false;
 			};
 
 			Number nb = b->toNumber();
 
-			if(isnan(nb)) {
+			if (isnan(nb)) {
 				return false;
 			};
 
@@ -279,19 +277,19 @@ namespace Quantum {
 		};
 
 		bool Variable::isGreaterOrEqual(Variable *b) {
-			if(isString() && b->isString()) {
+			if (isString() && b->isString()) {
 				return (toString() >= b->toString());
 			};
 
 			Number na = toNumber();
 
-			if(isnan(na)) {
+			if (isnan(na)) {
 				return false;
 			};
 
 			Number nb = b->toNumber();
 
-			if(isnan(nb)) {
+			if (isnan(nb)) {
 				return false;
 			};
 
@@ -299,57 +297,57 @@ namespace Quantum {
 		};
 
 		bool Variable::isEqual(Variable *b) {
-			if(isSameType(b)) {
-				if(TIsTypeExact<VariableUndefined>(this)) {
+			if (isSameType(b)) {
+				if (TIsTypeExact<VariableUndefined>(this)) {
 					return true;
 				};
-				if(TIsType<VariableNull>(this)) {
+				if (TIsType<VariableNull>(this)) {
 					return true;
 				};
-				if(TIsType<VariableNumber>(this)) {
-					if(isnan((static_cast<VariableNumber *>(this))->value)) {
+				if (TIsType<VariableNumber>(this)) {
+					if (isnan((static_cast<VariableNumber *>(this))->value)) {
 						return false;
 					};
-					if(isnan((static_cast<VariableNumber *>(b))->value)) {
+					if (isnan((static_cast<VariableNumber *>(b))->value)) {
 						return false;
 					};
-					if((static_cast<VariableNumber *>(this))->value == (static_cast<VariableNumber *>(b))->value) {
+					if ((static_cast<VariableNumber *>(this))->value == (static_cast<VariableNumber *>(b))->value) {
 						return true;
 					};
 					return false;
 				};
-				if(isString() && b->isString()) {
+				if (isString() && b->isString()) {
 					return (toString() == b->toString());
 				};
-				if(this == b) {
+				if (this == b) {
 					return true;
 				};
 				return false;
 			};
-			if(TIsType<VariableNull>(this)) {
-				if(TIsTypeExact<VariableUndefined>(b)) {
+			if (TIsType<VariableNull>(this)) {
+				if (TIsTypeExact<VariableUndefined>(b)) {
 					return true;
 				};
 			};
-			if(TIsTypeExact<VariableUndefined>(this)) {
-				if(TIsType<VariableNull>(b)) {
+			if (TIsTypeExact<VariableUndefined>(this)) {
+				if (TIsType<VariableNull>(b)) {
 					return true;
 				};
 			};
 
-			if(isString() && b->isString()) {
+			if (isString() && b->isString()) {
 				return (toString() == b->toString());
 			};
 
 			Number na = toNumber();
 
-			if(isnan(na)) {
+			if (isnan(na)) {
 				return false;
 			};
 
 			Number nb = b->toNumber();
 
-			if(isnan(nb)) {
+			if (isnan(nb)) {
 				return false;
 			};
 
@@ -357,52 +355,52 @@ namespace Quantum {
 		};
 
 		bool Variable::isEqualStrict(Variable *b) {
-			if(!isSameType(b)) {
-				if(isString() && b->isString()) {
+			if (!isSameType(b)) {
+				if (isString() && b->isString()) {
 					return (toString() == b->toString());
 				};
 				return false;
 			};
-			if(TIsTypeExact<VariableUndefined>(this)) {
+			if (TIsTypeExact<VariableUndefined>(this)) {
 				return true;
 			};
-			if(TIsType<VariableNull>(this)) {
+			if (TIsType<VariableNull>(this)) {
 				return true;
 			};
-			if(TIsType<VariableNumber>(this)) {
-				if(isnan((static_cast<VariableNumber *>(this))->value)) {
+			if (TIsType<VariableNumber>(this)) {
+				if (isnan((static_cast<VariableNumber *>(this))->value)) {
 					return false;
 				};
-				if(isnan((static_cast<VariableNumber *>(b))->value)) {
+				if (isnan((static_cast<VariableNumber *>(b))->value)) {
 					return false;
 				};
-				if((static_cast<VariableNumber *>(this))->value == (static_cast<VariableNumber *>(b))->value) {
+				if ((static_cast<VariableNumber *>(this))->value == (static_cast<VariableNumber *>(b))->value) {
 					return true;
 				};
 				return false;
 			};
-			if(isString() && b->isString()) {
+			if (isString() && b->isString()) {
 				return (toString() == b->toString());
 			};
-			if(this == b) {
+			if (this == b) {
 				return true;
 			};
 			return false;
 		};
 
 		int Variable::compare(Variable *b) {
-			if(isString() && b->isString()) {
+			if (isString() && b->isString()) {
 				return (toString()).compare(b->toString());
 			};
 			Number na = toNumber();
 
-			if(isnan(na)) {
+			if (isnan(na)) {
 				return -1;
 			};
 
 			Number nb = b->toNumber();
 
-			if(isnan(nb)) {
+			if (isnan(nb)) {
 				return -1;
 			};
 
@@ -410,12 +408,10 @@ namespace Quantum {
 		};
 
 		TPointer<Variable> Variable::operatorPlus(Variable *b) {
-			if(isString() || b->isString()) {
+			if (isString() || b->isString()) {
 				return VariableString::newVariable(toString() << b->toString());
 			};
 			return VariableNumber::newVariable(toNumber() + b->toNumber());
 		};
 	};
 };
-
-

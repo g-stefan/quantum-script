@@ -17,7 +17,6 @@
 namespace Quantum {
 	namespace Script {
 
-
 		bool Parser::statementYield() {
 			if (token.isSymbolX("yield")) {
 
@@ -40,4 +39,3 @@ namespace Quantum {
 
 	};
 };
-

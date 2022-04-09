@@ -38,7 +38,7 @@ namespace Quantum {
 		};
 
 		bool Parser::isFunctionArgument(String variable, int &index, int &level) {
-			TStack<TRedBlackTree<String, int > >::Node *arguments(functionArguments.head);
+			TStack<TRedBlackTree<String, int>>::Node *arguments(functionArguments.head);
 			level = 0;
 			for (; arguments; arguments = arguments->next, ++level) {
 				if (arguments->value.get(variable, index)) {
@@ -49,7 +49,7 @@ namespace Quantum {
 		};
 
 		bool Parser::isFunctionLocalVariable(String variable, int &index, int &level) {
-			TStack<TRedBlackTree<String, int > >::Node *variables(functionLocalVariables.head);
+			TStack<TRedBlackTree<String, int>>::Node *variables(functionLocalVariables.head);
 			level = 0;
 			for (; variables; variables = variables->next, ++level) {
 				if (variables->value.get(variable, index)) {
@@ -156,7 +156,6 @@ namespace Quantum {
 			assembler->linkProgramCounterEnd(old_, new_);
 		};
 
-
 		bool Parser::isBlockStatement() {
 			if (token.is1("{")) {
 				while (!token.isEof()) {
@@ -221,11 +220,9 @@ namespace Quantum {
 		};
 
 		void Parser::initMemory() {
-			TStack<TRedBlackTree<String, int > >::initMemory();
+			TStack<TRedBlackTree<String, int>>::initMemory();
 			TStack<int>::initMemory();
 		};
 
 	};
 };
-
-

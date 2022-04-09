@@ -11,13 +11,12 @@
 #define QUANTUM_SCRIPT_VARIABLESYMBOL_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLE_HPP
-#include "quantum-script-variable.hpp"
+#	include "quantum-script-variable.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_SYMBOLLIST_HPP
-#include "quantum-script-symbollist.hpp"
+#	include "quantum-script-symbollist.hpp"
 #endif
-
 
 namespace Quantum {
 	namespace Script {
@@ -26,12 +25,10 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::VariableSymbol>:
-			public TMemoryPoolActive<Quantum::Script::VariableSymbol> {};
+		template <>
+		class TMemory<Quantum::Script::VariableSymbol> : public TMemoryPoolActive<Quantum::Script::VariableSymbol> {};
 	};
 };
 
@@ -40,14 +37,14 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class VariableSymbol :
-			public Variable {
+		class VariableSymbol : public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableSymbol);
 				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableSymbol);
+
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeSymbol;
-			public:
 
+			public:
 				Symbol value;
 
 				QUANTUM_SCRIPT_EXPORT VariableSymbol();
@@ -67,11 +64,9 @@ namespace Quantum {
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT Number toNumber();
 				QUANTUM_SCRIPT_EXPORT bool isString();
-
 		};
 
 	};
 };
-
 
 #endif

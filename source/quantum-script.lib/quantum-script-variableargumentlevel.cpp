@@ -35,7 +35,7 @@ namespace Quantum {
 			retV = TMemory<VariableArgumentLevel>::newMemory();
 			retV->value = value;
 			retV->level = level;
-			return (Variable *) retV;
+			return (Variable *)retV;
 		};
 
 		bool VariableArgumentLevel::toBoolean() {
@@ -46,8 +46,5 @@ namespace Quantum {
 			return strTypeArgumentLevel;
 		};
 
-
 	};
 };
-
-

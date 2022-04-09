@@ -11,16 +11,15 @@
 #define QUANTUM_SCRIPT_VARIABLEASSOCIATIVEARRAY_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLE_HPP
-#include "quantum-script-variable.hpp"
+#	include "quantum-script-variable.hpp"
 #endif
 
 namespace XYO {
 	namespace DataStructures {
 
-		template<>
+		template <>
 		class TComparator<Quantum::Script::Variable> {
 			public:
-
 				inline static bool isLess(const Quantum::Script::Variable &a, const Quantum::Script::Variable &b) {
 					return ((const_cast<Quantum::Script::Variable &>(a)).compare(&(const_cast<Quantum::Script::Variable &>(b))) < 0);
 				};
@@ -40,12 +39,10 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::VariableAssociativeArray>:
-			public TMemoryPoolActive<Quantum::Script::VariableAssociativeArray> {};
+		template <>
+		class TMemory<Quantum::Script::VariableAssociativeArray> : public TMemoryPoolActive<Quantum::Script::VariableAssociativeArray> {};
 	};
 };
 
@@ -56,16 +53,17 @@ namespace Quantum {
 
 		typedef TAssociativeArray<TPointerX<Variable>, TPointerX<Variable>, 4, TMemoryPoolActive> AssociativeArray;
 
-		class VariableAssociativeArray :
-			public Variable {
+		class VariableAssociativeArray : public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableAssociativeArray);
 				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableAssociativeArray);
+
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeAssociativeArray;
+
 			public:
 				TPointerX<AssociativeArray> value;
 
-				QUANTUM_SCRIPT_EXPORT  VariableAssociativeArray();
+				QUANTUM_SCRIPT_EXPORT VariableAssociativeArray();
 
 				inline void activeDestructor() {
 					value->activeDestructor();
@@ -87,20 +85,15 @@ namespace Quantum {
 				QUANTUM_SCRIPT_EXPORT TPointer<Iterator> getIteratorKey();
 				QUANTUM_SCRIPT_EXPORT TPointer<Iterator> getIteratorValue();
 
-
 				QUANTUM_SCRIPT_EXPORT static void initMemory();
-
 
 				QUANTUM_SCRIPT_EXPORT Variable *clone(SymbolList &inSymbolList);
 
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT String toString();
-
 		};
 
 	};
 };
-
-
 
 #endif

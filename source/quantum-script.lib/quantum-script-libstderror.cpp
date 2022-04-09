@@ -26,9 +26,6 @@ namespace Quantum {
 				executive->compileStringX(libStdErrorSource);
 			};
 
-
 		};
 	};
 };
-
-

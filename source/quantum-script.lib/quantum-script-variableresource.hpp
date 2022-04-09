@@ -11,7 +11,7 @@
 #define QUANTUM_SCRIPT_VARIABLERESOURCE_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLE_HPP
-#include "quantum-script-variable.hpp"
+#	include "quantum-script-variable.hpp"
 #endif
 
 namespace Quantum {
@@ -22,12 +22,10 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::VariableResource>:
-			public TMemoryPoolActive<Quantum::Script::VariableResource> {};
+		template <>
+		class TMemory<Quantum::Script::VariableResource> : public TMemoryPoolActive<Quantum::Script::VariableResource> {};
 	};
 };
 
@@ -36,14 +34,14 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class VariableResource :
-			public Variable {
+		class VariableResource : public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableResource);
 				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableResource);
+
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeResource;
-			public:
 
+			public:
 				typedef void (*ResourceDelete)(void *);
 
 				void *resource;
@@ -57,8 +55,8 @@ namespace Quantum {
 				};
 
 				inline void close() {
-					if(resource != nullptr) {
-						if(resourceDelete != nullptr) {
+					if (resource != nullptr) {
+						if (resourceDelete != nullptr) {
 							(*resourceDelete)(resource);
 							resourceDelete = nullptr;
 						};
@@ -78,11 +76,9 @@ namespace Quantum {
 
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT String toString();
-
 		};
 
 	};
 };
-
 
 #endif

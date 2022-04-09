@@ -25,13 +25,12 @@ namespace Quantum {
 		};
 
 		Variable *VariableOperator22::newVariable() {
-			return (Variable *) TMemory<VariableOperator22>::newMemory();
+			return (Variable *)TMemory<VariableOperator22>::newMemory();
 		};
 
 		bool VariableOperator22::toBoolean() {
 			return true;
 		};
-
 
 		String VariableOperator22::toString() {
 			return strTypeUndefined;
@@ -39,5 +38,3 @@ namespace Quantum {
 
 	};
 };
-
-

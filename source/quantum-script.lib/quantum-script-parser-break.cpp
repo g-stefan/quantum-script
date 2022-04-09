@@ -17,10 +17,9 @@
 namespace Quantum {
 	namespace Script {
 
-
 		bool Parser::statementBreak() {
 			if (token.isSymbolX("break")) {
-				if(parserContext.head->value->isLoop) {
+				if (parserContext.head->value->isLoop) {
 					parserContext.head->value->pcBreak.push(assembleProgramCounter(ParserAsm::Goto, nullptr));
 					return true;
 				};
@@ -32,5 +31,3 @@ namespace Quantum {
 
 	};
 };
-
-

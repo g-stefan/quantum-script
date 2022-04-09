@@ -38,7 +38,7 @@ namespace Quantum {
 			VariableBoolean *retV;
 			retV = TMemory<VariableBoolean>::newMemory();
 			retV->value = value;
-			return (Variable *) retV;
+			return (Variable *)retV;
 		};
 
 		Variable *VariableBoolean::instancePrototype() {
@@ -58,14 +58,11 @@ namespace Quantum {
 		};
 
 		String VariableBoolean::toString() {
-			if(value) {
+			if (value) {
 				return strTrue;
 			};
 			return strFalse;
 		};
 
-
 	};
 };
-
-

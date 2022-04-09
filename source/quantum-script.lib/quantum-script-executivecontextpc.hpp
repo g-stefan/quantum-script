@@ -11,19 +11,19 @@
 #define QUANTUM_SCRIPT_EXECUTIVECONTEXTPC_HPP
 
 #ifndef QUANTUM_SCRIPT__DEPENDENCY_HPP
-#include "quantum-script--dependency.hpp"
+#	include "quantum-script--dependency.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_PROGRAMCOUNTER_HPP
-#include "quantum-script-programcounter.hpp"
+#	include "quantum-script-programcounter.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_VARIABLE_HPP
-#include "quantum-script-variable.hpp"
+#	include "quantum-script-variable.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_ITERATOR_HPP
-#include "quantum-script-iterator.hpp"
+#	include "quantum-script-iterator.hpp"
 #endif
 
 namespace Quantum {
@@ -33,15 +33,12 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::ExecutiveContextPc>:
-			public TMemoryPoolActive<Quantum::Script::ExecutiveContextPc> {};
+		template <>
+		class TMemory<Quantum::Script::ExecutiveContextPc> : public TMemoryPoolActive<Quantum::Script::ExecutiveContextPc> {};
 	};
 };
-
 
 namespace Quantum {
 	namespace Script {
@@ -50,9 +47,9 @@ namespace Quantum {
 
 		class ExecutiveContextFunction;
 
-		class ExecutiveContextPc :
-			public Object {
+		class ExecutiveContextPc : public Object {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(ExecutiveContextPc);
+
 			public:
 				ProgramCounter *catch_;
 				ProgramCounter *finally_;
@@ -68,8 +65,8 @@ namespace Quantum {
 
 				ExecutiveContextFunction *functionContext;
 
-				TPointer<Variable>  registerValue;
-				TPointer<Iterator>  iteratorValue;
+				TPointer<Variable> registerValue;
+				TPointer<Iterator> iteratorValue;
 				TPointer<Variable> referenceValue;
 
 				inline ExecutiveContextPc() {
@@ -85,7 +82,6 @@ namespace Quantum {
 					tryThrow_ = nullptr;
 					pc_ = nullptr;
 					stackLink_ = nullptr;
-
 				};
 
 				inline void activeConstructor() {
@@ -115,6 +111,5 @@ namespace Quantum {
 
 	};
 };
-
 
 #endif

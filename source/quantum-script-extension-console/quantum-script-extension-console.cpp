@@ -15,7 +15,7 @@
 #include "quantum-script-extension-console.hpp"
 #include "quantum-script-extension-console-license.hpp"
 #ifndef QUANTUM_SCRIPT_EXTENSION_CONSOLE_NO_VERSION
-#include "quantum-script-extension-console-version.hpp"
+#	include "quantum-script-extension-console-version.hpp"
 #endif
 
 //#define QUANTUM_SCRIPT_VM_DEBUG_RUNTIME
@@ -38,7 +38,6 @@ namespace Quantum {
 					return Context::getValueUndefined();
 				};
 
-
 				static TPointer<Variable> writeLn(VariableFunction *function, Variable *this_, VariableArray *arguments) {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 					printf("- console-write-ln\n");
@@ -53,7 +52,7 @@ namespace Quantum {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 					printf("- console-read-ln\n");
 #endif
-					String  retV;
+					String retV;
 
 					Number ln;
 					size_t readLn;
@@ -65,27 +64,27 @@ namespace Quantum {
 					buffer[1] = 0;
 
 					ln = (arguments->index(0))->toNumber();
-					if(isnan(ln) || isinf(ln) || signbit(ln)) {
+					if (isnan(ln) || isinf(ln) || signbit(ln)) {
 						return Context::getValueUndefined();
 					};
 
 					readToLn = (size_t)(ln);
 					readTotal = 0;
-					if(readToLn < 1) {
+					if (readToLn < 1) {
 						return VariableString::newVariable("");
 					};
-					for(;;) {
+					for (;;) {
 						readLn = fread(buffer, sizeof(uint8_t), 1, stdin);
-						if(readLn > 0) {
+						if (readLn > 0) {
 
-							if(buffer[0] == '\r') {
-								if(readTotal + 1 >= readToLn) {
+							if (buffer[0] == '\r') {
+								if (readTotal + 1 >= readToLn) {
 									retV.concatenate("\r", 1);
 									return VariableString::newVariable(retV);
 								};
 								readLn = fread(buffer, sizeof(uint8_t), 1, stdin);
-								if(readLn > 0) {
-									if(buffer[0] == '\n') {
+								if (readLn > 0) {
+									if (buffer[0] == '\n') {
 										retV.concatenate("\r", 1);
 										retV.concatenate("\n", 1);
 										return VariableString::newVariable(retV);
@@ -93,34 +92,34 @@ namespace Quantum {
 									};
 									retV.concatenate(buffer, 1);
 									readTotal += 2;
-									if(readTotal >= readToLn) {
+									if (readTotal >= readToLn) {
 										return VariableString::newVariable(retV);
 									};
 									continue;
 								};
 
 								retV.concatenate("\r", 1);
-								//end of file
+								// end of file
 								return VariableString::newVariable(retV);
 							};
 
-							if(buffer[0] == '\n') {
+							if (buffer[0] == '\n') {
 								retV.concatenate("\n", 1);
 								return VariableString::newVariable(retV);
 							};
 
 							retV.concatenate(buffer, 1);
 							readTotal++;
-							if(readTotal >= readToLn) {
+							if (readTotal >= readToLn) {
 								return VariableString::newVariable(retV);
 							};
 							continue;
 						};
 						// connection interrupted - 0 to read ...
-						if(readTotal == 0) {
+						if (readTotal == 0) {
 							break;
 						};
-						//end of file
+						// end of file
 						return VariableString::newVariable(retV);
 					};
 
@@ -148,7 +147,7 @@ namespace Quantum {
 #ifdef QUANTUM_SCRIPT_DEBUG_RUNTIME
 					printf("- console-get-key\n");
 #endif
-					if(XYO::Console::keyHit()) {
+					if (XYO::Console::keyHit()) {
 						char buf[2];
 						buf[0] = XYO::Console::getChar();
 						buf[1] = 0;
@@ -161,7 +160,6 @@ namespace Quantum {
 				void registerInternalExtension(Executive *executive) {
 					executive->registerInternalExtension("Console", initExecutive);
 				};
-
 
 				void initExecutive(Executive *executive, void *extensionId) {
 #ifdef XYO_OS_UNIX
@@ -188,7 +186,6 @@ namespace Quantum {
 					executive->setFunction2("Console.getKey()", getKey);
 				};
 
-
 			};
 		};
 	};
@@ -199,4 +196,3 @@ extern "C" QUANTUM_SCRIPT_EXTENSION_CONSOLE_EXPORT void quantumScriptExtension(Q
 	Quantum::Script::Extension::Console::initExecutive(executive, extensionId);
 };
 #endif
-

@@ -32,7 +32,7 @@ namespace Quantum {
 			retV = TMemory<VariableStackTrace>::newMemory();
 			retV->stackTrace = stackTrace;
 			retV->context = context;
-			return (Variable *) retV;
+			return (Variable *)retV;
 		};
 
 		String VariableStackTrace::getVariableType() {
@@ -50,7 +50,7 @@ namespace Quantum {
 				uint32_t level = 0;
 				TDoubleEndedQueue<InstructionTrace>::Node *scan;
 				for (scan = stackTrace->tail; scan && (level < level_); scan = scan->back, ++level) {
-					if(scan->value.sourceSymbol) {
+					if (scan->value.sourceSymbol) {
 						String symbol = Context::getSymbolMirror(scan->value.sourceSymbol);
 						if (symbol[0] == '#') {
 							out << "- file " << symbol.index(1) << " ";
@@ -72,13 +72,9 @@ namespace Quantum {
 			return out;
 		};
 
-
 		bool VariableStackTrace::toBoolean() {
 			return true;
 		};
 
-
 	};
 };
-
-

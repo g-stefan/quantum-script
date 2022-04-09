@@ -17,7 +17,6 @@
 namespace Quantum {
 	namespace Script {
 
-
 		bool Parser::statementSwitch() {
 			if (token.isSymbolX("switch")) {
 				ProgramCounter *linkSwitchBreak;
@@ -37,8 +36,7 @@ namespace Quantum {
 								parserLeaveContext();
 								assemble(ParserAsm::LeaveContext);
 								linkProgramCounter(linkSwitchBreak,
-									assemble(ParserAsm::Mark)
-								);
+								                   assemble(ParserAsm::Mark));
 								return true;
 							};
 						};
@@ -68,8 +66,7 @@ namespace Quantum {
 							if (token.isSymbolX("case")) {
 								linkCaseSkip = assembleProgramCounter(ParserAsm::Goto, nullptr);
 								linkProgramCounter(linkCaseIf,
-									assemble(ParserAsm::Mark)
-								);
+								                   assemble(ParserAsm::Mark));
 								if (expression(0)) {
 									if (token.is1(":")) {
 										assemble(ParserAsm::ContextPushRegisterValue);
@@ -77,8 +74,7 @@ namespace Quantum {
 										linkCaseIf = assembleProgramCounter(ParserAsm::IfFalseGoto, nullptr);
 
 										linkProgramCounter(linkCaseSkip,
-											assemble(ParserAsm::Mark)
-										);
+										                   assemble(ParserAsm::Mark));
 
 										continue;
 									};
@@ -86,14 +82,12 @@ namespace Quantum {
 							};
 							if (token.isSymbolX("default")) {
 								if (token.is1(":")) {
-									if(linkCaseIf != nullptr) {
+									if (linkCaseIf != nullptr) {
 										linkProgramCounter(linkCaseIf,
-											assemble(ParserAsm::Mark)
-										);
+										                   assemble(ParserAsm::Mark));
 									};
 									linkCaseIf = nullptr;
 									continue;
-
 								};
 								error = ParserError::Compile;
 								return false;
@@ -108,8 +102,7 @@ namespace Quantum {
 							if (token.checkIs1("}")) {
 								if (linkCaseIf != nullptr) {
 									linkProgramCounter(linkCaseIf,
-										assemble(ParserAsm::Mark)
-									);
+									                   assemble(ParserAsm::Mark));
 								};
 								return true;
 							};
@@ -129,5 +122,3 @@ namespace Quantum {
 
 	};
 };
-
-

@@ -24,7 +24,7 @@ namespace Quantum {
 
 		bool ObjectIteratorKey::next(Variable *out) {
 			PropertyNode *next_;
-			if(value) {
+			if (value) {
 				out->referenceSet(VariableSymbol::newVariable(value->key));
 				value = value->successor();
 				return true;
@@ -35,6 +35,3 @@ namespace Quantum {
 
 	};
 };
-
-
-

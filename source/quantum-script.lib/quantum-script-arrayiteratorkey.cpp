@@ -21,7 +21,7 @@ namespace Quantum {
 		using namespace XYO;
 
 		bool ArrayIteratorKey::next(Variable *out) {
-			if(index >= sourceArray->value->length()) {
+			if (index >= sourceArray->value->length()) {
 				out->referenceSet(Context::getValueUndefined());
 				return false;
 			};
@@ -32,5 +32,3 @@ namespace Quantum {
 
 	};
 };
-
-

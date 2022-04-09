@@ -41,16 +41,16 @@ namespace Quantum {
 			localToken.init(token);
 			isOk = 0;
 
-			if(backOperator->asmType == ParserAsm::OperatorConditional) {
+			if (backOperator->asmType == ParserAsm::OperatorConditional) {
 				ProgramCounter *linkIf;
 				linkIf = assembleProgramCounter(ParserAsm::IfFalseGoto, nullptr);
-				if(expression(0)) {
+				if (expression(0)) {
 					token.reset();
 					if (token.is1(":")) {
 						ProgramCounter *linkElse;
 						linkElse = assembleProgramCounter(ParserAsm::Goto, nullptr);
 						linkProgramCounter(linkIf, assemble(ParserAsm::Mark));
-						if(expression(0)) {
+						if (expression(0)) {
 							// Nop, don't use Mark (can be replaced by optimizer, runtime error)
 							linkProgramCounter(linkElse, assemble(ParserAsm::Nop));
 							return true;
@@ -62,14 +62,13 @@ namespace Quantum {
 			};
 
 			if (backOperator->asmType == ParserAsm::OperatorAssign ||
-				backOperator->asmType == ParserAsm::OperatorAssignPlus ||
-				backOperator->asmType == ParserAsm::OperatorAssignMinus ||
-				backOperator->asmType == ParserAsm::OperatorAssignMul ||
-				backOperator->asmType == ParserAsm::OperatorAssignDiv ||
-				backOperator->asmType == ParserAsm::OperatorAssignMod ||
-				backOperator->asmType == ParserAsm::OperatorAssignBitwiseOr ||
-				backOperator->asmType == ParserAsm::OperatorAssignBitwiseAnd
-			) {
+			    backOperator->asmType == ParserAsm::OperatorAssignPlus ||
+			    backOperator->asmType == ParserAsm::OperatorAssignMinus ||
+			    backOperator->asmType == ParserAsm::OperatorAssignMul ||
+			    backOperator->asmType == ParserAsm::OperatorAssignDiv ||
+			    backOperator->asmType == ParserAsm::OperatorAssignMod ||
+			    backOperator->asmType == ParserAsm::OperatorAssignBitwiseOr ||
+			    backOperator->asmType == ParserAsm::OperatorAssignBitwiseAnd) {
 
 				if (statementFunction()) {
 					isOk = 1;
@@ -85,9 +84,7 @@ namespace Quantum {
 						error = ParserError::Compile;
 						return false;
 					};
-
 				};
-
 			};
 
 			if (!isOk) {
@@ -101,13 +98,13 @@ namespace Quantum {
 				if (expressionIsBinaryOperator(&localToken)) {
 					if (localToken.precedence < backOperator->precedence) {
 						assemble(backOperator->asmType);
-						if(levelOperator) {
+						if (levelOperator) {
 							levelOperator->copy(localToken);
 							return true;
 						};
 						levelToken.reset();
-						if(expressionStep(&localToken, &levelToken)) {
-							if(levelToken.asmType > 0) {
+						if (expressionStep(&localToken, &levelToken)) {
+							if (levelToken.asmType > 0) {
 								localToken.copy(levelToken);
 								return expressionStep(&localToken);
 							};
@@ -175,7 +172,6 @@ namespace Quantum {
 				return false;
 			};
 
-
 			if (statementFunction()) {
 				return true;
 			} else if (token.isSymbolX("new")) {
@@ -201,7 +197,7 @@ namespace Quantum {
 					localToken.reset();
 					localToken.lValue = 1;
 					localToken.lValueDelete = 1;
-					if(expressionTermSelector(&localToken, 0, 0, isNew)) {
+					if (expressionTermSelector(&localToken, 0, 0, isNew)) {
 						if (error) {
 							return false;
 						};
@@ -225,7 +221,7 @@ namespace Quantum {
 				error = ParserError::Compile;
 				return false;
 			} else if (expressionTermSymbol(backToken, hasSymbol, isNew)) {
-				if(hasSymbol == 0) {
+				if (hasSymbol == 0) {
 					expressionTermSelector(&token, 0, 0, isNew);
 				};
 				return true;
@@ -247,9 +243,7 @@ namespace Quantum {
 		bool Parser::expressionTermSymbol(Token *backToken, int hasSymbol, int isNew) {
 			Token localToken;
 
-
 			localToken.init(token);
-
 
 			if (hasSymbol) {
 				localToken.copy(token);
@@ -269,7 +263,7 @@ namespace Quantum {
 				} else if (localToken.type == TokenType::NumberHexadecimal) {
 					char buf[60];
 					unsigned int tmp_ = 0;
-					if(sscanf((char *) & (localToken.value.value())[2], "%x", &tmp_)!=1) {
+					if (sscanf((char *)&(localToken.value.value())[2], "%x", &tmp_) != 1) {
 						tmp_ = 0;
 					};
 					sprintf(buf, "%u", tmp_);
@@ -299,7 +293,7 @@ namespace Quantum {
 
 			index = 0;
 			if (token_->lValue) {
-				if(token_->lValueDelete) {
+				if (token_->lValueDelete) {
 					if (token_->type == TokenType::Index) {
 						tokenLastAsm = ParserAsm::OperatorReferenceDeleteIndex;
 						tokenLastValue = "";
@@ -451,7 +445,6 @@ namespace Quantum {
 							tokenLastValue = token_->value;
 							return assemble1(ParserAsm::PushObjectReference, token_->value);
 						};
-
 					};
 				} else {
 					error = ParserError::Compile;
@@ -631,7 +624,7 @@ namespace Quantum {
 					assemble(ParserAsm::ContextPushThis);
 					localToken.reset();
 					localToken.lValue = 1;
-					if(expressionTermSelector(&localToken, 0, 0, 0)) {
+					if (expressionTermSelector(&localToken, 0, 0, 0)) {
 						if (error) {
 							return false;
 						};
@@ -641,7 +634,6 @@ namespace Quantum {
 					error = ParserError::Compile;
 					return false;
 				};
-
 
 				localToken.reset();
 				if (localToken.isSymbol()) {
@@ -666,7 +658,7 @@ namespace Quantum {
 					(functionHint.head)->value |= ParserFunctionHint::This;
 					assemble(ParserAsm::ContextPushThis);
 					localToken.reset();
-					if(expressionTermSelector(&localToken, 0, 0, 0)) {
+					if (expressionTermSelector(&localToken, 0, 0, 0)) {
 						if (error) {
 							return false;
 						};
@@ -681,7 +673,7 @@ namespace Quantum {
 					assemble(ParserAsm::OperatorUnaryPlus);
 					return true;
 				};
-				if(expressionParentheses()) {
+				if (expressionParentheses()) {
 					assemble(ParserAsm::OperatorUnaryPlus);
 					return true;
 				};
@@ -695,7 +687,7 @@ namespace Quantum {
 					assemble(ParserAsm::ContextPushThis);
 					localToken.reset();
 					localToken.lValue = 1;
-					if(expressionTermSelector(&localToken, 0, 0, 0)) {
+					if (expressionTermSelector(&localToken, 0, 0, 0)) {
 						if (error) {
 							return false;
 						};
@@ -705,7 +697,6 @@ namespace Quantum {
 					error = ParserError::Compile;
 					return false;
 				};
-
 
 				localToken.reset();
 				if (localToken.isSymbol()) {
@@ -733,7 +724,7 @@ namespace Quantum {
 					(functionHint.head)->value |= ParserFunctionHint::This;
 					assemble(ParserAsm::ContextPushThis);
 					localToken.reset();
-					if(expressionTermSelector(&localToken, 0, 0, 0)) {
+					if (expressionTermSelector(&localToken, 0, 0, 0)) {
 						if (error) {
 							return false;
 						};
@@ -744,12 +735,11 @@ namespace Quantum {
 					return false;
 				};
 
-
 				if (expressionTermSymbol(&localToken, 0, 0)) {
 					assemble(ParserAsm::OperatorMinus);
 					return true;
 				};
-				if(expressionParentheses()) {
+				if (expressionParentheses()) {
 					assemble(ParserAsm::OperatorMinus);
 					return true;
 				};
@@ -762,7 +752,7 @@ namespace Quantum {
 					(functionHint.head)->value |= ParserFunctionHint::This;
 					assemble(ParserAsm::ContextPushThis);
 					localToken.reset();
-					if(expressionTermSelector(&localToken, 0, 0, 0)) {
+					if (expressionTermSelector(&localToken, 0, 0, 0)) {
 						if (error) {
 							return false;
 						};
@@ -777,7 +767,7 @@ namespace Quantum {
 					assemble(ParserAsm::OperatorNot);
 					return true;
 				};
-				if(expressionParentheses()) {
+				if (expressionParentheses()) {
 					assemble(ParserAsm::OperatorNot);
 					return true;
 				};
@@ -790,7 +780,7 @@ namespace Quantum {
 					(functionHint.head)->value |= ParserFunctionHint::This;
 					assemble(ParserAsm::ContextPushThis);
 					localToken.reset();
-					if(expressionTermSelector(&localToken, 0, 0, 0)) {
+					if (expressionTermSelector(&localToken, 0, 0, 0)) {
 						if (error) {
 							return false;
 						};
@@ -805,7 +795,7 @@ namespace Quantum {
 					assemble(ParserAsm::OperatorBitwiseNot);
 					return true;
 				};
-				if(expressionParentheses()) {
+				if (expressionParentheses()) {
 					assemble(ParserAsm::OperatorBitwiseNot);
 					return true;
 				};
@@ -816,7 +806,7 @@ namespace Quantum {
 				(functionHint.head)->value |= ParserFunctionHint::This;
 				assemble(ParserAsm::ContextPushThis);
 				localToken.reset();
-				if(expressionTermSelector(&localToken, 0, 0, 0)) {
+				if (expressionTermSelector(&localToken, 0, 0, 0)) {
 					if (error) {
 						return false;
 					};
@@ -893,7 +883,6 @@ namespace Quantum {
 			int tokenIndexForCall = 0;
 			int tokenLevelForCall = 0;
 			String tokenValueForCall;
-
 
 			localToken.init(token);
 			if (localToken.is1(".")) {
@@ -993,7 +982,7 @@ namespace Quantum {
 											continue;
 										};
 										if (localToken.is1(")")) {
-											if(step == 1) {
+											if (step == 1) {
 												assemble(ParserAsm::PushNewArray);
 												assemble(ParserAsm::XArrayPushWithTransfer);
 											};
@@ -1005,7 +994,6 @@ namespace Quantum {
 								error = ParserError::Compile;
 								return false;
 							};
-
 						};
 
 						if (expressionTermSelector(&localToken, 1, 1, isNew)) {
@@ -1033,9 +1021,7 @@ namespace Quantum {
 					};
 
 					if (
-						(backToken->type == TokenType::FirstSymbol)
-						|| (backToken->type == TokenType::Symbol)
-					) {
+					    (backToken->type == TokenType::FirstSymbol) || (backToken->type == TokenType::Symbol)) {
 						if (level) {
 							hasThis = 1;
 						} else {
@@ -1044,7 +1030,6 @@ namespace Quantum {
 							tokenIndexForCall = tokenLastIndex;
 							tokenLevelForCall = tokenLastLevel;
 							tokenValueForCall = tokenLastValue;
-
 						};
 					} else {
 						tokenPcForCall = expressionProcessToken(backToken);
@@ -1077,7 +1062,7 @@ namespace Quantum {
 							if (isNew) {
 								assemble(ParserAsm::XCallThis);
 							} else {
-								if(tokenAsmForCall == ParserAsm::PushSymbol) {
+								if (tokenAsmForCall == ParserAsm::PushSymbol) {
 									assembler->removeProgramCounter(tokenPcForCall);
 									assemble1(ParserAsm::XCallSymbol, tokenValueForCall);
 									tokenAsmForCall = ParserAsm::Nop;
@@ -1091,7 +1076,6 @@ namespace Quantum {
 							assemble(ParserAsm::XPushNewArray);
 							continue;
 						};
-
 
 						localToken.reset();
 						if (requestLValue) {
@@ -1125,7 +1109,7 @@ namespace Quantum {
 								if (isNew) {
 									assemble(ParserAsm::XCallThis);
 								} else {
-									if(tokenAsmForCall == ParserAsm::PushSymbol) {
+									if (tokenAsmForCall == ParserAsm::PushSymbol) {
 										assembler->removeProgramCounter(tokenPcForCall);
 										assemble1(ParserAsm::XCallSymbol, tokenValueForCall);
 										tokenAsmForCall = ParserAsm::Nop;
@@ -1153,9 +1137,7 @@ namespace Quantum {
 							};
 
 							return true;
-
 						};
-
 					};
 					break;
 				};
@@ -1197,9 +1179,7 @@ namespace Quantum {
 							};
 
 							return true;
-
 						};
-
 					};
 					break;
 				};
@@ -1526,7 +1506,6 @@ namespace Quantum {
 
 				assemble(ParserAsm::PushNewArray);
 
-
 				while (!token.isEof()) {
 					token.reset();
 					if (token.is1("]")) {
@@ -1546,5 +1525,3 @@ namespace Quantum {
 
 	};
 };
-
-

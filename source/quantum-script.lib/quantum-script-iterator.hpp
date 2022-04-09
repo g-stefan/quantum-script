@@ -11,7 +11,7 @@
 #define QUANTUM_SCRIPT_ITERATOR_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLE_HPP
-#include "quantum-script-variable.hpp"
+#	include "quantum-script-variable.hpp"
 #endif
 
 namespace Quantum {
@@ -22,12 +22,10 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::Iterator>:
-			public TMemoryPoolActive<Quantum::Script::Iterator> {};
+		template <>
+		class TMemory<Quantum::Script::Iterator> : public TMemoryPoolActive<Quantum::Script::Iterator> {};
 	};
 };
 
@@ -36,19 +34,15 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class Iterator :
-			public virtual Object {
+		class Iterator : public virtual Object {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(Iterator);
-			public:
 
-				inline Iterator() {
-				};
+			public:
+				inline Iterator(){};
 
 				QUANTUM_SCRIPT_EXPORT virtual bool next(Variable *out);
 		};
 	};
 };
-
-
 
 #endif

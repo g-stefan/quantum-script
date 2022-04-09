@@ -11,12 +11,11 @@
 #define QUANTUM_SCRIPT_TOKEN_HPP
 
 #ifndef QUANTUM_SCRIPT_INPUT_HPP
-#include "quantum-script-input.hpp"
+#	include "quantum-script-input.hpp"
 #endif
 
 namespace Quantum {
 	namespace Script {
-
 
 		class TokenType {
 			public:
@@ -35,7 +34,6 @@ namespace Quantum {
 
 		class TokenAssociativity {
 			public:
-
 				enum {
 					LeftToRight,
 					RightToLeft
@@ -44,9 +42,9 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class Token :
-			public Object {
+		class Token : public Object {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(Token);
+
 			public:
 				TPointer<Input> input;
 				String value;
@@ -84,12 +82,9 @@ namespace Quantum {
 				QUANTUM_SCRIPT_EXPORT bool isEof();
 				QUANTUM_SCRIPT_EXPORT bool is1X(const char *value);
 				QUANTUM_SCRIPT_EXPORT bool isSymbolX(const char *name);
-
 		};
-
 
 	};
 };
-
 
 #endif

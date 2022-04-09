@@ -11,7 +11,7 @@
 #define QUANTUM_SCRIPT_PROGRAMCOUNTER_HPP
 
 #ifndef QUANTUM_SCRIPT__DEPENDENCY_HPP
-#include "quantum-script--dependency.hpp"
+#	include "quantum-script--dependency.hpp"
 #endif
 
 namespace Quantum {
@@ -21,6 +21,5 @@ namespace Quantum {
 
 	};
 };
-
 
 #endif

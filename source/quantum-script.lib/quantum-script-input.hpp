@@ -11,7 +11,7 @@
 #define QUANTUM_SCRIPT_INPUT_HPP
 
 #ifndef QUANTUM_SCRIPT__DEPENDENCY_HPP
-#include "quantum-script--dependency.hpp"
+#	include "quantum-script--dependency.hpp"
 #endif
 
 #define QUANTUM_SCRIPT_INPUT_STACK_SIZE 32
@@ -30,18 +30,19 @@ namespace Quantum {
 		using namespace XYO;
 
 		typedef struct s_InputStack {
-			char stack[QUANTUM_SCRIPT_INPUT_STACK_SIZE];
-			int length;
+				char stack[QUANTUM_SCRIPT_INPUT_STACK_SIZE];
+				int length;
 		} InputStack;
 
-		class Input :
-			public Object {
+		class Input : public Object {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(Input);
+
 			protected:
 				TPointer<IRead> input;
 				InputStack stack;
 
 				bool pop();
+
 			public:
 				int error;
 				uint32_t lineNumber;
@@ -94,11 +95,9 @@ namespace Quantum {
 					capture = "";
 					return retV;
 				};
-
 		};
 
 	};
 };
-
 
 #endif

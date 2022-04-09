@@ -11,11 +11,11 @@
 #define QUANTUM_SCRIPT_VARIABLEVMPROGRAMCOUNTER_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLE_HPP
-#include "quantum-script-variable.hpp"
+#	include "quantum-script-variable.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_PROGRAMCOUNTER_HPP
-#include "quantum-script-programcounter.hpp"
+#	include "quantum-script-programcounter.hpp"
 #endif
 
 namespace Quantum {
@@ -25,29 +25,26 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::VariableVmProgramCounter>:
-			public TMemoryPoolActive<Quantum::Script::VariableVmProgramCounter> {};
+		template <>
+		class TMemory<Quantum::Script::VariableVmProgramCounter> : public TMemoryPoolActive<Quantum::Script::VariableVmProgramCounter> {};
 	};
 };
-
 
 namespace Quantum {
 	namespace Script {
 
 		using namespace XYO;
 
-		class VariableVmProgramCounter :
-			public Variable {
+		class VariableVmProgramCounter : public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableVmProgramCounter);
 				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableVmProgramCounter);
+
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeVmProgramCounter;
-			public:
 
+			public:
 				ProgramCounter *value;
 
 				QUANTUM_SCRIPT_EXPORT VariableVmProgramCounter();
@@ -58,11 +55,9 @@ namespace Quantum {
 
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT String toString();
-
 		};
 
 	};
 };
-
 
 #endif

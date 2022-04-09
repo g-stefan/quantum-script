@@ -11,16 +11,15 @@
 #define QUANTUM_SCRIPT_VARIABLEOBJECT_HPP
 
 #ifndef QUANTUM_SCRIPT_VARIABLE_HPP
-#include "quantum-script-variable.hpp"
+#	include "quantum-script-variable.hpp"
 #endif
 
 #ifndef QUANTUM_SCRIPT_PROTOTYPE_HPP
-#include "quantum-script-prototype.hpp"
+#	include "quantum-script-prototype.hpp"
 #endif
 
 namespace Quantum {
 	namespace Script {
-
 
 		class VariableObject;
 
@@ -29,9 +28,8 @@ namespace Quantum {
 
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::VariableObject>:
-			public TMemoryPoolActive<Quantum::Script::VariableObject> {};
+		template <>
+		class TMemory<Quantum::Script::VariableObject> : public TMemoryPoolActive<Quantum::Script::VariableObject> {};
 	};
 };
 
@@ -40,18 +38,18 @@ namespace Quantum {
 
 		using namespace XYO;
 
-		class VariableObject :
-			public Variable {
+		class VariableObject : public Variable {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableObject);
 				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, VariableObject);
+
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeObject;
-			public:
 
+			public:
 				TPointerX<Property> value;
 				TPointerX<Prototype> prototype;
 
-				QUANTUM_SCRIPT_EXPORT  VariableObject();
+				QUANTUM_SCRIPT_EXPORT VariableObject();
 
 				inline void activeConstructor() {
 					prototype.newMemory();
@@ -89,13 +87,9 @@ namespace Quantum {
 
 				QUANTUM_SCRIPT_EXPORT bool toBoolean();
 				QUANTUM_SCRIPT_EXPORT String toString();
-
 		};
 
 	};
 };
 
-
 #endif
-
-

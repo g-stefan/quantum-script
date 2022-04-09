@@ -26,12 +26,13 @@ namespace Quantum {
 				printf("- resource-drop\n");
 #endif
 
-				if(!TIsType<VariableResource>(this_)) {
+				if (!TIsType<VariableResource>(this_)) {
 					throw(Error("invalid parameter"));
 				};
 
-				((VariableResource *)( this_ ))->drop();
-				return Context::getValueUndefined();;
+				((VariableResource *)(this_))->drop();
+				return Context::getValueUndefined();
+				;
 			};
 
 			static TPointer<Variable> close(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -39,12 +40,13 @@ namespace Quantum {
 				printf("- resource-close\n");
 #endif
 
-				if(!TIsType<VariableResource>(this_)) {
+				if (!TIsType<VariableResource>(this_)) {
 					throw(Error("invalid parameter"));
 				};
 
-				((VariableResource *)( this_ ))->close();
-				return Context::getValueUndefined();;
+				((VariableResource *)(this_))->close();
+				return Context::getValueUndefined();
+				;
 			};
 
 			void initExecutive(Executive *executive, void *extensionId) {
@@ -55,5 +57,3 @@ namespace Quantum {
 		};
 	};
 };
-
-

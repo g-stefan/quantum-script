@@ -11,7 +11,7 @@
 #define QUANTUM_SCRIPT_VARIABLE_HPP
 
 #ifndef QUANTUM_SCRIPT__DEPENDENCY_HPP
-#include "quantum-script--dependency.hpp"
+#	include "quantum-script--dependency.hpp"
 #endif
 
 namespace Quantum {
@@ -30,20 +30,16 @@ namespace Quantum {
 	};
 };
 
-
 namespace XYO {
 	namespace ManagedMemory {
-		template<>
-		class TMemory<Quantum::Script::Variable>:
-			public TMemoryPoolActive<Quantum::Script::Variable> {};
+		template <>
+		class TMemory<Quantum::Script::Variable> : public TMemoryPoolActive<Quantum::Script::Variable> {};
 
-		template<>
-		class TMemory<Quantum::Script::Array>:
-			public TMemoryPoolActive<Quantum::Script::Array> {};
+		template <>
+		class TMemory<Quantum::Script::Array> : public TMemoryPoolActive<Quantum::Script::Array> {};
 
-		template<>
-		class TMemory<Quantum::Script::Property>:
-			public TMemoryPoolActive<Quantum::Script::Property> {};
+		template <>
+		class TMemory<Quantum::Script::Property> : public TMemoryPoolActive<Quantum::Script::Property> {};
 	};
 };
 
@@ -70,35 +66,36 @@ namespace Quantum {
 		class VariableArray;
 
 #ifdef XYO_OS_WINDOWS
-#define QUANTUM_SCRIPT_FORMAT_INTEGER "%I64d"
-#define QUANTUM_SCRIPT_FORMAT_NUMBER "%g"
-#define QUANTUM_SCRIPT_FORMAT_NUMBER_INTEGER "%.0lf"
-#define QUANTUM_SCRIPT_FORMAT_NUMBER_INPUT "%lf"
-#define QUANTUM_SCRIPT_FORMAT_DWORD XYO_FORMAT_UINT32T
+#	define QUANTUM_SCRIPT_FORMAT_INTEGER "%I64d"
+#	define QUANTUM_SCRIPT_FORMAT_NUMBER "%g"
+#	define QUANTUM_SCRIPT_FORMAT_NUMBER_INTEGER "%.0lf"
+#	define QUANTUM_SCRIPT_FORMAT_NUMBER_INPUT "%lf"
+#	define QUANTUM_SCRIPT_FORMAT_DWORD XYO_FORMAT_UINT32T
 #endif
 
 #ifdef XYO_OS_UNIX
-#ifdef XYO_APPLICATION_64BIT
-#define QUANTUM_SCRIPT_FORMAT_INTEGER "%ld"
-#define QUANTUM_SCRIPT_FORMAT_NUMBER "%g"
-#define QUANTUM_SCRIPT_FORMAT_NUMBER_INTEGER "%.0lf"
-#define QUANTUM_SCRIPT_FORMAT_NUMBER_INPUT "%lf"
-#define QUANTUM_SCRIPT_FORMAT_DWORD XYO_FORMAT_UINT32T
-#else
-#define QUANTUM_SCRIPT_FORMAT_INTEGER "%lld"
-#define QUANTUM_SCRIPT_FORMAT_NUMBER "%g"
-#define QUANTUM_SCRIPT_FORMAT_NUMBER_INTEGER "%.0lf"
-#define QUANTUM_SCRIPT_FORMAT_NUMBER_INPUT "%lf"
-#define QUANTUM_SCRIPT_FORMAT_DWORD "%u"
-#endif
+#	ifdef XYO_APPLICATION_64BIT
+#		define QUANTUM_SCRIPT_FORMAT_INTEGER "%ld"
+#		define QUANTUM_SCRIPT_FORMAT_NUMBER "%g"
+#		define QUANTUM_SCRIPT_FORMAT_NUMBER_INTEGER "%.0lf"
+#		define QUANTUM_SCRIPT_FORMAT_NUMBER_INPUT "%lf"
+#		define QUANTUM_SCRIPT_FORMAT_DWORD XYO_FORMAT_UINT32T
+#	else
+#		define QUANTUM_SCRIPT_FORMAT_INTEGER "%lld"
+#		define QUANTUM_SCRIPT_FORMAT_NUMBER "%g"
+#		define QUANTUM_SCRIPT_FORMAT_NUMBER_INTEGER "%.0lf"
+#		define QUANTUM_SCRIPT_FORMAT_NUMBER_INPUT "%lf"
+#		define QUANTUM_SCRIPT_FORMAT_DWORD "%u"
+#	endif
 #endif
 
-		class Variable :
-			public DynamicObject {
+		class Variable : public DynamicObject {
 				XYO_DISALLOW_COPY_ASSIGN_MOVE(Variable);
 				XYO_DYNAMIC_TYPE_DEFINE(QUANTUM_SCRIPT_EXPORT, Variable);
+
 			protected:
 				QUANTUM_SCRIPT_EXPORT static const char *strTypeUndefined;
+
 			public:
 				//
 				// Constructor/Destructor
@@ -121,16 +118,16 @@ namespace Quantum {
 				//
 				// Member access operators
 				//
-				QUANTUM_SCRIPT_EXPORT virtual TPointer<Variable> getPropertyBySymbol(Symbol symbolId); // x.y
-				QUANTUM_SCRIPT_EXPORT virtual TPointer<Variable> getPropertyByIndex(size_t index); // x[y]
-				QUANTUM_SCRIPT_EXPORT virtual TPointer<Variable> getPropertyByVariable(Variable *index); // x[y]
-				QUANTUM_SCRIPT_EXPORT virtual void setPropertyBySymbol(Symbol symbolId, Variable *value); // x.y = ...
-				QUANTUM_SCRIPT_EXPORT virtual void setPropertyByIndex(size_t index, Variable *value); // x[y] = ...
+				QUANTUM_SCRIPT_EXPORT virtual TPointer<Variable> getPropertyBySymbol(Symbol symbolId);      // x.y
+				QUANTUM_SCRIPT_EXPORT virtual TPointer<Variable> getPropertyByIndex(size_t index);          // x[y]
+				QUANTUM_SCRIPT_EXPORT virtual TPointer<Variable> getPropertyByVariable(Variable *index);    // x[y]
+				QUANTUM_SCRIPT_EXPORT virtual void setPropertyBySymbol(Symbol symbolId, Variable *value);   // x.y = ...
+				QUANTUM_SCRIPT_EXPORT virtual void setPropertyByIndex(size_t index, Variable *value);       // x[y] = ...
 				QUANTUM_SCRIPT_EXPORT virtual void setPropertyByVariable(Variable *index, Variable *value); // x[y] = ...
-				QUANTUM_SCRIPT_EXPORT virtual bool deletePropertyBySymbol(Symbol symbolId); // delete x.y
-				QUANTUM_SCRIPT_EXPORT virtual bool deletePropertyByIndex(size_t index); // delete x[y]
-				QUANTUM_SCRIPT_EXPORT virtual bool deletePropertyByVariable(Variable *index); // delete x[y]
-				QUANTUM_SCRIPT_EXPORT virtual bool hasPropertyByVariable(Variable *variable); // y in x
+				QUANTUM_SCRIPT_EXPORT virtual bool deletePropertyBySymbol(Symbol symbolId);                 // delete x.y
+				QUANTUM_SCRIPT_EXPORT virtual bool deletePropertyByIndex(size_t index);                     // delete x[y]
+				QUANTUM_SCRIPT_EXPORT virtual bool deletePropertyByVariable(Variable *index);               // delete x[y]
+				QUANTUM_SCRIPT_EXPORT virtual bool hasPropertyByVariable(Variable *variable);               // y in x
 				//
 				QUANTUM_SCRIPT_EXPORT virtual TPointer<Variable> referenceSet(Variable *value);
 				QUANTUM_SCRIPT_EXPORT virtual TPointer<Variable> referenceGet();
@@ -180,7 +177,6 @@ namespace Quantum {
 
 				QUANTUM_SCRIPT_EXPORT TPointer<Variable> operatorPlus(Variable *b);
 		};
-
 
 	};
 };
