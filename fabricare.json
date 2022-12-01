@@ -1,0 +1,57 @@
+{
+	"solution" : {
+		"name" : "quantum-script",
+		"type" : "xyo-cpp-solution",
+		"projects" : [
+			{
+				"name" : "quantum-script",
+				"type" : "xyo-cpp-project",
+				"make" : "lib-and-dll",
+				"SPDX-License-Identifier": "MIT",
+				"sourcePath" : "XYO/QuantumScript",
+				"dependency" : [
+					"xyo-system"
+				],
+				"defines" : [
+					"XYO_QUANTUMSCRIPT_INTERNAL"
+				]
+			},
+			{
+				"name" : "quantum-script--console",
+				"type" : "xyo-cpp-project",
+				"make" : "lib-and-dll",
+				"SPDX-License-Identifier": "MIT",
+				"sourcePath" : "XYO/QuantumScript.Extension/Console",
+				"dependency" : [
+					"quantum-script"
+				]
+			},
+			{
+				"name" : "quantum-script.application",
+				"type" : "xyo-cpp-project",
+				"make" : "lib",
+				"SPDX-License-Identifier": "MIT",
+				"sourcePath" : "XYO/QuantumScript.Application",
+				"dependency" : [
+					"quantum-script"
+				],
+				"defines" : [
+					"XYO_QUANTUMSCRIPT_APPLICATION_LIBRARY"
+				],
+				"linkVersion" : "quantum-script.application"
+			},
+			{
+				"name" : "quantum-script",
+				"type" : "xyo-cpp-project",
+				"make" : "exe",
+				"SPDX-License-Identifier": "MIT",
+				"sourcePath" : "XYO/QuantumScript.Application",
+				"dependency" : [
+					"quantum-script--console",
+					"quantum-script"
+				],
+				"versionName" : "quantum-script.application"
+			}
+		]
+	}
+}

@@ -53,5 +53,4 @@
 /output/
 /temp/
 /release/
-!/source/quantum-script.exe/
-!/source/quantum-script.lib/
+/vendor/

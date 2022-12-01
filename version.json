@@ -1,0 +1,20 @@
+{
+	"quantum-script": {
+		"version": "3.0.0",
+		"build": "1",
+		"date": "2022-12-02",
+		"time": "01:09:35"
+	},
+	"quantum-script--console": {
+		"version": "3.0.0",
+		"build": "1",
+		"date": "2022-12-02",
+		"time": "01:09:35"
+	},
+	"quantum-script.application": {
+		"version": "3.0.0",
+		"build": "1",
+		"date": "2022-12-02",
+		"time": "01:09:35"
+	}
+}

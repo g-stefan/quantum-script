@@ -8,10 +8,10 @@
 			"name": "(Windows) Launch",
 			"type": "cppvsdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/bin/quantum-script.exe",
+			"program": "${workspaceFolder}/output/file-to-cs.exe",
 			"args": [],
 			"stopAtEntry": false,
-			"cwd": "${workspaceFolder}/bin",
+			"cwd": "${workspaceFolder}/output",
 			"environment": [],
 			"externalConsole": true
 		}
