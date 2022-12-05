@@ -92,7 +92,7 @@ namespace XYO::QuantumScript {
 			if (executive.execute() == 0) {
 				return true;
 			} else {
-				error = "Error: ";
+				error = "Error: Internal virtual machine - ";
 				error += executive.instructionContext->errorInfo;
 				return false;
 			};
