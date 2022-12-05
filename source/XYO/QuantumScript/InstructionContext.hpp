@@ -65,6 +65,7 @@ namespace XYO::QuantumScript {
 			TPointer<Variable> returnValue;
 
 			int error;
+			String errorInfo;
 			int configPrintStackTraceLimit;
 
 			void *executiveSuper;

@@ -742,6 +742,7 @@ namespace XYO::QuantumScript {
 		} while (break_ == nullptr);
 
 		context->error = InstructionError::Error;
+		context->errorInfo = "break without loop";
 		context->nextProgramCounter = nullptr;
 	};
 
@@ -779,6 +780,7 @@ namespace XYO::QuantumScript {
 		} while (continue_ == nullptr);
 
 		context->error = InstructionError::Error;
+		context->errorInfo = "continue without loop";
 		context->nextProgramCounter = nullptr;
 	};
 
@@ -853,6 +855,7 @@ namespace XYO::QuantumScript {
 			};
 		} while (return_ == nullptr);
 		context->error = InstructionError::Error;
+		context->errorInfo = "return without call";
 		context->nextProgramCounter = nullptr;
 	};
 
@@ -921,6 +924,7 @@ namespace XYO::QuantumScript {
 
 		context->push(operand1);
 		context->error = InstructionError::Throw;
+		context->errorInfo = "throw";
 		context->nextProgramCounter = nullptr;
 	};
 
