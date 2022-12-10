@@ -1046,8 +1046,8 @@ namespace XYO::QuantumScript {
 			printf("- script-exit\n");
 #endif
 			Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
-			executive->isExit=true;
-			executive->exitCode=context->getArgument(0)->toNumber();
+			executive->isExit = true;
+			executive->exitCode = context->getArgument(0)->toNumber();
 			context->nextProgramCounter = nullptr;
 		};
 
@@ -1055,8 +1055,8 @@ namespace XYO::QuantumScript {
 #ifdef XYO_QUANTUMSCRIPT_DEBUG_RUNTIME
 			printf("- script-set-exit-code\n");
 #endif
-			Executive *executive = (Executive *)(((VariableResource *)operand)->resource);			
-			executive->exitCode=context->getArgument(0)->toNumber();			
+			Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
+			executive->exitCode = context->getArgument(0)->toNumber();
 		};
 
 		void initExecutive(Executive *executive, void *extensionId) {

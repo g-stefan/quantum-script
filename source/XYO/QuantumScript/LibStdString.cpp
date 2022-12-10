@@ -173,7 +173,7 @@ namespace XYO::QuantumScript {
 			return VariableString::newVariable(String::encodeCX(this_->toString()));
 		};
 
-		void initExecutive(Executive *executive, void *extensionId) {			
+		void initExecutive(Executive *executive, void *extensionId) {
 			executive->setFunction2("String.prototype.indexOf(text,st)", indexOf);
 			executive->setFunction2("String.prototype.lastIndexOf(text,st)", lastIndexOf);
 			executive->setFunction2("String.prototype.substring(st,ln)", substring);

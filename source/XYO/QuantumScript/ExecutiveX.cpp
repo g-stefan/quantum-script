@@ -40,7 +40,7 @@ namespace XYO::QuantumScript {
 			Executive executive;
 			String error;
 			String stackTrace;
-			TPointer<Variable> returnValue;			
+			TPointer<Variable> returnValue;
 
 			ExecutiveX_();
 			~ExecutiveX_();
@@ -73,7 +73,7 @@ namespace XYO::QuantumScript {
 	bool ExecutiveX::initExecutive(int cmdN, char **cmdS, QuantumScriptInitExecutiveProc applicationInitExecutive) {
 		Executive &executive = (TSingletonThread<ExecutiveX_>::getValue())->executive;
 		String &error = (TSingletonThread<ExecutiveX_>::getValue())->error;
-		String pathApplication;		
+		String pathApplication;
 
 		pathApplication = Shell::getExecutablePath();
 		executive.includePath->push(pathApplication);
@@ -252,11 +252,11 @@ namespace XYO::QuantumScript {
 		(TSingletonThread<ExecutiveX_>::getValue())->executive.includePath->push(includePath_);
 	};
 
-	bool ExecutiveX::isExit(){
+	bool ExecutiveX::isExit() {
 		return (TSingletonThread<ExecutiveX_>::getValue())->executive.isExit;
 	};
 
-	int ExecutiveX::getExitCode(){
+	int ExecutiveX::getExitCode() {
 		return (TSingletonThread<ExecutiveX_>::getValue())->executive.exitCode;
 	};
 

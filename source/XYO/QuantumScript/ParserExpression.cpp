@@ -186,7 +186,7 @@ namespace XYO::QuantumScript {
 		} else if (token.isSymbolX("delete")) {
 			Token localToken;
 			localToken.init(token);
-			localToken.reset();			
+			localToken.reset();
 			if (localToken.isSymbol()) {
 				localToken.lValue = 1;
 				localToken.lValueDelete = 1;
@@ -616,7 +616,7 @@ namespace XYO::QuantumScript {
 			error = ParserError::Compile;
 			return false;
 		};
-		if (localToken.is1("+")) {			
+		if (localToken.is1("+")) {
 			localToken.reset();
 			if (expressionTermSymbol(&localToken, 0, 0)) {
 				assemble(ParserAsm::OperatorUnaryPlus);
@@ -650,7 +650,7 @@ namespace XYO::QuantumScript {
 			return false;
 		};
 		if (localToken.is1("-")) {
-			assemble1(ParserAsm::PushNumber, "0");			
+			assemble1(ParserAsm::PushNumber, "0");
 			if (expressionTermSymbol(&localToken, 0, 0)) {
 				assemble(ParserAsm::OperatorMinus);
 				return true;

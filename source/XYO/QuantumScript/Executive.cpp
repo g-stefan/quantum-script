@@ -76,7 +76,7 @@ namespace XYO::QuantumScript {
 		mainCmdN = 0;
 		mainCmdS = nullptr;
 
-		isExit=false;
+		isExit = false;
 		exitCode = 0;
 	};
 
@@ -109,7 +109,7 @@ namespace XYO::QuantumScript {
 	};
 
 	void Executive::initExecutive() {
-		isExit=false;
+		isExit = false;
 		exitCode = 0;
 
 		assembler.newMemory();

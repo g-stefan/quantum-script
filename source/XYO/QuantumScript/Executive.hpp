@@ -153,7 +153,7 @@ namespace XYO::QuantumScript {
 
 			XYO_QUANTUMSCRIPT_EXPORT void setIncludeSource(String fileName, String source);
 			XYO_QUANTUMSCRIPT_EXPORT void removeIncludeSource(String fileName);
-			XYO_QUANTUMSCRIPT_EXPORT bool hasIncludeSource(String fileName);	
+			XYO_QUANTUMSCRIPT_EXPORT bool hasIncludeSource(String fileName);
 	};
 
 };
