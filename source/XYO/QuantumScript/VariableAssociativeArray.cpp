@@ -74,6 +74,7 @@ namespace XYO::QuantumScript {
 		x = value->mapKey->find(index);
 		if (x) {
 			(*(value->arrayValue))[x->value] = valueToSet;
+			return;
 		};
 		value->mapKey->set(index, value->length_);
 		(*(value->arrayKey))[value->length_] = index;
