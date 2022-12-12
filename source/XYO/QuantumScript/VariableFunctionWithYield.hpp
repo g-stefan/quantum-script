@@ -16,7 +16,7 @@
 #endif
 
 #ifndef XYO_QUANTUMSCRIPT_FUNCTIONPARENT_HPP
-#	include <XYO/QuantumScript/functionparent.hpp>
+#	include <XYO/QuantumScript/FunctionParent.hpp>
 #endif
 
 #ifndef XYO_QUANTUMSCRIPT_VARIABLEARRAY_HPP
