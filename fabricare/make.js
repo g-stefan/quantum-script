@@ -5,12 +5,12 @@
 
 if(Project.name=="quantum-script"){
 	if(Project.make=="lib-and-dll"){
-		Fabricare.include("msvc.make.quantum-script");
+		Fabricare.include("make.quantum-script");
 		return;
 	};
 };
 
-if(!Fabricare.include("msvc.make."+Project.make)){
+if(!Fabricare.include("make."+Project.make)){
 	messageError("Don't know how to make '"+Project.make+"'!");
 	exit(1);
 };

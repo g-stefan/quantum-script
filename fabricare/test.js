@@ -9,6 +9,10 @@ if(Project.make!="exe"){
 
 // ---
 
+messageAction("test");
+
+// ---
+
 for(var k=1;k<=9;++k){
 	exitIf(Shell.execute("output/bin/quantum-script  --execution-time test/test.000"+k+".js"));
 };
