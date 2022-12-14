@@ -14,7 +14,8 @@
 				],
 				"defines" : [
 					"XYO_QUANTUMSCRIPT_INTERNAL"
-				]
+				],
+				"versionName" : "quantum-script.library"
 			},
 			{
 				"name" : "quantum-script--console",
@@ -38,7 +39,7 @@
 				"defines" : [
 					"XYO_QUANTUMSCRIPT_APPLICATION_LIBRARY"
 				],
-				"linkVersion" : "quantum-script.application"
+				"linkVersion" : "quantum-script"
 			},
 			{
 				"name" : "quantum-script",
@@ -49,8 +50,7 @@
 				"dependency" : [
 					"quantum-script--console",
 					"quantum-script"
-				],
-				"versionName" : "quantum-script.application"
+				]
 			}
 		]
 	}

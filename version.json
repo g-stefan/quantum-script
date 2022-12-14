@@ -1,5 +1,5 @@
 {
-	"quantum-script": {
+	"quantum-script.library": {
 		"version": "3.0.0",
 		"build": "1",
 		"date": "2022-12-02",
@@ -11,7 +11,7 @@
 		"date": "2022-12-02",
 		"time": "01:09:35"
 	},
-	"quantum-script.application": {
+	"quantum-script": {
 		"version": "3.0.0",
 		"build": "1",
 		"date": "2022-12-02",
