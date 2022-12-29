@@ -51,7 +51,8 @@
 					"quantum-script--console",
 					"quantum-script"
 				],
-				"githubRelease" : "true"
+				"hasRelease" : true,
+				"githubRelease" : true
 			}
 		]
 	}
