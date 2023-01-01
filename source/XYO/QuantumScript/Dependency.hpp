@@ -7,6 +7,10 @@
 #ifndef XYO_QUANTUMSCRIPT_DEPENDENCY_HPP
 #define XYO_QUANTUMSCRIPT_DEPENDENCY_HPP
 
+#ifndef XYO_QUANTUMSCRIPT_CONFIG_HPP
+#	include <XYO/QuantumScript/Config.hpp>
+#endif
+
 #include <math.h>
 
 #ifndef XYO_SYSTEM_HPP

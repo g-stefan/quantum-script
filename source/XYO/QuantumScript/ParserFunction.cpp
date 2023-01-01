@@ -106,7 +106,12 @@ namespace XYO::QuantumScript {
 				functionArgumentsLevelHint.push(k1_);
 				functionVariablesLevelHint.push(k1_);
 
+				parserEnterContext();
+
 				if (isBlockStatement()) {
+
+					parserLeaveContext();
+
 					char buffer1[32];
 					char buffer2[32];
 
@@ -154,6 +159,8 @@ namespace XYO::QuantumScript {
 
 					return true;
 				};
+
+				parserLeaveContext();
 			};
 
 			endCapture();

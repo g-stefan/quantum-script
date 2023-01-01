@@ -721,6 +721,9 @@ namespace XYO::QuantumScript {
 		do {
 			if (context->pcContext == nullptr) {
 				break;
+			};			
+			if (context->pcContext == static_cast<ExecutiveContextPc *>(context->functionContext)) {
+				break;
 			};
 
 			break_ = context->pcContext->break_;
@@ -742,7 +745,7 @@ namespace XYO::QuantumScript {
 		} while (break_ == nullptr);
 
 		context->error = InstructionError::Error;
-		context->errorInfo = "break without loop";
+		context->errorInfo = "break without loop/switch";
 		context->nextProgramCounter = nullptr;
 	};
 
@@ -759,6 +762,9 @@ namespace XYO::QuantumScript {
 
 		do {
 			if (context->pcContext == nullptr) {
+				break;
+			};
+			if (context->pcContext == static_cast<ExecutiveContextPc *>(context->functionContext)) {
 				break;
 			};
 

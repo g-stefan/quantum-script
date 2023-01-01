@@ -1121,11 +1121,14 @@ namespace XYO::QuantumScript {
 					InstructionVmXCallThisModeApply(fnContext, nullptr);
 					fnContext->currentProgramCounter = fnContext->nextProgramCounter;
 
-					// -- executor
-					int error = Executive::execute_(fnContext.value());
+					// -- executor					
+					int error = Executive::execute_(fnContext.value());					
 					if (error == InstructionError::None) {
 						return fnContext->returnValue;
 					};
+					if (error == InstructionError::Error) {						
+						throw Error(fnContext->errorInfo);
+					};					
 					if (error == InstructionError::Throw) {
 						TPointer<Variable> throwValue;
 						fnContext->pop(throwValue);
@@ -1140,7 +1143,7 @@ namespace XYO::QuantumScript {
 						stackTrace.deleteMemory();
 						throw Error(
 						    (throwValue->getPropertyBySymbol(Context::getSymbol("message")))->toString());
-					};
+					};					
 				};
 			};
 		};
