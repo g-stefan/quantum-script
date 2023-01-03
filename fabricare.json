@@ -5,7 +5,6 @@
 		"projects" : [
 			{
 				"name" : "quantum-script",
-				"type" : "xyo-cpp",
 				"make" : "lib-and-dll",
 				"SPDX-License-Identifier": "MIT",
 				"sourcePath" : "XYO/QuantumScript",
@@ -19,7 +18,6 @@
 			},
 			{
 				"name" : "quantum-script--console",
-				"type" : "xyo-cpp",
 				"make" : "lib-and-dll",
 				"SPDX-License-Identifier": "MIT",
 				"sourcePath" : "XYO/QuantumScript.Extension/Console",
@@ -29,7 +27,6 @@
 			},
 			{
 				"name" : "quantum-script.application",
-				"type" : "xyo-cpp",
 				"make" : "lib",
 				"SPDX-License-Identifier": "MIT",
 				"sourcePath" : "XYO/QuantumScript.Application",
@@ -43,17 +40,15 @@
 			},
 			{
 				"name" : "quantum-script",
-				"type" : "xyo-cpp",
 				"make" : "exe",
 				"SPDX-License-Identifier": "MIT",
 				"sourcePath" : "XYO/QuantumScript.Application",
 				"dependency" : [
 					"quantum-script--console",
 					"quantum-script"
-				],
-				"hasRelease" : true,
-				"githubRelease" : true
+				]
 			}
-		]
+		],
+		"hasGithub" : true
 	}
 }

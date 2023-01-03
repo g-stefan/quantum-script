@@ -3,7 +3,7 @@
 // SPDX-FileCopyrightText: 2022 Grigore Stefan <g_stefan@yahoo.com>
 // SPDX-License-Identifier: Unlicense
 
-messageAction("make.quantum-script");
+messageAction("make.prepare");
 
 runInPath("source/XYO/QuantumScript",function(){
 	exitIf(Shell.system("file-to-cs --touch=LibStdArray.cpp --file-in=LibStdArray.js --file-out=LibStdArray.Source.cpp --is-string --name=libStdArraySource"));
@@ -12,8 +12,3 @@ runInPath("source/XYO/QuantumScript",function(){
 	exitIf(Shell.system("file-to-cs --touch=LibStdObject.cpp --file-in=LibStdObject.js --file-out=LibStdObject.Source.cpp --is-string --name=libStdObjectSource"));
 	exitIf(Shell.system("file-to-cs --touch=LibStdScript.cpp --file-in=LibStdScript.js --file-out=LibStdScript.Source.cpp --is-string --name=libStdScriptSource"));
 });
-
-if(!Fabricare.include("make."+Project.make)){
-	messageError("Don't know how to make '"+Project.make+"'!");
-	exit(1);
-};
