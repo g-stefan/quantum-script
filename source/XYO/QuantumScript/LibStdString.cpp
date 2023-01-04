@@ -144,10 +144,10 @@ namespace XYO::QuantumScript {
 			if (String::indexOf(src, sig, 0, index)) {
 				ln = 1;
 				retV->setPropertyByIndex(0, VariableString::newVariable(String::substring(src, 0, index)));
-				pos = index + 1;
+				pos = index + sig.length();
 				while (String::indexOf(src, sig, pos, index)) {
 					retV->setPropertyByIndex(ln, VariableString::newVariable(String::substring(src, pos, index - pos)));
-					pos = index + 1;
+					pos = index + sig.length();
 					++ln;
 				};
 				retV->setPropertyByIndex(ln, VariableString::newVariable(String::substring(src, pos)));
