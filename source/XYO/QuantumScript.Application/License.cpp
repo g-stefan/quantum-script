@@ -1,7 +1,7 @@
 // Quantum Script
-// Copyright (c) 2022 Grigore Stefan <g_stefan@yahoo.com>
+// Copyright (c) 2016-2023 Grigore Stefan <g_stefan@yahoo.com>
 // MIT License (MIT) <http://opensource.org/licenses/MIT>
-// SPDX-FileCopyrightText: 2022 Grigore Stefan <g_stefan@yahoo.com>
+// SPDX-FileCopyrightText: 2016-2023 Grigore Stefan <g_stefan@yahoo.com>
 // SPDX-License-Identifier: MIT
 
 #include <XYO/QuantumScript.Application/License.hpp>
@@ -9,11 +9,11 @@
 namespace XYO::QuantumScript::Application::License {
 
 	const char *license() {
-		return XYO::ManagedMemory::License::license();
+		return XYO::QuantumScript::License::license();
 	};
 
 	const char *shortLicense() {
-		return XYO::ManagedMemory::License::shortLicense();
+		return XYO::QuantumScript::License::shortLicense();
 	};
 
 };
