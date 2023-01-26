@@ -174,4 +174,8 @@ namespace XYO::QuantumScript {
 		TPointerX<TStack<TPointerX<ExecutiveContextPc>>>::initMemory();
 	};
 
+	bool VariableVmFunction::isFunction() {
+		return true;
+	};
+
 };

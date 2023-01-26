@@ -241,7 +241,7 @@ namespace XYO::QuantumScript {
 				};
 				break;
 
-			} catch (const Error &e) {
+			} catch (const Error &e) {				
 				context->push(context->newError((const_cast<Error &>(e)).getMessage()));
 				InstructionVmThrow(context, nullptr);
 			};
@@ -1121,29 +1121,25 @@ namespace XYO::QuantumScript {
 					InstructionVmXCallThisModeApply(fnContext, nullptr);
 					fnContext->currentProgramCounter = fnContext->nextProgramCounter;
 
-					// -- executor					
-					int error = Executive::execute_(fnContext.value());					
-					if (error == InstructionError::None) {
+					// -- executor
+					int error = Executive::execute_(fnContext.value());
+					if (error == InstructionError::None) {						
 						return fnContext->returnValue;
 					};
 					if (error == InstructionError::Error) {						
 						throw Error(fnContext->errorInfo);
-					};					
-					if (error == InstructionError::Throw) {
+					};
+					if (error == InstructionError::Throw) {						
 						TPointer<Variable> throwValue;
-						fnContext->pop(throwValue);
-						// catch, native throw
-						if (fnContext->stackTrace) {
-							fnContext->stackTrace->pop();
-						};
-						TPointer<VariableStackTrace> stackTrace((VariableStackTrace *)VariableStackTrace::newVariable(fnContext->stackTrace, fnContext));
-						fnContext->stackTrace.deleteMemory();
-						stackTrace->configPrintStackTraceLimit = fnContext->configPrintStackTraceLimit;
+						fnContext->pop(throwValue);							
+						TPointer<VariableStackTrace> stackTrace((VariableStackTrace *)VariableStackTrace::newVariable(fnContext->stackTrace, fnContext));						
+						stackTrace->configPrintStackTraceLimit = fnContext->configPrintStackTraceLimit;						
 						ExecutiveX::setStackTrace(stackTrace->toString());
 						stackTrace.deleteMemory();
+						fnContext->stackTrace.deleteMemory();
 						throw Error(
 						    (throwValue->getPropertyBySymbol(Context::getSymbol("message")))->toString());
-					};					
+					};
 				};
 			};
 		};

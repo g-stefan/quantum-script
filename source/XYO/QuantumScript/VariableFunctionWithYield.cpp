@@ -187,4 +187,8 @@ namespace XYO::QuantumScript {
 		TMemory<FunctionParent>::initMemory();
 	};
 
+	bool VariableFunctionWithYield::isFunction() {
+		return true;
+	};
+
 };

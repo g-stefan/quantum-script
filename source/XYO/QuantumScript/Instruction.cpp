@@ -721,7 +721,7 @@ namespace XYO::QuantumScript {
 		do {
 			if (context->pcContext == nullptr) {
 				break;
-			};			
+			};
 			if (context->pcContext == static_cast<ExecutiveContextPc *>(context->functionContext)) {
 				break;
 			};
@@ -880,8 +880,10 @@ namespace XYO::QuantumScript {
 		if (!TIsType<VariableObject>(operand1)) {
 			operand1 = context->newError(operand1->toString());
 		};
-
-		context->stackTrace.newMemory();
+		
+		if(!context->stackTrace) {
+			context->stackTrace.newMemory();
+		};
 		InstructionTrace tracePoint;
 		tracePoint.sourceSymbol = (reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(context->currentProgramCounter))->value.sourceSymbol;
 		tracePoint.sourceLineNumber = (reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(context->currentProgramCounter))->value.sourceLineNumber;
@@ -894,7 +896,7 @@ namespace XYO::QuantumScript {
 			if (context->pcContext->pc_) {
 				tracePoint.sourceSymbol = (reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(context->pcContext->pc_))->value.sourceSymbol;
 				tracePoint.sourceLineNumber = (reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(context->pcContext->pc_))->value.sourceLineNumber;
-				context->stackTrace->push(tracePoint);
+				context->stackTrace->push(tracePoint);				
 			};
 			catch_ = context->pcContext->catch_;
 			finally_ = context->pcContext->finally_;
@@ -927,7 +929,7 @@ namespace XYO::QuantumScript {
 				};
 			};
 		} while (catch_ == nullptr);
-
+		
 		context->push(operand1);
 		context->error = InstructionError::Throw;
 		context->errorInfo = "throw";
@@ -1250,6 +1252,7 @@ namespace XYO::QuantumScript {
 	// 6. ContextSetLocalVariables
 	// 7. Call
 	//
+	// ([function])()
 
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmXCall) {
 #ifdef XYO_QUANTUMSCRIPT_DEBUG_RUNTIME
@@ -1318,6 +1321,7 @@ namespace XYO::QuantumScript {
 	// 6. ContextSetLocalVariables
 	// 7. CallSymbol
 	//
+	// [function]()
 
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmXCallSymbol) {
 #ifdef XYO_QUANTUMSCRIPT_DEBUG_RUNTIME
@@ -1333,7 +1337,16 @@ namespace XYO::QuantumScript {
 		operand1 = (Context::getGlobalObject())->getPropertyBySymbol(((VariableSymbol *)operand)->value);
 
 		if (!TIsType<VariableVmFunction>(operand1)) {
-			context->push(operand1->functionApply(Context::getValueUndefined(), functionArguments));
+			if (operand1->isFunction()) {
+				context->push(operand1->functionApply(Context::getValueUndefined(), functionArguments));
+				return;
+			};
+
+			String symbolName = Context::getSymbolMirror(((VariableSymbol *)operand)->value);
+			String error;
+			error << "\"" << symbolName << "\" is not a function";
+			context->push(context->newError(error));
+			InstructionVmThrow(context, nullptr);
 			return;
 		};
 
@@ -1390,6 +1403,7 @@ namespace XYO::QuantumScript {
 	// 6. ContextSetLocalVariables
 	// 7. Call
 	//
+	// new [function]()
 
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmXCallThis) {
 #ifdef XYO_QUANTUMSCRIPT_DEBUG_RUNTIME
@@ -1470,6 +1484,7 @@ namespace XYO::QuantumScript {
 	// 6. ContextSetLocalVariables
 	// 7. Call
 	//
+	// [function].call(...)
 
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmXCallThisModeCall) {
 #ifdef XYO_QUANTUMSCRIPT_DEBUG_RUNTIME
@@ -1483,7 +1498,6 @@ namespace XYO::QuantumScript {
 
 		if (!TIsType<VariableVmFunction>(operand1)) {
 			context->push(operand1->functionApply(operand2, functionArguments));
-			return;
 		};
 
 		if (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
@@ -1537,6 +1551,7 @@ namespace XYO::QuantumScript {
 		context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
 	};
 
+	// [function].apply(...)
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmXCallThisModeApply) {
 #ifdef XYO_QUANTUMSCRIPT_DEBUG_RUNTIME
 		printf(">%p    x-call-this-mode-apply\n", context->currentProgramCounter);
@@ -1614,6 +1629,7 @@ namespace XYO::QuantumScript {
 	// 6. ContextSetLocalVariables
 	// 7. Call
 	//
+	// [object].[function]()
 
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmXCallWithThisReference) { //  x.fn()
 #ifdef XYO_QUANTUMSCRIPT_DEBUG_RUNTIME
@@ -1634,7 +1650,16 @@ namespace XYO::QuantumScript {
 		if (result) {
 
 			if (!TIsType<VariableVmFunction>(result)) {
-				context->push(result->functionApply(operand1, functionArguments));
+				if (result->isFunction()) {
+					context->push(result->functionApply(operand1, functionArguments));
+					return;
+				};
+
+				String symbolName = Context::getSymbolMirror(((VariableSymbol *)operand)->value);
+				String error;
+				error << "\"" << symbolName << "\" is not a function";
+				context->push(context->newError(error));
+				InstructionVmThrow(context, nullptr);
 				return;
 			};
 
@@ -1780,7 +1805,6 @@ namespace XYO::QuantumScript {
 		Variable *operand1;
 		context->peek(operand1);
 		if (TIsType<VariableObject>(operand1)) {
-			context->stackTrace->pop();
 			Variable *retV = VariableStackTrace::newVariable(context->stackTrace, context);
 			context->stackTrace.deleteMemory();
 			((VariableStackTrace *)retV)->configPrintStackTraceLimit = context->configPrintStackTraceLimit;

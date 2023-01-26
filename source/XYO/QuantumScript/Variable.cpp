@@ -407,4 +407,8 @@ namespace XYO::QuantumScript {
 		};
 		return VariableNumber::newVariable(toNumber() + b->toNumber());
 	};
+
+	bool Variable::isFunction() {
+		return false;
+	};
 };

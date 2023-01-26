@@ -102,6 +102,8 @@ namespace XYO::QuantumScript {
 			XYO_QUANTUMSCRIPT_EXPORT String toString();
 
 			XYO_QUANTUMSCRIPT_EXPORT static void initMemory();
+
+			XYO_QUANTUMSCRIPT_EXPORT virtual bool isFunction();
 	};
 
 };

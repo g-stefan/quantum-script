@@ -164,6 +164,9 @@ namespace XYO::QuantumScript {
 			XYO_QUANTUMSCRIPT_EXPORT int compare(Variable *b);
 
 			XYO_QUANTUMSCRIPT_EXPORT TPointer<Variable> operatorPlus(Variable *b);
+
+			//
+			XYO_QUANTUMSCRIPT_EXPORT virtual bool isFunction();
 	};
 
 };
