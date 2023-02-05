@@ -89,13 +89,31 @@ namespace XYO::QuantumScript {
 
 			executive.initExecutive();
 			executive.compileEnd();
-			if (executive.execute() == 0) {
+
+			int errorExecute = executive.execute();			
+			if (errorExecute == InstructionError::None) {				
 				return true;
-			} else {				
-				error = "Error: Internal virtual machine - ";
-				error += executive.instructionContext->errorInfo;
+			};
+			if (errorExecute == InstructionError::Error) {						
 				return false;
 			};
+			if (errorExecute == InstructionError::Throw) {				
+				TPointer<Variable> throwValue;
+				executive.instructionContext->pop(throwValue);
+				TPointer<VariableStackTrace> stackTrace((VariableStackTrace *)VariableStackTrace::newVariable(executive.instructionContext->stackTrace, executive.instructionContext));
+				stackTrace->configPrintStackTraceLimit = executive.instructionContext->configPrintStackTraceLimit;						
+				ExecutiveX::setStackTrace(stackTrace->toString());
+				stackTrace.deleteMemory();
+				executive.instructionContext->stackTrace.deleteMemory();
+
+				error = "Error: ";
+				error += (throwValue->getPropertyBySymbol(Context::getSymbol("message")))->toString();
+				return false;				
+			};
+			
+			error = "Error: ";
+			error += executive.instructionContext->errorInfo;
+			return false;			
 
 		} catch (const Error &e) {
 			error = "Error: ";
