@@ -261,7 +261,7 @@ namespace XYO::QuantumScript {
 
 					String stringToCompile;
 					if (executive->includeSource->get(((VariableString *)operand1.value())->value, stringToCompile)) {
-						int retV = executive->includeAndExecuteString(context, stringToCompile);
+						int retV = executive->includeAndExecuteString(context, stringToCompile, ((VariableString *)operand1.value())->value);
 						if (retV == VmParserError::None) {
 							return;
 						} else if (retV == VmParserError::Compile) {
@@ -375,7 +375,7 @@ namespace XYO::QuantumScript {
 
 					String stringToCompile;
 					if (executive->includeSource->get(((VariableString *)operand1.value())->value, stringToCompile)) {
-						int retV = executive->includeAndExecuteString(context, stringToCompile);
+						int retV = executive->includeAndExecuteString(context, stringToCompile, ((VariableString *)operand1.value())->value);
 						if (retV == VmParserError::None) {
 							return;
 						} else if (retV == VmParserError::Compile) {
@@ -478,7 +478,7 @@ namespace XYO::QuantumScript {
 
 					String stringToCompile;
 					if (executive->includeSource->get(((VariableString *)operand1.value())->value, stringToCompile)) {
-						int retV = executive->includeAndExecuteStringSkipLines(context, stringToCompile, skipLines);
+						int retV = executive->includeAndExecuteStringSkipLines(context, stringToCompile, skipLines, ((VariableString *)operand1.value())->value);
 						if (retV == VmParserError::None) {
 							return;
 						} else if (retV == VmParserError::Compile) {
@@ -511,10 +511,13 @@ namespace XYO::QuantumScript {
 
 			TPointer<Variable> operand1;
 			TPointer<Variable> operand2;
+			TPointer<Variable> tagValue;
+
 			char buf[2048];
 
 			operand1 = context->getArgument(0);
 			operand2 = context->getArgument(1);
+			tagValue = context->getArgument(2);
 
 			if (!TIsType<VariableArray>(operand2)) {
 				operand2 = VariableArray::newVariable();
@@ -528,9 +531,15 @@ namespace XYO::QuantumScript {
 			if (operand1) {
 				if (TIsType<VariableString>(operand1)) {
 					Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
+
+					const char *tag=nullptr;
+					if (TIsType<VariableString>(tagValue)) {
+						tag =  ((VariableString *)tagValue.value())->value.value();
+					};
+
 					String stringToCompile;
 					stringToCompile = ((VariableString *)operand1.value())->value.value();
-					int retV = executive->includeAndExecuteString(context, stringToCompile);
+					int retV = executive->includeAndExecuteString(context, stringToCompile, tag);
 					if (retV == VmParserError::None) {
 						return;
 					} else if (retV == VmParserError::Compile) {
@@ -555,11 +564,14 @@ namespace XYO::QuantumScript {
 
 			TPointer<Variable> operand1;
 			TPointer<Variable> operand2;
+			TPointer<Variable> tagValue;
+
 			char buf[2048];
 
 			operand1 = context->getArgument(0);
-			operand2 = context->getArgument(1);
+			operand2 = context->getArgument(1);		
 			size_t skipLines = (context->getArgument(2))->toIndex();
+			tagValue = context->getArgument(3);
 
 			if (!TIsType<VariableArray>(operand2)) {
 				operand2 = VariableArray::newVariable();
@@ -573,9 +585,15 @@ namespace XYO::QuantumScript {
 			if (operand1) {
 				if (TIsType<VariableString>(operand1)) {
 					Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
+
+					const char *tag=nullptr;
+					if (TIsType<VariableString>(tagValue)) {
+						tag =  ((VariableString *)tagValue.value())->value.value();
+					};
+
 					String stringToCompile;
 					stringToCompile = ((VariableString *)operand1.value())->value.value();
-					int retV = executive->includeAndExecuteStringSkipLines(context, stringToCompile, skipLines);
+					int retV = executive->includeAndExecuteStringSkipLines(context, stringToCompile, skipLines, tag);
 					if (retV == VmParserError::None) {
 						return;
 					} else if (retV == VmParserError::Compile) {
@@ -974,10 +992,13 @@ namespace XYO::QuantumScript {
 
 			TPointer<Variable> operand1;
 			TPointer<Variable> operand2;
+			TPointer<Variable> tagValue;
+			
 			char buf[2048];
 
 			operand2 = context->getArgument(0);
 			operand1 = context->getArgument(1);
+			tagValue = context->getArgument(2);
 
 			if (!context->functionContext->this_) {
 				context->functionContext->this_ = VariableUndefined::newVariable();
@@ -989,7 +1010,12 @@ namespace XYO::QuantumScript {
 						if (TIsType<VariableString>(operand2)) {
 							Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
 
-							int retV = executive->setVmFunctionFromStringX(context, ((VariableString *)operand2.value())->value, ((VariableString *)operand1.value())->value);
+							const char *tag=nullptr;
+							if (TIsType<VariableString>(tagValue)) {
+								tag =  ((VariableString *)tagValue.value())->value.value();
+							};
+
+							int retV = executive->setVmFunctionFromStringX(context, ((VariableString *)operand2.value())->value, ((VariableString *)operand1.value())->value, tag);
 							if (retV == VmParserError::None) {
 								return;
 							} else if (retV == VmParserError::Compile) {

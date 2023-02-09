@@ -492,7 +492,7 @@ namespace XYO::QuantumScript {
 		return VmParserError::Compile;
 	};
 
-	int Executive::compileString(const char *data_) {
+	int Executive::compileString(const char *data_, const char *tag) {
 		Parser parser;
 		Input input;
 		MemoryRead in;
@@ -502,8 +502,18 @@ namespace XYO::QuantumScript {
 
 		if (in.open(data_, StringCore::length(data_))) {
 			if (input.init(&in)) {
-				String strSymbol("@");
-				strSymbol << data_;
+
+				String strSymbol;
+				if(tag) {
+					strSymbol = "!";
+					strSymbol << tag;
+				} else {
+#ifdef XYO_QUANTUMSCRIPT_STACK_TRACE_SHOW_MEMORY_SOURCE
+					strSymbol = "@";
+					strSymbol << data_;
+#endif					
+				};
+				
 				Symbol symbolSource = Context::getSymbol(strSymbol);
 				if (parser.init(&input, assembler, symbolSource)) {
 					retV = parser.parse();
@@ -515,12 +525,16 @@ namespace XYO::QuantumScript {
 
 		errorInfo.compileError = retV;
 		errorInfo.compileLineNumber = input.lineNumber;
-		errorInfo.compileFileName = "";
+		if(tag) {
+			errorInfo.compileFileName = tag;
+		}else{
+			errorInfo.compileFileName = "";
+		};
 
 		return retV;
 	};
 
-	int Executive::compileStringSkipLines(const char *data_, size_t skipLines) {
+	int Executive::compileStringSkipLines(const char *data_, size_t skipLines, const char *tag) {
 		Parser parser;
 		Input input;
 		MemoryRead in;
@@ -542,8 +556,17 @@ namespace XYO::QuantumScript {
 					};
 				};
 
-				String strSymbol("@");
-				strSymbol << data_;
+				String strSymbol;
+				if(tag) {
+					strSymbol = "!";
+					strSymbol << tag;
+				} else {
+#ifdef XYO_QUANTUMSCRIPT_STACK_TRACE_SHOW_MEMORY_SOURCE
+					strSymbol = "@";
+					strSymbol << data_;
+#endif					
+				};
+
 				Symbol symbolSource = Context::getSymbol(strSymbol);
 				if (parser.init(&input, assembler, symbolSource)) {
 					retV = parser.parse();
@@ -555,12 +578,16 @@ namespace XYO::QuantumScript {
 
 		errorInfo.compileError = retV;
 		errorInfo.compileLineNumber = input.lineNumber;
-		errorInfo.compileFileName = "";
+		if(tag) {
+			errorInfo.compileFileName = tag;
+		}else{
+			errorInfo.compileFileName = "";
+		};
 
 		return retV;
 	};
 
-	int Executive::includeAndExecuteString(InstructionContext *context, const char *data_) {
+	int Executive::includeAndExecuteString(InstructionContext *context, const char *data_, const char *tag) {
 		ProgramCounter *linkBegin;
 		ProgramCounter *linkStart;
 		ProgramCounter *linkEnd;
@@ -583,7 +610,7 @@ namespace XYO::QuantumScript {
 		assembler->assembleProgramCounter(ParserAsm::ContextSetTryContinue, currentContextContinue, 0, 0);
 		assembler->assembleProgramCounter(ParserAsm::ContextSetTryBreak, currentContextBreak, 0, 0);
 
-		retV = compileString(data_);
+		retV = compileString(data_, tag);
 		if (retV == VmParserError::None) {
 			assembler->assemble(ParserAsm::LeaveContext, "", 0, 0);
 			linkEntry = assembler->assemble(ParserAsm::EnterContext, "", 0, 0);
@@ -608,7 +635,7 @@ namespace XYO::QuantumScript {
 		return retV;
 	};
 
-	int Executive::includeAndExecuteStringSkipLines(InstructionContext *context, const char *data_, size_t skipLines) {
+	int Executive::includeAndExecuteStringSkipLines(InstructionContext *context, const char *data_, size_t skipLines, const char *tag) {
 		ProgramCounter *linkBegin;
 		ProgramCounter *linkStart;
 		ProgramCounter *linkEnd;
@@ -631,7 +658,7 @@ namespace XYO::QuantumScript {
 		assembler->assembleProgramCounter(ParserAsm::ContextSetTryContinue, currentContextContinue, 0, 0);
 		assembler->assembleProgramCounter(ParserAsm::ContextSetTryBreak, currentContextBreak, 0, 0);
 
-		retV = compileStringSkipLines(data_, skipLines);
+		retV = compileStringSkipLines(data_, skipLines, tag);
 		if (retV == VmParserError::None) {
 			assembler->assemble(ParserAsm::LeaveContext, "", 0, 0);
 			linkEntry = assembler->assemble(ParserAsm::EnterContext, "", 0, 0);
@@ -868,7 +895,7 @@ namespace XYO::QuantumScript {
 		return retV;
 	};
 
-	int Executive::setVmFunctionFromString(const char *name, const char *data) {
+	int Executive::setVmFunctionFromString(const char *name, const char *data, const char *tag) {
 		ProgramCounter *linkFunctionBegin;
 		ProgramCounter *linkFunctionEnd;
 		ProgramCounter *linkFunctionEnter;
@@ -962,7 +989,7 @@ namespace XYO::QuantumScript {
 
 		fnSource << "{" << data << "}";
 
-		retV = compileString(data);
+		retV = compileString(data,tag);
 
 		uint32_t fnSourceSymbol = Context::getSymbol(fnSource);
 		assembler->linkProgramCounterSource(linkFunctionBegin, fnSourceSymbol, 0);
@@ -1024,7 +1051,7 @@ namespace XYO::QuantumScript {
 		return retV;
 	};
 
-	int Executive::setVmFunctionFromStringX(InstructionContext *context, const char *name, const char *fileName) {
+	int Executive::setVmFunctionFromStringX(InstructionContext *context, const char *name, const char *data, const char *tag) {
 		ProgramCounter *linkBegin;
 		ProgramCounter *linkStart;
 		ProgramCounter *linkEnd;
@@ -1047,7 +1074,7 @@ namespace XYO::QuantumScript {
 		assembler->assembleProgramCounter(ParserAsm::ContextSetTryContinue, currentContextContinue, 0, 0);
 		assembler->assembleProgramCounter(ParserAsm::ContextSetTryBreak, currentContextBreak, 0, 0);
 
-		retV = setVmFunctionFromString(name, fileName);
+		retV = setVmFunctionFromString(name, data, tag);
 		if (retV == VmParserError::None) {
 			assembler->assemble(ParserAsm::LeaveContext, "", 0, 0);
 			linkEntry = assembler->assemble(ParserAsm::EnterContext, "", 0, 0);

@@ -1,20 +1,20 @@
 {
 	"quantum-script.library": {
-		"version": "3.1.0",
-		"build": "6",
-		"date": "2023-02-05",
-		"time": "03:00:12"
+		"version": "3.2.0",
+		"build": "7",
+		"date": "2023-02-10",
+		"time": "01:38:28"
 	},
 	"quantum-script--console": {
 		"version": "3.0.1",
-		"build": "6",
-		"date": "2023-02-05",
-		"time": "03:00:12"
+		"build": "7",
+		"date": "2023-02-10",
+		"time": "01:38:28"
 	},
 	"quantum-script": {
 		"version": "3.0.1",
-		"build": "6",
-		"date": "2023-02-05",
-		"time": "03:00:12"
+		"build": "7",
+		"date": "2023-02-10",
+		"time": "01:38:28"
 	}
 }

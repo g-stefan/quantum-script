@@ -51,6 +51,11 @@ namespace XYO::QuantumScript {
 						sprintf(buffer, "line %u\n", scan->value.sourceLineNumber);
 						out << buffer;
 					};
+					if (symbol[0] == '!') {
+						out << "- tag " << symbol.index(1) << " ";
+						sprintf(buffer, "line %u\n", scan->value.sourceLineNumber);
+						out << buffer;
+					};
 					if (symbol[0] == '@') {
 #ifdef XYO_QUANTUMSCRIPT_STACK_TRACE_SHOW_MEMORY_SOURCE
 						out << "- memory " << symbol.index(1) << " ";
