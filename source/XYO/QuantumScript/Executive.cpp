@@ -241,7 +241,7 @@ namespace XYO::QuantumScript {
 				};
 				break;
 
-			} catch (const Error &e) {				
+			} catch (const Error &e) {
 				context->push(context->newError((const_cast<Error &>(e)).getMessage()));
 				InstructionVmThrow(context, nullptr);
 			};
@@ -504,16 +504,16 @@ namespace XYO::QuantumScript {
 			if (input.init(&in)) {
 
 				String strSymbol;
-				if(tag) {
+				if (tag) {
 					strSymbol = "!";
 					strSymbol << tag;
 				} else {
 #ifdef XYO_QUANTUMSCRIPT_STACK_TRACE_SHOW_MEMORY_SOURCE
 					strSymbol = "@";
 					strSymbol << data_;
-#endif					
+#endif
 				};
-				
+
 				Symbol symbolSource = Context::getSymbol(strSymbol);
 				if (parser.init(&input, assembler, symbolSource)) {
 					retV = parser.parse();
@@ -525,9 +525,9 @@ namespace XYO::QuantumScript {
 
 		errorInfo.compileError = retV;
 		errorInfo.compileLineNumber = input.lineNumber;
-		if(tag) {
+		if (tag) {
 			errorInfo.compileFileName = tag;
-		}else{
+		} else {
 			errorInfo.compileFileName = "";
 		};
 
@@ -557,14 +557,14 @@ namespace XYO::QuantumScript {
 				};
 
 				String strSymbol;
-				if(tag) {
+				if (tag) {
 					strSymbol = "!";
 					strSymbol << tag;
 				} else {
 #ifdef XYO_QUANTUMSCRIPT_STACK_TRACE_SHOW_MEMORY_SOURCE
 					strSymbol = "@";
 					strSymbol << data_;
-#endif					
+#endif
 				};
 
 				Symbol symbolSource = Context::getSymbol(strSymbol);
@@ -578,9 +578,9 @@ namespace XYO::QuantumScript {
 
 		errorInfo.compileError = retV;
 		errorInfo.compileLineNumber = input.lineNumber;
-		if(tag) {
+		if (tag) {
 			errorInfo.compileFileName = tag;
-		}else{
+		} else {
 			errorInfo.compileFileName = "";
 		};
 
@@ -989,7 +989,7 @@ namespace XYO::QuantumScript {
 
 		fnSource << "{" << data << "}";
 
-		retV = compileString(data,tag);
+		retV = compileString(data, tag);
 
 		uint32_t fnSourceSymbol = Context::getSymbol(fnSource);
 		assembler->linkProgramCounterSource(linkFunctionBegin, fnSourceSymbol, 0);
@@ -1150,17 +1150,17 @@ namespace XYO::QuantumScript {
 
 					// -- executor
 					int error = Executive::execute_(fnContext.value());
-					if (error == InstructionError::None) {						
+					if (error == InstructionError::None) {
 						return fnContext->returnValue;
 					};
-					if (error == InstructionError::Error) {						
+					if (error == InstructionError::Error) {
 						throw Error(fnContext->errorInfo);
 					};
-					if (error == InstructionError::Throw) {						
+					if (error == InstructionError::Throw) {
 						TPointer<Variable> throwValue;
-						fnContext->pop(throwValue);							
-						TPointer<VariableStackTrace> stackTrace((VariableStackTrace *)VariableStackTrace::newVariable(fnContext->stackTrace, fnContext));						
-						stackTrace->configPrintStackTraceLimit = fnContext->configPrintStackTraceLimit;						
+						fnContext->pop(throwValue);
+						TPointer<VariableStackTrace> stackTrace((VariableStackTrace *)VariableStackTrace::newVariable(fnContext->stackTrace, fnContext));
+						stackTrace->configPrintStackTraceLimit = fnContext->configPrintStackTraceLimit;
 						ExecutiveX::setStackTrace(stackTrace->toString());
 						stackTrace.deleteMemory();
 						fnContext->stackTrace.deleteMemory();

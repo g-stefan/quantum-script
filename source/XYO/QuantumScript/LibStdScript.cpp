@@ -532,9 +532,9 @@ namespace XYO::QuantumScript {
 				if (TIsType<VariableString>(operand1)) {
 					Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
 
-					const char *tag=nullptr;
+					const char *tag = nullptr;
 					if (TIsType<VariableString>(tagValue)) {
-						tag =  ((VariableString *)tagValue.value())->value.value();
+						tag = ((VariableString *)tagValue.value())->value.value();
 					};
 
 					String stringToCompile;
@@ -569,7 +569,7 @@ namespace XYO::QuantumScript {
 			char buf[2048];
 
 			operand1 = context->getArgument(0);
-			operand2 = context->getArgument(1);		
+			operand2 = context->getArgument(1);
 			size_t skipLines = (context->getArgument(2))->toIndex();
 			tagValue = context->getArgument(3);
 
@@ -586,9 +586,9 @@ namespace XYO::QuantumScript {
 				if (TIsType<VariableString>(operand1)) {
 					Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
 
-					const char *tag=nullptr;
+					const char *tag = nullptr;
 					if (TIsType<VariableString>(tagValue)) {
-						tag =  ((VariableString *)tagValue.value())->value.value();
+						tag = ((VariableString *)tagValue.value())->value.value();
 					};
 
 					String stringToCompile;
@@ -993,7 +993,7 @@ namespace XYO::QuantumScript {
 			TPointer<Variable> operand1;
 			TPointer<Variable> operand2;
 			TPointer<Variable> tagValue;
-			
+
 			char buf[2048];
 
 			operand2 = context->getArgument(0);
@@ -1010,9 +1010,9 @@ namespace XYO::QuantumScript {
 						if (TIsType<VariableString>(operand2)) {
 							Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
 
-							const char *tag=nullptr;
+							const char *tag = nullptr;
 							if (TIsType<VariableString>(tagValue)) {
-								tag =  ((VariableString *)tagValue.value())->value.value();
+								tag = ((VariableString *)tagValue.value())->value.value();
 							};
 
 							int retV = executive->setVmFunctionFromStringX(context, ((VariableString *)operand2.value())->value, ((VariableString *)operand1.value())->value, tag);

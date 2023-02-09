@@ -880,8 +880,8 @@ namespace XYO::QuantumScript {
 		if (!TIsType<VariableObject>(operand1)) {
 			operand1 = context->newError(operand1->toString());
 		};
-		
-		if(!context->stackTrace) {
+
+		if (!context->stackTrace) {
 			context->stackTrace.newMemory();
 		};
 		InstructionTrace tracePoint;
@@ -896,7 +896,7 @@ namespace XYO::QuantumScript {
 			if (context->pcContext->pc_) {
 				tracePoint.sourceSymbol = (reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(context->pcContext->pc_))->value.sourceSymbol;
 				tracePoint.sourceLineNumber = (reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(context->pcContext->pc_))->value.sourceLineNumber;
-				context->stackTrace->push(tracePoint);				
+				context->stackTrace->push(tracePoint);
 			};
 			catch_ = context->pcContext->catch_;
 			finally_ = context->pcContext->finally_;
@@ -929,7 +929,7 @@ namespace XYO::QuantumScript {
 				};
 			};
 		} while (catch_ == nullptr);
-		
+
 		context->push(operand1);
 		context->error = InstructionError::Throw;
 		context->errorInfo = "throw";

@@ -90,30 +90,30 @@ namespace XYO::QuantumScript {
 			executive.initExecutive();
 			executive.compileEnd();
 
-			int errorExecute = executive.execute();			
-			if (errorExecute == InstructionError::None) {				
+			int errorExecute = executive.execute();
+			if (errorExecute == InstructionError::None) {
 				return true;
 			};
-			if (errorExecute == InstructionError::Error) {						
+			if (errorExecute == InstructionError::Error) {
 				return false;
 			};
-			if (errorExecute == InstructionError::Throw) {				
+			if (errorExecute == InstructionError::Throw) {
 				TPointer<Variable> throwValue;
 				executive.instructionContext->pop(throwValue);
 				TPointer<VariableStackTrace> stackTrace((VariableStackTrace *)VariableStackTrace::newVariable(executive.instructionContext->stackTrace, executive.instructionContext));
-				stackTrace->configPrintStackTraceLimit = executive.instructionContext->configPrintStackTraceLimit;						
+				stackTrace->configPrintStackTraceLimit = executive.instructionContext->configPrintStackTraceLimit;
 				ExecutiveX::setStackTrace(stackTrace->toString());
 				stackTrace.deleteMemory();
 				executive.instructionContext->stackTrace.deleteMemory();
 
 				error = "Error: ";
 				error += (throwValue->getPropertyBySymbol(Context::getSymbol("message")))->toString();
-				return false;				
+				return false;
 			};
-			
+
 			error = "Error: ";
 			error += executive.instructionContext->errorInfo;
-			return false;			
+			return false;
 
 		} catch (const Error &e) {
 			error = "Error: ";

@@ -40,11 +40,11 @@ namespace XYO::QuantumScript {
 	String VariableStackTrace::toString(int level_) {
 		String out = "";
 		char buffer[1024];
-		if (stackTrace) {			
+		if (stackTrace) {
 			uint32_t level = 0;
 			TDoubleEndedQueue<InstructionTrace>::Node *scan;
-			for (scan = stackTrace->tail; scan && (level < level_); scan = scan->back, ++level) {				
-				if (scan->value.sourceSymbol) {					
+			for (scan = stackTrace->tail; scan && (level < level_); scan = scan->back, ++level) {
+				if (scan->value.sourceSymbol) {
 					String symbol = Context::getSymbolMirror(scan->value.sourceSymbol);
 					if (symbol[0] == '#') {
 						out << "- file " << String::replace(symbol.index(1), Shell::getCwd() << Shell::pathSeparator, "") << " ";

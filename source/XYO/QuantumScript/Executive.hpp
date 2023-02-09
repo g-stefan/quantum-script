@@ -119,14 +119,14 @@ namespace XYO::QuantumScript {
 			XYO_QUANTUMSCRIPT_EXPORT int includeAndExecuteFileSkipLines(InstructionContext *context, const char *fileName, size_t skipLines);
 			XYO_QUANTUMSCRIPT_EXPORT void setVmFunction(const char *name, InstructionProcedure procedure, Variable *operand);
 
-			XYO_QUANTUMSCRIPT_EXPORT int compileString(const char *, const char *tag=nullptr);
-			XYO_QUANTUMSCRIPT_EXPORT int compileStringSkipLines(const char *, size_t skipLines, const char *tag=nullptr);
-			XYO_QUANTUMSCRIPT_EXPORT int includeAndExecuteString(InstructionContext *context, const char *, const char *tag=nullptr);
-			XYO_QUANTUMSCRIPT_EXPORT int includeAndExecuteStringSkipLines(InstructionContext *context, const char *, size_t skipLines, const char *tag=nullptr);
+			XYO_QUANTUMSCRIPT_EXPORT int compileString(const char *, const char *tag = nullptr);
+			XYO_QUANTUMSCRIPT_EXPORT int compileStringSkipLines(const char *, size_t skipLines, const char *tag = nullptr);
+			XYO_QUANTUMSCRIPT_EXPORT int includeAndExecuteString(InstructionContext *context, const char *, const char *tag = nullptr);
+			XYO_QUANTUMSCRIPT_EXPORT int includeAndExecuteStringSkipLines(InstructionContext *context, const char *, size_t skipLines, const char *tag = nullptr);
 			XYO_QUANTUMSCRIPT_EXPORT int setVmFunctionFromFile(const char *name, const char *fileName);
-			XYO_QUANTUMSCRIPT_EXPORT int setVmFunctionFromString(const char *name, const char *data, const char *tag=nullptr);
+			XYO_QUANTUMSCRIPT_EXPORT int setVmFunctionFromString(const char *name, const char *data, const char *tag = nullptr);
 			XYO_QUANTUMSCRIPT_EXPORT int setVmFunctionFromFileX(InstructionContext *context, const char *name, const char *fileName);
-			XYO_QUANTUMSCRIPT_EXPORT int setVmFunctionFromStringX(InstructionContext *context, const char *name, const char *data, const char *tag=nullptr);
+			XYO_QUANTUMSCRIPT_EXPORT int setVmFunctionFromStringX(InstructionContext *context, const char *name, const char *data, const char *tag = nullptr);
 
 			XYO_QUANTUMSCRIPT_EXPORT void compileEnd();
 
