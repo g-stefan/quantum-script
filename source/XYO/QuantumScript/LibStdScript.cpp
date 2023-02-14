@@ -1010,7 +1010,7 @@ namespace XYO::QuantumScript {
 						if (TIsType<VariableString>(operand2)) {
 							Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
 
-							const char *tag = nullptr;
+							const char *tag = ((VariableString *)operand2.value())->value.value();
 							if (TIsType<VariableString>(tagValue)) {
 								tag = ((VariableString *)tagValue.value())->value.value();
 							};
