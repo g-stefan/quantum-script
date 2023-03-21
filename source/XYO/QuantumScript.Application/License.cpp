@@ -8,11 +8,11 @@
 
 namespace XYO::QuantumScript::Application::License {
 
-	const char *license() {
+	std::string license() {
 		return XYO::QuantumScript::License::license();
 	};
 
-	const char *shortLicense() {
+	std::string shortLicense() {
 		return XYO::QuantumScript::License::shortLicense();
 	};
 

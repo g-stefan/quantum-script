@@ -16,7 +16,7 @@ namespace XYO::QuantumScript::Application {
 	void Application::showUsage() {
 		printf("Quantum Script\n");
 		showVersion();
-		printf("%s\n\n", QuantumScript::Application::Copyright::copyright());
+		printf("%s\n\n", QuantumScript::Application::Copyright::copyright().c_str());
 
 		printf("%s",
 		       "options:\n"
@@ -30,7 +30,7 @@ namespace XYO::QuantumScript::Application {
 	};
 
 	void Application::showLicense() {
-		printf("%s", QuantumScript::Application::License::license());
+		printf("%s", QuantumScript::Application::License::license().c_str());
 	};
 
 	void Application::showVersion() {

@@ -150,7 +150,7 @@ namespace XYO::QuantumScript::Extension::Console {
 #endif
 
 		String info = "Console\r\n";
-		info << License::shortLicense();
+		info << License::shortLicense().c_str();
 
 		executive->setExtensionName(extensionId, "Console");
 		executive->setExtensionInfo(extensionId, info);
