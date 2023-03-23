@@ -27,7 +27,7 @@ namespace XYO::QuantumScript {
 			printf("- string-index-of\n");
 #endif
 			size_t index_;
-			if (String::indexOf(
+			if (StringX::indexOf(
 			        this_->toString(),
 			        (arguments->index(0))->toString(),
 			        (arguments->index(1))->toIndex(),
@@ -43,7 +43,7 @@ namespace XYO::QuantumScript {
 #endif
 
 			size_t index_;
-			if (String::indexOfFromEnd(
+			if (StringX::indexOfFromEnd(
 			        this_->toString(),
 			        (arguments->index(0))->toString(),
 			        (arguments->index(1))->toIndex(),
@@ -60,7 +60,7 @@ namespace XYO::QuantumScript {
 			String value = this_->toString();
 			Number ln = (arguments->index(1))->toNumber();
 			return VariableString::newVariable(
-			    String::substring(
+			    StringX::substring(
 			        value,
 			        (arguments->index(0))->toIndex(),
 			        (isnan(ln)) ? value.length() : ((isinf(ln)) ? value.length() : ((Integer)ln))));
@@ -71,7 +71,7 @@ namespace XYO::QuantumScript {
 			printf("- string-to-lower-case-ascii\n");
 #endif
 
-			return VariableString::newVariable(String::toLowerCaseAscii(this_->toString()));
+			return VariableString::newVariable(StringX::toLowerCaseAscii(this_->toString()));
 		};
 
 		static TPointer<Variable> toUpperCaseAscii(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -79,7 +79,7 @@ namespace XYO::QuantumScript {
 			printf("- string-to-upper-case-ascii\n");
 #endif
 
-			return VariableString::newVariable(String::toUpperCaseAscii(this_->toString()));
+			return VariableString::newVariable(StringX::toUpperCaseAscii(this_->toString()));
 		};
 
 		static TPointer<Variable> replace(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -88,7 +88,7 @@ namespace XYO::QuantumScript {
 #endif
 
 			return VariableString::newVariable(
-			    String::replace(
+			    StringX::replace(
 			        this_->toString(),
 			        (arguments->index(0))->toString(),
 			        (arguments->index(1))->toString()));
@@ -100,7 +100,7 @@ namespace XYO::QuantumScript {
 #endif
 
 			return VariableBoolean::newVariable(
-			    String::matchAscii(this_->toString(), (arguments->index(1))->toString()));
+			    StringX::matchAscii(this_->toString(), (arguments->index(1))->toString()));
 		};
 
 		static TPointer<Variable> getElement(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -125,7 +125,7 @@ namespace XYO::QuantumScript {
 			printf("- string-trim\n");
 #endif
 
-			return VariableString::newVariable(String::trimWithElement(this_->toString(), " \t\r\n"));
+			return VariableString::newVariable(StringX::trimWithElement(this_->toString(), " \t\r\n"));
 		};
 
 		static TPointer<Variable> split(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -141,16 +141,16 @@ namespace XYO::QuantumScript {
 			if ((src.length() == 0) && (sig.length() == 0)) {
 				return retV;
 			};
-			if (String::indexOf(src, sig, 0, index)) {
+			if (StringX::indexOf(src, sig, 0, index)) {
 				ln = 1;
-				retV->setPropertyByIndex(0, VariableString::newVariable(String::substring(src, 0, index)));
+				retV->setPropertyByIndex(0, VariableString::newVariable(StringX::substring(src, 0, index)));
 				pos = index + sig.length();
-				while (String::indexOf(src, sig, pos, index)) {
-					retV->setPropertyByIndex(ln, VariableString::newVariable(String::substring(src, pos, index - pos)));
+				while (StringX::indexOf(src, sig, pos, index)) {
+					retV->setPropertyByIndex(ln, VariableString::newVariable(StringX::substring(src, pos, index - pos)));
 					pos = index + sig.length();
 					++ln;
 				};
-				retV->setPropertyByIndex(ln, VariableString::newVariable(String::substring(src, pos)));
+				retV->setPropertyByIndex(ln, VariableString::newVariable(StringX::substring(src, pos)));
 				return retV;
 			};
 			retV->setPropertyByIndex(0, VariableString::newVariable(src));
@@ -162,7 +162,7 @@ namespace XYO::QuantumScript {
 			printf("- string-encodeC\n");
 #endif
 
-			return VariableString::newVariable(String::encodeC(this_->toString()));
+			return VariableString::newVariable(StringX::encodeC(this_->toString()));
 		};
 
 		static TPointer<Variable> encodeCX(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -170,7 +170,7 @@ namespace XYO::QuantumScript {
 			printf("- string-encodeCX\n");
 #endif
 
-			return VariableString::newVariable(String::encodeCX(this_->toString()));
+			return VariableString::newVariable(StringX::encodeCX(this_->toString()));
 		};
 
 		void initExecutive(Executive *executive, void *extensionId) {

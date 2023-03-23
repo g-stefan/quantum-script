@@ -662,14 +662,14 @@ namespace XYO::QuantumScript {
 
 					fileNameFull = ((VariableString *)operand1.value())->value;
 					fileName = "quantum-script--";
-					if (String::indexOfFromEnd(fileNameFull, "\\", 0, index)) {
-						filePath = String::substring(fileNameFull, 0, index + 1);
-						fileName << String::toLowerCaseAscii(String::substring(fileNameFull, index + 1));
-					} else if (String::indexOfFromEnd(fileNameFull, "/", 0, index)) {
-						filePath = String::substring(fileNameFull, 0, index + 1);
-						fileName << String::toLowerCaseAscii(String::substring(fileNameFull, index + 1));
+					if (StringX::indexOfFromEnd(fileNameFull, "\\", 0, index)) {
+						filePath = StringX::substring(fileNameFull, 0, index + 1);
+						fileName << StringX::toLowerCaseAscii(StringX::substring(fileNameFull, index + 1));
+					} else if (StringX::indexOfFromEnd(fileNameFull, "/", 0, index)) {
+						filePath = StringX::substring(fileNameFull, 0, index + 1);
+						fileName << StringX::toLowerCaseAscii(StringX::substring(fileNameFull, index + 1));
 					} else {
-						fileName << String::toLowerCaseAscii(fileNameFull);
+						fileName << StringX::toLowerCaseAscii(fileNameFull);
 					};
 
 					fileNameFinal = filePath;
@@ -737,9 +737,9 @@ namespace XYO::QuantumScript {
 					} else {
 
 						TDoubleEndedQueue<InternalExtension_>::Node *scan;
-						String extensionName_ = String::toLowerCaseAscii(((VariableString *)operand1.value())->value);
+						String extensionName_ = StringX::toLowerCaseAscii(((VariableString *)operand1.value())->value);
 						for (scan = executive->internalExtensionList->head; scan; scan = scan->next) {
-							if (extensionName_ == String::toLowerCaseAscii(scan->value.name)) {
+							if (extensionName_ == StringX::toLowerCaseAscii(scan->value.name)) {
 								executive->extensionList->push();
 								(executive->extensionList->head)->value.fileName = "";
 								(executive->extensionList->head)->value.name = ((VariableString *)operand1.value())->value;
@@ -794,9 +794,9 @@ namespace XYO::QuantumScript {
 					};
 
 					TDoubleEndedQueue<InternalExtension_>::Node *scan;
-					String extensionName_ = String::toLowerCaseAscii(((VariableString *)operand1.value())->value);
+					String extensionName_ = StringX::toLowerCaseAscii(((VariableString *)operand1.value())->value);
 					for (scan = executive->internalExtensionList->head; scan; scan = scan->next) {
-						if (extensionName_ == String::toLowerCaseAscii(scan->value.name)) {
+						if (extensionName_ == StringX::toLowerCaseAscii(scan->value.name)) {
 							executive->extensionList->push();
 							(executive->extensionList->head)->value.fileName = "";
 							(executive->extensionList->head)->value.name = ((VariableString *)operand1.value())->value;

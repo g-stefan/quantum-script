@@ -144,9 +144,9 @@ namespace XYO::QuantumScript {
 
 	bool Executive::isExtensionLoaded(String extensionName) {
 		TDoubleEndedQueue<Extension_>::Node *scan;
-		extensionName = String::toLowerCaseAscii(extensionName);
+		extensionName = StringX::toLowerCaseAscii(extensionName);
 		for (scan = extensionList->head; scan; scan = scan->next) {
-			if (extensionName == String::toLowerCaseAscii(scan->value.name)) {
+			if (extensionName == StringX::toLowerCaseAscii(scan->value.name)) {
 				return true;
 			};
 		};
@@ -193,9 +193,9 @@ namespace XYO::QuantumScript {
 
 	void Executive::registerInternalExtension(String extensionName, QuantumScriptExtensionInitProc extensionProc) {
 		TDoubleEndedQueue<InternalExtension_>::Node *scan;
-		String extensionName_ = String::toLowerCaseAscii(extensionName);
+		String extensionName_ = StringX::toLowerCaseAscii(extensionName);
 		for (scan = internalExtensionList->head; scan; scan = scan->next) {
-			if (extensionName_ == String::toLowerCaseAscii(scan->value.name)) {
+			if (extensionName_ == StringX::toLowerCaseAscii(scan->value.name)) {
 				scan->value.extensionProc = extensionProc;
 				return;
 			};

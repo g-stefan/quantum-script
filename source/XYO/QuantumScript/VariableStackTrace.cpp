@@ -47,7 +47,7 @@ namespace XYO::QuantumScript {
 				if (scan->value.sourceSymbol) {
 					String symbol = Context::getSymbolMirror(scan->value.sourceSymbol);
 					if (symbol[0] == '#') {
-						out << "- file " << String::replace(symbol.index(1), Shell::getCwd() << Shell::pathSeparator, "") << " ";
+						out << "- file " << StringX::replace(symbol.index(1), Shell::getCwd() << Shell::pathSeparator, "") << " ";
 						sprintf(buffer, "line %u\n", scan->value.sourceLineNumber);
 						out << buffer;
 					};
