@@ -45,7 +45,7 @@ namespace XYO::QuantumScript {
 #ifdef XYO_QUANTUMSCRIPT_DEBUG_RUNTIME
 			printf("- convert-to-string-source\n");
 #endif
-			return VariableString::newVariable(StringX::encodeC((arguments->index(0))->toString()));
+			return VariableString::newVariable((arguments->index(0))->toString().encodeC());
 		};
 
 		static TPointer<Variable> numberFormat(VariableFunction *function, Variable *this_, VariableArray *arguments) {

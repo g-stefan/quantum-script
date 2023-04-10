@@ -137,7 +137,7 @@ namespace XYO::QuantumScript {
 					};
 
 					String source = endCapture();
-					String fnSource = StringX::substring(source, 0, source.length() - 1);
+					String fnSource = source.substring(0, source.length() - 1);
 					uint32_t fnSourceSymbol = Context::getSymbol(fnSource);
 
 					assembler->linkProgramCounterSource(linkFunctionBegin, fnSourceSymbol, 0);

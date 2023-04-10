@@ -662,14 +662,14 @@ namespace XYO::QuantumScript {
 
 					fileNameFull = ((VariableString *)operand1.value())->value;
 					fileName = "quantum-script--";
-					if (StringX::indexOfFromEnd(fileNameFull, "\\", 0, index)) {
-						filePath = StringX::substring(fileNameFull, 0, index + 1);
-						fileName << StringX::toLowerCaseAscii(StringX::substring(fileNameFull, index + 1));
-					} else if (StringX::indexOfFromEnd(fileNameFull, "/", 0, index)) {
-						filePath = StringX::substring(fileNameFull, 0, index + 1);
-						fileName << StringX::toLowerCaseAscii(StringX::substring(fileNameFull, index + 1));
+					if (fileNameFull.indexOfFromEnd("\\", 0, index)) {
+						filePath = fileNameFull.substring(0, index + 1);
+						fileName << fileNameFull.substring(index + 1).toLowerCaseAscii();
+					} else if (fileNameFull.indexOfFromEnd("/", 0, index)) {
+						filePath = fileNameFull.substring(0, index + 1);
+						fileName << fileNameFull.substring(index + 1).toLowerCaseAscii();
 					} else {
-						fileName << StringX::toLowerCaseAscii(fileNameFull);
+						fileName << fileNameFull.toLowerCaseAscii();
 					};
 
 					fileNameFinal = filePath;
@@ -737,9 +737,9 @@ namespace XYO::QuantumScript {
 					} else {
 
 						TDoubleEndedQueue<InternalExtension_>::Node *scan;
-						String extensionName_ = StringX::toLowerCaseAscii(((VariableString *)operand1.value())->value);
+						String extensionName_ = ((VariableString *)operand1.value())->value.toLowerCaseAscii();
 						for (scan = executive->internalExtensionList->head; scan; scan = scan->next) {
-							if (extensionName_ == StringX::toLowerCaseAscii(scan->value.name)) {
+							if (extensionName_ == scan->value.name.toLowerCaseAscii()) {
 								executive->extensionList->push();
 								(executive->extensionList->head)->value.fileName = "";
 								(executive->extensionList->head)->value.name = ((VariableString *)operand1.value())->value;
@@ -794,9 +794,9 @@ namespace XYO::QuantumScript {
 					};
 
 					TDoubleEndedQueue<InternalExtension_>::Node *scan;
-					String extensionName_ = StringX::toLowerCaseAscii(((VariableString *)operand1.value())->value);
+					String extensionName_ = ((VariableString *)operand1.value())->value.toLowerCaseAscii();
 					for (scan = executive->internalExtensionList->head; scan; scan = scan->next) {
-						if (extensionName_ == StringX::toLowerCaseAscii(scan->value.name)) {
+						if (extensionName_ == scan->value.name.toLowerCaseAscii()) {
 							executive->extensionList->push();
 							(executive->extensionList->head)->value.fileName = "";
 							(executive->extensionList->head)->value.name = ((VariableString *)operand1.value())->value;
