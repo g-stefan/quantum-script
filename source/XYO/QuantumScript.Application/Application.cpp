@@ -86,9 +86,9 @@ namespace XYO::QuantumScript::Application {
 			if (StringCore::beginWith(cmdLine[i], "--")) {
 				opt = cmdLine[i].index(2);
 				optValue = "";
-				if (opt.indexOf( "=", 0, optIndex)) {
-					optValue = opt.substring( optIndex + 1);
-					opt = opt.substring( 0, optIndex);
+				if (opt.indexOf("=", 0, optIndex)) {
+					optValue = opt.substring(optIndex + 1);
+					opt = opt.substring(0, optIndex);
 				};
 				if (opt == "usage") {
 					showUsage();

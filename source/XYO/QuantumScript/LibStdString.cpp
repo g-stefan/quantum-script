@@ -42,7 +42,7 @@ namespace XYO::QuantumScript {
 #endif
 
 			size_t index_;
-			if (this_->toString().indexOfFromEnd(			        
+			if (this_->toString().indexOfFromEnd(
 			        (arguments->index(0))->toString(),
 			        (arguments->index(1))->toIndex(),
 			        index_)) {
@@ -58,7 +58,7 @@ namespace XYO::QuantumScript {
 			String value = this_->toString();
 			Number ln = (arguments->index(1))->toNumber();
 			return VariableString::newVariable(
-			    value.substring(			        
+			    value.substring(
 			        (arguments->index(0))->toIndex(),
 			        (isnan(ln)) ? value.length() : ((isinf(ln)) ? value.length() : ((Integer)ln))));
 		};
@@ -85,7 +85,7 @@ namespace XYO::QuantumScript {
 #endif
 
 			return VariableString::newVariable(
-			    this_->toString().replace(			        
+			    this_->toString().replace(
 			        (arguments->index(0))->toString(),
 			        (arguments->index(1))->toString()));
 		};
@@ -138,14 +138,14 @@ namespace XYO::QuantumScript {
 			};
 			if (src.indexOf(sig, 0, index)) {
 				ln = 1;
-				retV->setPropertyByIndex(0, VariableString::newVariable(src.substring( 0, index)));
+				retV->setPropertyByIndex(0, VariableString::newVariable(src.substring(0, index)));
 				pos = index + sig.length();
 				while (src.indexOf(sig, pos, index)) {
-					retV->setPropertyByIndex(ln, VariableString::newVariable(src.substring( pos, index - pos)));
+					retV->setPropertyByIndex(ln, VariableString::newVariable(src.substring(pos, index - pos)));
 					pos = index + sig.length();
 					++ln;
 				};
-				retV->setPropertyByIndex(ln, VariableString::newVariable(src.substring( pos)));
+				retV->setPropertyByIndex(ln, VariableString::newVariable(src.substring(pos)));
 				return retV;
 			};
 			retV->setPropertyByIndex(0, VariableString::newVariable(src));
