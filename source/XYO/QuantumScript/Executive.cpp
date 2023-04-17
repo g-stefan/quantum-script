@@ -214,7 +214,6 @@ namespace XYO::QuantumScript {
 	};
 
 	int Executive::execute() {
-		assembler->resetLinks();
 		instructionContext->error = InstructionError::None;
 		instructionContext->contextStack->enter(instructionContext->pcContext);
 		instructionContext->instructionListExecutive = assembler->instructionList.value();
@@ -379,6 +378,8 @@ namespace XYO::QuantumScript {
 			assembler->linkProgramCounter(linkEnd, currentContextReturn);
 			assembler->linkProgramCounter(linkCallPC, context->nextProgramCounter);
 			context->nextProgramCounter = linkStart;
+
+			assembler->resetLinks();
 			return 0;
 		};
 
@@ -431,6 +432,8 @@ namespace XYO::QuantumScript {
 			assembler->linkProgramCounter(linkEnd, currentContextReturn);
 			assembler->linkProgramCounter(linkCallPC, context->nextProgramCounter);
 			context->nextProgramCounter = linkStart;
+
+			assembler->resetLinks();
 			return 0;
 		};
 
@@ -480,6 +483,8 @@ namespace XYO::QuantumScript {
 			assembler->linkProgramCounter(linkEnd, currentContextReturn);
 			assembler->linkProgramCounter(linkCallPC, context->nextProgramCounter);
 			context->nextProgramCounter = linkStart;
+
+			assembler->resetLinks();
 			return 0;
 
 		} catch (...) {
@@ -625,6 +630,8 @@ namespace XYO::QuantumScript {
 			assembler->linkProgramCounter(linkEnd, currentContextReturn);
 			assembler->linkProgramCounter(linkCallPC, context->nextProgramCounter);
 			context->nextProgramCounter = linkStart;
+
+			assembler->resetLinks();
 			return 0;
 		};
 
@@ -673,6 +680,8 @@ namespace XYO::QuantumScript {
 			assembler->linkProgramCounter(linkEnd, currentContextReturn);
 			assembler->linkProgramCounter(linkCallPC, context->nextProgramCounter);
 			context->nextProgramCounter = linkStart;
+
+			assembler->resetLinks();
 			return 0;
 		};
 
@@ -733,8 +742,7 @@ namespace XYO::QuantumScript {
 		linkFunctionBegin = assembler->assembleProgramCounter(ParserAsm::XPushFunction, nullptr, 0, 0);
 		linkFunctionEnd = assembler->assembleProgramCounter(ParserAsm::Goto, nullptr, 0, 0);
 
-		assembler->linkProgramCounter(linkFunctionBegin,
-		                              assembler->assemble(ParserAsm::Mark, "", 0, 0));
+		assembler->linkProgramCounter(linkFunctionBegin, assembler->assemble(ParserAsm::Mark, "", 0, 0));
 
 		isEmpty = 0;
 		if (name[k] == '(') {
@@ -778,6 +786,8 @@ namespace XYO::QuantumScript {
 		assembler->linkProgramCounterEnd(linkFunctionBegin, assembler->assemble(ParserAsm::Return, "", 0, 0));
 
 		assembler->linkProgramCounter(linkFunctionEnd, assembler->assemble(ParserAsm::Assign, "", 0, 0));
+
+		assembler->resetLinks();
 	};
 
 	int Executive::setVmFunctionFromFile(const char *name, const char *fileName) {
@@ -831,8 +841,7 @@ namespace XYO::QuantumScript {
 
 		linkFunctionEnd = assembler->assembleProgramCounter(ParserAsm::Goto, nullptr, 0, 0);
 
-		assembler->linkProgramCounter(linkFunctionBegin,
-		                              assembler->assemble(ParserAsm::Mark, "", 0, 0));
+		assembler->linkProgramCounter(linkFunctionBegin, assembler->assemble(ParserAsm::Mark, "", 0, 0));
 
 		String fnSource = "function(";
 
@@ -890,9 +899,9 @@ namespace XYO::QuantumScript {
 		assembler->assemble(ParserAsm::PushUndefined, "", 0, 0);
 		assembler->linkProgramCounterEnd(linkFunctionBegin, assembler->assemble(ParserAsm::Return, "", 0, 0));
 
-		assembler->linkProgramCounter(linkFunctionEnd,
-		                              assembler->assemble(ParserAsm::Assign, "", 0, 0));
+		assembler->linkProgramCounter(linkFunctionEnd, assembler->assemble(ParserAsm::Assign, "", 0, 0));
 
+		assembler->resetLinks();
 		return retV;
 	};
 
@@ -947,8 +956,7 @@ namespace XYO::QuantumScript {
 
 		linkFunctionEnd = assembler->assembleProgramCounter(ParserAsm::Goto, nullptr, 0, 0);
 
-		assembler->linkProgramCounter(linkFunctionBegin,
-		                              assembler->assemble(ParserAsm::Mark, "", 0, 0));
+		assembler->linkProgramCounter(linkFunctionBegin, assembler->assemble(ParserAsm::Mark, "", 0, 0));
 
 		isEmpty = 0;
 		if (name[k] == '(') {
@@ -998,9 +1006,9 @@ namespace XYO::QuantumScript {
 		assembler->assemble(ParserAsm::PushUndefined, "", 0, 0);
 		assembler->linkProgramCounterEnd(linkFunctionBegin, assembler->assemble(ParserAsm::Return, "", 0, 0));
 
-		assembler->linkProgramCounter(linkFunctionEnd,
-		                              assembler->assemble(ParserAsm::Assign, "", 0, 0));
+		assembler->linkProgramCounter(linkFunctionEnd, assembler->assemble(ParserAsm::Assign, "", 0, 0));
 
+		assembler->resetLinks();
 		return retV;
 	};
 
@@ -1041,6 +1049,8 @@ namespace XYO::QuantumScript {
 			assembler->linkProgramCounter(linkEnd, currentContextReturn);
 			assembler->linkProgramCounter(linkCallPC, context->nextProgramCounter);
 			context->nextProgramCounter = linkStart;
+
+			assembler->resetLinks();
 			return 0;
 		};
 
@@ -1089,6 +1099,8 @@ namespace XYO::QuantumScript {
 			assembler->linkProgramCounter(linkEnd, currentContextReturn);
 			assembler->linkProgramCounter(linkCallPC, context->nextProgramCounter);
 			context->nextProgramCounter = linkStart;
+
+			assembler->resetLinks();
 			return 0;
 		};
 

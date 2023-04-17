@@ -1124,11 +1124,11 @@ namespace XYO::QuantumScript {
 			executive->setVmFunction("Script.setFunctionFromFile", InstructionLibStdScript_setFunctionFromFile, TPointer<Variable>(VariableResource::newVariable(executive, nullptr)));
 			executive->setVmFunction("Script.setFunctionFromString", InstructionLibStdScript_setFunctionFromString, TPointer<Variable>(VariableResource::newVariable(executive, nullptr)));
 			executive->setVmFunction("Script.getIncludedFile", InstructionLibStdScript_getIncludedFile, nullptr);
-			executive->compileStringX("Script.requireExtension=Script.requireExternalExtension;");
 			executive->setFunction2("Script.getVersion()", getVersion);
 			executive->setFunction4("Script.hasIncludeSource(x)", hasIncludeSource, executive);
 			executive->setVmFunction("Script.exit", InstructionLibStdScript_exit, VariableResource::newVariable(executive, nullptr));
 			executive->setVmFunction("Script.setExitCode", InstructionLibStdScript_setExitCode, VariableResource::newVariable(executive, nullptr));
+			executive->compileStringX("Script.requireExtension=Script.requireExternalExtension;");
 			executive->compileStringX(libStdScriptSource);
 		};
 

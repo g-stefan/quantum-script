@@ -69,10 +69,9 @@ namespace XYO::QuantumScript {
 
 			inline InstructionX &operator=(InstructionX &value) {
 				procedure = value.procedure;
-				operand = value.operand;				
+				operand = value.operand;
 				return *this;
 			};
-
 
 			inline InstructionX &operator=(InstructionX &&value) {
 				procedure = value.procedure;
