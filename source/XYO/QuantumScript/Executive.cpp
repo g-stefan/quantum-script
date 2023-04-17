@@ -214,6 +214,7 @@ namespace XYO::QuantumScript {
 	};
 
 	int Executive::execute() {
+		assembler->resetLinks();
 		instructionContext->error = InstructionError::None;
 		instructionContext->contextStack->enter(instructionContext->pcContext);
 		instructionContext->instructionListExecutive = assembler->instructionList.value();

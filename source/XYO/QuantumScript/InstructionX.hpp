@@ -62,9 +62,21 @@ namespace XYO::QuantumScript {
 				operand = value.operand;
 			};
 
-			inline InstructionX &operator=(InstructionX &value) {
-				operand = value.operand;
+			inline InstructionX(InstructionX &&value) {
 				procedure = value.procedure;
+				operand = std::move(value.operand);
+			};
+
+			inline InstructionX &operator=(InstructionX &value) {
+				procedure = value.procedure;
+				operand = value.operand;				
+				return *this;
+			};
+
+
+			inline InstructionX &operator=(InstructionX &&value) {
+				procedure = value.procedure;
+				operand = std::move(value.operand);
 				return *this;
 			};
 	};
