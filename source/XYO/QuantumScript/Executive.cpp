@@ -1166,9 +1166,6 @@ namespace XYO::QuantumScript {
 					if (error == InstructionError::None) {
 						return fnContext->returnValue;
 					};
-					if (error == InstructionError::Error) {
-						throw Error(fnContext->errorInfo);
-					};
 					if (error == InstructionError::Throw) {
 						TPointer<Variable> throwValue;
 						fnContext->pop(throwValue);
@@ -1177,9 +1174,9 @@ namespace XYO::QuantumScript {
 						ExecutiveX::setStackTrace(stackTrace->toString());
 						stackTrace.deleteMemory();
 						fnContext->stackTrace.deleteMemory();
-						throw Error(
-						    (throwValue->getPropertyBySymbol(Context::getSymbol("message")))->toString());
+						throw Error((throwValue->getPropertyBySymbol(Context::getSymbol("message")))->toString());
 					};
+					throw Error(fnContext->errorInfo);
 				};
 			};
 		};

@@ -94,9 +94,6 @@ namespace XYO::QuantumScript {
 			if (errorExecute == InstructionError::None) {
 				return true;
 			};
-			if (errorExecute == InstructionError::Error) {
-				return false;
-			};
 			if (errorExecute == InstructionError::Throw) {
 				TPointer<Variable> throwValue;
 				executive.instructionContext->pop(throwValue);
