@@ -8,9 +8,9 @@ messageAction("test");
 // ---
 
 for(var k=1;k<=9;++k){
-	exitIf(Shell.execute("output/bin/quantum-script  --execution-time test/test.000"+k+".js"));
+	exitIfTest(Shell.execute("output/bin/quantum-script  --execution-time test/test.000"+k+".js"),"000"+k);
 };
 
 for(var k=10;k<=36;++k){
-	exitIf(Shell.execute("output/bin/quantum-script  --execution-time test/test.00"+k+".js"));
+	exitIfTest(Shell.execute("output/bin/quantum-script  --execution-time test/test.00"+k+".js"),"00"+k);
 };
