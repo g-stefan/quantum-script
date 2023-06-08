@@ -29,3 +29,21 @@ Script.forEach = function(what_, proc_, this_) {
 		proc_.call(this_, key, what_[key]);
 	};
 };
+
+Script.requireExtensionExternalOrInternal = function(extension) {
+	try{
+		return Script.requireExternalExtension(extension);
+	} catch(e){};
+
+	return Script.requireInternalExtension(extension);
+};
+
+Script.requireExtensionInternalOrExternal = function(extension) {
+	try{
+		return Script.requireInternalExtension(extension);
+	} catch(e){};
+
+	return Script.requireExternalExtension(extension);	
+};
+
+Script.requireExtension=Script.requireExtensionExternalOrInternal;
