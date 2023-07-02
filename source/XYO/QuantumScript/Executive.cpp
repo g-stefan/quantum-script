@@ -1233,9 +1233,18 @@ namespace XYO::QuantumScript {
 		assembler->assembleDirect(InstructionVmSetFunction, nativeFunction);
 	};
 
-	void Executive::compileStringX(const char *source) {
-		if (compileString(source) != 0) {
-			throw Error("Compile error");
+	void Executive::compileStringX(const char *source, const char *tag) {
+		if (compileString(source, tag) != 0) {
+			char buf[2048];
+			if (strlen(errorInfo.compileFileName)==0) {
+				sprintf(buf, "Compile error on line %u",
+				        errorInfo.compileLineNumber);
+			} else {
+				sprintf(buf, "Compile error in %s line %u",
+				        errorInfo.compileFileName,
+				        errorInfo.compileLineNumber);				
+			};
+			throw Error(buf);
 		};
 	};
 

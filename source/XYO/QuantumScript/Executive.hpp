@@ -134,7 +134,7 @@ namespace XYO::QuantumScript {
 
 			XYO_QUANTUMSCRIPT_EXPORT TPointer<Variable> callVmFunction(Variable *fnProcedure, Variable *fnThis, Variable *fnParameters);
 
-			XYO_QUANTUMSCRIPT_EXPORT void compileStringX(const char *);
+			XYO_QUANTUMSCRIPT_EXPORT void compileStringX(const char *, const char *tag = nullptr);
 			XYO_QUANTUMSCRIPT_EXPORT void setFunction(const char *name, Variable *nativeFunction);
 			XYO_QUANTUMSCRIPT_EXPORT void setFunction2(const char *name, FunctionProcedure functionProcedure);
 			XYO_QUANTUMSCRIPT_EXPORT void setFunction3(const char *name, FunctionProcedure functionProcedure, Object *super);
