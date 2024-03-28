@@ -42,7 +42,7 @@ namespace XYO::QuantumScript {
 	typedef TAssociativeArray<TPointerX<Variable>, TPointerX<Variable>, 4, TMemoryPoolActive> AssociativeArray;
 
 	class VariableAssociativeArray : public Variable {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableAssociativeArray);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(VariableAssociativeArray);
 			XYO_DYNAMIC_TYPE_DEFINE(XYO_QUANTUMSCRIPT_EXPORT, VariableAssociativeArray);
 
 		protected:

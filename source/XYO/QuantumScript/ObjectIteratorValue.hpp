@@ -29,7 +29,7 @@ namespace XYO::ManagedMemory {
 namespace XYO::QuantumScript {
 
 	class ObjectIteratorValue : public Iterator {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(ObjectIteratorValue);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(ObjectIteratorValue);
 
 		public:
 			TPointer<Variable> value_;

@@ -30,7 +30,7 @@ namespace XYO::QuantumScript {
 	class InstructionContext;
 
 	class VariableStackTrace : public Variable {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableStackTrace);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(VariableStackTrace);
 			XYO_DYNAMIC_TYPE_DEFINE(XYO_QUANTUMSCRIPT_EXPORT, VariableStackTrace);
 
 		protected:

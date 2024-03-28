@@ -27,7 +27,7 @@ namespace XYO::ManagedMemory {
 namespace XYO::QuantumScript {
 
 	class ExecutiveContext : public TStackPointerUnsafe<ExecutiveContextPc, TMemoryPoolActive> {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(ExecutiveContext);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(ExecutiveContext);
 
 		public:
 			inline ExecutiveContext(){};

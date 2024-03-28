@@ -40,7 +40,7 @@ namespace XYO::QuantumScript {
 	};
 
 	class ParserContext : public Object {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(ParserContext);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(ParserContext);
 
 		public:
 			bool isLoop;
@@ -54,7 +54,7 @@ namespace XYO::QuantumScript {
 	};
 
 	class Parser : public Object {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(Parser);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(Parser);
 
 		protected:
 			TStack<TRedBlackTree<String, int>> functionArguments;

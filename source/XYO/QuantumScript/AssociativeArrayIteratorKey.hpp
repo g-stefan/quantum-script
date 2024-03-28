@@ -28,7 +28,7 @@ namespace XYO::ManagedMemory {
 namespace XYO::QuantumScript {
 
 	class AssociativeArrayIteratorKey : public Iterator {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(AssociativeArrayIteratorKey);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(AssociativeArrayIteratorKey);
 
 		public:
 			Integer index;

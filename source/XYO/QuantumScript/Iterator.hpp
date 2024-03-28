@@ -25,7 +25,7 @@ namespace XYO::ManagedMemory {
 namespace XYO::QuantumScript {
 
 	class Iterator : public virtual Object {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(Iterator);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(Iterator);
 
 		public:
 			inline Iterator(){};

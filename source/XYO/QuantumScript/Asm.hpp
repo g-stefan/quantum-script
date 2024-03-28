@@ -23,7 +23,7 @@ namespace XYO::QuantumScript {
 	} AsmLink;
 
 	class Asm : public Object {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(Asm);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(Asm);
 
 		protected:
 			bool lastIsMark_;

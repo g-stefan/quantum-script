@@ -28,7 +28,7 @@ namespace XYO::ManagedMemory {
 namespace XYO::QuantumScript {
 
 	class VariableOperator31 : public Variable {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableOperator31);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(VariableOperator31);
 			XYO_DYNAMIC_TYPE_DEFINE(XYO_QUANTUMSCRIPT_EXPORT, VariableOperator31);
 
 		public:

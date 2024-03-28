@@ -45,7 +45,7 @@ namespace XYO::QuantumScript {
 	};
 
 	class InstructionContext : public Stack {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(InstructionContext);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(InstructionContext);
 
 		public:
 			TStack<String> includedFile;

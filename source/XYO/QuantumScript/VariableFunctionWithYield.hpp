@@ -44,7 +44,7 @@ namespace XYO::QuantumScript {
 	typedef TPointer<Variable> (*FunctionProcedureWithYield)(VariableFunctionWithYield *function, Variable *this_, VariableArray *arguments);
 
 	class VariableFunctionWithYield : public Variable {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableFunctionWithYield);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(VariableFunctionWithYield);
 			XYO_DYNAMIC_TYPE_DEFINE(XYO_QUANTUMSCRIPT_EXPORT, VariableFunctionWithYield);
 
 		protected:

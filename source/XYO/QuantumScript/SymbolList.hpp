@@ -14,7 +14,7 @@
 namespace XYO::QuantumScript {
 
 	class SymbolList : public Object {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(SymbolList);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(SymbolList);
 
 		public:
 			typedef TRedBlackTree<String, Symbol, TMemoryPoolActive> XSymbolList;

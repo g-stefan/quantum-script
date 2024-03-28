@@ -38,7 +38,7 @@ namespace XYO::QuantumScript {
 	class ExecutiveContextFunction;
 
 	class ExecutiveContextPc : public Object {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(ExecutiveContextPc);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(ExecutiveContextPc);
 
 		public:
 			ProgramCounter *catch_;

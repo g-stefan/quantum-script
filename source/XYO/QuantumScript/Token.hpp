@@ -37,7 +37,7 @@ namespace XYO::QuantumScript {
 	};
 
 	class Token : public Object {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(Token);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(Token);
 
 		public:
 			TPointer<Input> input;

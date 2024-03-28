@@ -29,7 +29,7 @@ namespace XYO::QuantumScript {
 	} InputStack;
 
 	class Input : public Object {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(Input);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(Input);
 
 		protected:
 			TPointer<IRead> input;

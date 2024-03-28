@@ -25,7 +25,7 @@ namespace XYO::ManagedMemory {
 namespace XYO::QuantumScript {
 
 	class Prototype : public Object {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(Prototype);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(Prototype);
 
 		public:
 			TPointerX<Prototype> parent;

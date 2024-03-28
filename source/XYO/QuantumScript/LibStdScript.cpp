@@ -11,7 +11,7 @@
 
 #include <XYO/QuantumScript/Dependency.hpp>
 
-#ifdef XYO_OS_WINDOWS
+#ifdef XYO_PLATFORM_OS_WINDOWS
 #	define WIN32_LEAN_AND_MEAN
 #	include <windows.h>
 #else
@@ -675,7 +675,7 @@ namespace XYO::QuantumScript {
 					fileNameFinal = filePath;
 					fileNameFinal << fileName;
 
-#ifdef XYO_OS_WINDOWS
+#ifdef XYO_PLATFORM_OS_WINDOWS
 					fileNameFinal << ".dll";
 #else
 					fileNameFinal << ".so";
@@ -703,7 +703,7 @@ namespace XYO::QuantumScript {
 								return;
 							};
 						};
-#ifdef XYO_OS_WINDOWS
+#ifdef XYO_PLATFORM_OS_WINDOWS
 						HMODULE hModule = LoadLibrary(fileNameX);
 						if (hModule) {
 							FARPROC farProc = GetProcAddress(hModule, "quantumScriptExtension");

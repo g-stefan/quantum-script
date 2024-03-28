@@ -67,7 +67,7 @@ namespace XYO::QuantumScript {
 	};
 
 	class Executive : public Object {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(Executive);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(Executive);
 
 		protected:
 			XYO_QUANTUMSCRIPT_EXPORT void errorInfoInit();

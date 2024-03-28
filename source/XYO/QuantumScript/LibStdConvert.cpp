@@ -58,7 +58,7 @@ namespace XYO::QuantumScript {
 			char buf[128];
 			char req[128];
 
-			sprintf(req, "%%." XYO_FORMAT_SIZET "lf", fSize);
+			sprintf(req, "%%." XYO_PLATFORM_FORMAT_SIZET "lf", fSize);
 			sprintf(buf, req, x);
 
 			return VariableString::newVariable(buf);

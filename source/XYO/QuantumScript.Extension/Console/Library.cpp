@@ -145,7 +145,7 @@ namespace XYO::QuantumScript::Extension::Console {
 	};
 
 	void initExecutive(Executive *executive, void *extensionId) {
-#ifdef XYO_OS_LINUX
+#ifdef XYO_PLATFORM_OS_LINUX
 		setbuf(stdout, nullptr);
 #endif
 
@@ -169,7 +169,7 @@ namespace XYO::QuantumScript::Extension::Console {
 
 };
 
-#ifdef XYO_COMPILE_DYNAMIC_LIBRARY
+#ifdef XYO_PLATFORM_COMPILE_DYNAMIC_LIBRARY
 extern "C" XYO_QUANTUMSCRIPT_EXTENSION_CONSOLE_EXPORT void quantumScriptExtension(XYO::QuantumScript::Executive *executive, void *extensionId) {
 	XYO::QuantumScript::Extension::Console::initExecutive(executive, extensionId);
 };

@@ -32,7 +32,7 @@ namespace XYO::ManagedMemory {
 namespace XYO::QuantumScript {
 
 	class ExecutiveContextFunction : public ExecutiveContextPc {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(ExecutiveContextFunction);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(ExecutiveContextFunction);
 
 		public:
 			TPointerX<Variable> thisFunction_;

@@ -53,7 +53,7 @@ namespace XYO::QuantumScript {
 
 	class VariableArray;
 
-#ifdef XYO_OS_WINDOWS
+#ifdef XYO_PLATFORM_OS_WINDOWS
 #	define XYO_QUANTUMSCRIPT_FORMAT_INTEGER "%I64d"
 #	define XYO_QUANTUMSCRIPT_FORMAT_NUMBER "%g"
 #	define XYO_QUANTUMSCRIPT_FORMAT_NUMBER_INTEGER "%.0lf"
@@ -61,8 +61,8 @@ namespace XYO::QuantumScript {
 #	define XYO_QUANTUMSCRIPT_FORMAT_DWORD "%u"
 #endif
 
-#ifdef XYO_OS_LINUX
-#	ifdef XYO_APPLICATION_64BIT
+#ifdef XYO_PLATFORM_OS_LINUX
+#	ifdef XYO_PLATFORM_64BIT
 #		define XYO_QUANTUMSCRIPT_FORMAT_INTEGER "%ld"
 #		define XYO_QUANTUMSCRIPT_FORMAT_NUMBER "%g"
 #		define XYO_QUANTUMSCRIPT_FORMAT_NUMBER_INTEGER "%.0lf"
@@ -78,7 +78,7 @@ namespace XYO::QuantumScript {
 #endif
 
 	class Variable : public DynamicObject {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(Variable);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(Variable);
 			XYO_DYNAMIC_TYPE_DEFINE(XYO_QUANTUMSCRIPT_EXPORT, Variable);
 
 		protected:

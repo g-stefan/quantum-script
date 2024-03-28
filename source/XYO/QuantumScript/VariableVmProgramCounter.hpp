@@ -28,7 +28,7 @@ namespace XYO::ManagedMemory {
 namespace XYO::QuantumScript {
 
 	class VariableVmProgramCounter : public Variable {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableVmProgramCounter);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(VariableVmProgramCounter);
 			XYO_DYNAMIC_TYPE_DEFINE(XYO_QUANTUMSCRIPT_EXPORT, VariableVmProgramCounter);
 
 		protected:

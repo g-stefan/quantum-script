@@ -25,7 +25,7 @@ namespace XYO::ManagedMemory {
 namespace XYO::QuantumScript {
 
 	class FunctionParent : public Object {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(FunctionParent);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(FunctionParent);
 
 		public:
 			TPointerX<FunctionParent> functionParent;

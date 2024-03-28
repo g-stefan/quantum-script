@@ -27,7 +27,7 @@ namespace XYO::ManagedMemory {
 namespace XYO::QuantumScript {
 
 	class ArrayIteratorValue : public Iterator {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(ArrayIteratorValue);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(ArrayIteratorValue);
 
 		public:
 			Integer index;

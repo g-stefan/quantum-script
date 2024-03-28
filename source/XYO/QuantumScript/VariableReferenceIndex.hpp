@@ -28,7 +28,7 @@ namespace XYO::ManagedMemory {
 namespace XYO::QuantumScript {
 
 	class VariableReferenceIndex : public Variable {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(VariableReferenceIndex);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(VariableReferenceIndex);
 			XYO_DYNAMIC_TYPE_DEFINE(XYO_QUANTUMSCRIPT_EXPORT, VariableReferenceIndex);
 
 		protected:
