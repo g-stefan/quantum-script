@@ -1,7 +1,7 @@
 ﻿// Quantum Script
-// Copyright (c) 2016-2024 Grigore Stefan <g_stefan@yahoo.com>
+// Copyright (c) 2016-2025 Grigore Stefan <g_stefan@yahoo.com>
 // MIT License (MIT) <http://opensource.org/licenses/MIT>
-// SPDX-FileCopyrightText: 2016-2024 Grigore Stefan <g_stefan@yahoo.com>
+// SPDX-FileCopyrightText: 2016-2025 Grigore Stefan <g_stefan@yahoo.com>
 // SPDX-License-Identifier: MIT
 
 #include <stdio.h>
@@ -63,20 +63,20 @@ namespace XYO::QuantumScript {
 			        (isnan(ln)) ? value.length() : ((isinf(ln)) ? value.length() : ((Integer)ln))));
 		};
 
-		static TPointer<Variable> toLowerCaseAscii(VariableFunction *function, Variable *this_, VariableArray *arguments) {
+		static TPointer<Variable> toLowerCaseASCII(VariableFunction *function, Variable *this_, VariableArray *arguments) {
 #ifdef XYO_QUANTUMSCRIPT_DEBUG_RUNTIME
 			printf("- string-to-lower-case-ascii\n");
 #endif
 
-			return VariableString::newVariable(this_->toString().toLowerCaseAscii());
+			return VariableString::newVariable(this_->toString().toLowerCaseASCII());
 		};
 
-		static TPointer<Variable> toUpperCaseAscii(VariableFunction *function, Variable *this_, VariableArray *arguments) {
+		static TPointer<Variable> toUpperCaseASCII(VariableFunction *function, Variable *this_, VariableArray *arguments) {
 #ifdef XYO_QUANTUMSCRIPT_DEBUG_RUNTIME
 			printf("- string-to-upper-case-ascii\n");
 #endif
 
-			return VariableString::newVariable(this_->toString().toUpperCaseAscii());
+			return VariableString::newVariable(this_->toString().toUpperCaseASCII());
 		};
 
 		static TPointer<Variable> replace(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -90,12 +90,12 @@ namespace XYO::QuantumScript {
 			        (arguments->index(1))->toString()));
 		};
 
-		static TPointer<Variable> matchAscii(VariableFunction *function, Variable *this_, VariableArray *arguments) {
+		static TPointer<Variable> matchASCII(VariableFunction *function, Variable *this_, VariableArray *arguments) {
 #ifdef XYO_QUANTUMSCRIPT_DEBUG_RUNTIME
 			printf("- string-match-ascii\n");
 #endif
 
-			return VariableBoolean::newVariable(this_->toString().matchAscii((arguments->index(1))->toString()));
+			return VariableBoolean::newVariable(this_->toString().matchASCII((arguments->index(1))->toString()));
 		};
 
 		static TPointer<Variable> getElement(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -172,10 +172,10 @@ namespace XYO::QuantumScript {
 			executive->setFunction2("String.prototype.indexOf(text,st)", indexOf);
 			executive->setFunction2("String.prototype.lastIndexOf(text,st)", lastIndexOf);
 			executive->setFunction2("String.prototype.substring(st,ln)", substring);
-			executive->setFunction2("String.prototype.toLowerCaseAscii()", toLowerCaseAscii);
-			executive->setFunction2("String.prototype.toUpperCaseAscii()", toUpperCaseAscii);
+			executive->setFunction2("String.prototype.toLowerCaseASCII()", toLowerCaseASCII);
+			executive->setFunction2("String.prototype.toUpperCaseASCII()", toUpperCaseASCII);
 			executive->setFunction2("String.prototype.replace(what_,with_)", replace);
-			executive->setFunction2("String.prototype.matchAscii(signature)", matchAscii);
+			executive->setFunction2("String.prototype.matchASCII(signature)", matchASCII);
 			executive->setFunction2("String.prototype.getElement(pos)", getElement);
 			executive->setFunction2("String.prototype.trim()", trim);
 			executive->setFunction2("String.prototype.split(str)", split);

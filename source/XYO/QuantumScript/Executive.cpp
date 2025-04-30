@@ -1,7 +1,7 @@
 ﻿// Quantum Script
-// Copyright (c) 2016-2024 Grigore Stefan <g_stefan@yahoo.com>
+// Copyright (c) 2016-2025 Grigore Stefan <g_stefan@yahoo.com>
 // MIT License (MIT) <http://opensource.org/licenses/MIT>
-// SPDX-FileCopyrightText: 2016-2024 Grigore Stefan <g_stefan@yahoo.com>
+// SPDX-FileCopyrightText: 2016-2025 Grigore Stefan <g_stefan@yahoo.com>
 // SPDX-License-Identifier: MIT
 
 #include <stdio.h>
@@ -144,9 +144,9 @@ namespace XYO::QuantumScript {
 
 	bool Executive::isExtensionLoaded(String extensionName) {
 		TDoubleEndedQueue<Extension_>::Node *scan;
-		extensionName = extensionName.toLowerCaseAscii();
+		extensionName = extensionName.toLowerCaseASCII();
 		for (scan = extensionList->head; scan; scan = scan->next) {
-			if (extensionName == scan->value.name.toLowerCaseAscii()) {
+			if (extensionName == scan->value.name.toLowerCaseASCII()) {
 				return true;
 			};
 		};
@@ -193,9 +193,9 @@ namespace XYO::QuantumScript {
 
 	void Executive::registerInternalExtension(String extensionName, QuantumScriptExtensionInitProc extensionProc) {
 		TDoubleEndedQueue<InternalExtension_>::Node *scan;
-		String extensionName_ = extensionName.toLowerCaseAscii();
+		String extensionName_ = extensionName.toLowerCaseASCII();
 		for (scan = internalExtensionList->head; scan; scan = scan->next) {
-			if (extensionName_ == scan->value.name.toLowerCaseAscii()) {
+			if (extensionName_ == scan->value.name.toLowerCaseASCII()) {
 				scan->value.extensionProc = extensionProc;
 				return;
 			};

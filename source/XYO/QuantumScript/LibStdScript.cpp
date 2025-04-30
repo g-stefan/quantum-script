@@ -1,7 +1,7 @@
 ﻿// Quantum Script
-// Copyright (c) 2016-2024 Grigore Stefan <g_stefan@yahoo.com>
+// Copyright (c) 2016-2025 Grigore Stefan <g_stefan@yahoo.com>
 // MIT License (MIT) <http://opensource.org/licenses/MIT>
-// SPDX-FileCopyrightText: 2016-2024 Grigore Stefan <g_stefan@yahoo.com>
+// SPDX-FileCopyrightText: 2016-2025 Grigore Stefan <g_stefan@yahoo.com>
 // SPDX-License-Identifier: MIT
 
 #include <stdio.h>
@@ -664,12 +664,12 @@ namespace XYO::QuantumScript {
 					fileName = "quantum-script--";
 					if (fileNameFull.indexOfFromEnd("\\", 0, index)) {
 						filePath = fileNameFull.substring(0, index + 1);
-						fileName << fileNameFull.substring(index + 1).toLowerCaseAscii();
+						fileName << fileNameFull.substring(index + 1).toLowerCaseASCII();
 					} else if (fileNameFull.indexOfFromEnd("/", 0, index)) {
 						filePath = fileNameFull.substring(0, index + 1);
-						fileName << fileNameFull.substring(index + 1).toLowerCaseAscii();
+						fileName << fileNameFull.substring(index + 1).toLowerCaseASCII();
 					} else {
-						fileName << fileNameFull.toLowerCaseAscii();
+						fileName << fileNameFull.toLowerCaseASCII();
 					};
 
 					fileNameFinal = filePath;
@@ -737,9 +737,9 @@ namespace XYO::QuantumScript {
 					} else {
 
 						TDoubleEndedQueue<InternalExtension_>::Node *scan;
-						String extensionName_ = ((VariableString *)operand1.value())->value.toLowerCaseAscii();
+						String extensionName_ = ((VariableString *)operand1.value())->value.toLowerCaseASCII();
 						for (scan = executive->internalExtensionList->head; scan; scan = scan->next) {
-							if (extensionName_ == scan->value.name.toLowerCaseAscii()) {
+							if (extensionName_ == scan->value.name.toLowerCaseASCII()) {
 								executive->extensionList->push();
 								(executive->extensionList->head)->value.fileName = "";
 								(executive->extensionList->head)->value.name = ((VariableString *)operand1.value())->value;
@@ -794,9 +794,9 @@ namespace XYO::QuantumScript {
 					};
 
 					TDoubleEndedQueue<InternalExtension_>::Node *scan;
-					String extensionName_ = ((VariableString *)operand1.value())->value.toLowerCaseAscii();
+					String extensionName_ = ((VariableString *)operand1.value())->value.toLowerCaseASCII();
 					for (scan = executive->internalExtensionList->head; scan; scan = scan->next) {
-						if (extensionName_ == scan->value.name.toLowerCaseAscii()) {
+						if (extensionName_ == scan->value.name.toLowerCaseASCII()) {
 							executive->extensionList->push();
 							(executive->extensionList->head)->value.fileName = "";
 							(executive->extensionList->head)->value.name = ((VariableString *)operand1.value())->value;
