@@ -1,7 +1,7 @@
 ﻿// Quantum Script
-// Copyright (c) 2016-2025 Grigore Stefan <g_stefan@yahoo.com>
+// Copyright (c) 2016-2026 Grigore Stefan <g_stefan@yahoo.com>
 // MIT License (MIT) <http://opensource.org/licenses/MIT>
-// SPDX-FileCopyrightText: 2016-2025 Grigore Stefan <g_stefan@yahoo.com>
+// SPDX-FileCopyrightText: 2016-2026 Grigore Stefan <g_stefan@yahoo.com>
 // SPDX-License-Identifier: MIT
 
 #include <stdio.h>
@@ -780,7 +780,7 @@ namespace XYO::QuantumScript {
 
 		case ParserAsm::ArgumentsPushObjectReference: {
 			uint32_t symbolId;
-			if (sscanf(name_, XYO_QUANTUMSCRIPT_FORMAT_DWORD, &symbolId) != 1) {
+			if (sscanf(name_, XYO_QUANTUMSCRIPT_FORMAT_UINT32, &symbolId) != 1) {
 				symbolId = 0;
 			};
 			XYO_QUANTUMSCRIPT_ASM_INSTRUCTION(ArgumentsPushObjectReference, VariableSymbol::newVariable(symbolId));
@@ -792,7 +792,7 @@ namespace XYO::QuantumScript {
 
 		case ParserAsm::ArgumentsPushSymbol: {
 			uint32_t symbolId;
-			if (sscanf(name_, XYO_QUANTUMSCRIPT_FORMAT_DWORD, &symbolId) != 1) {
+			if (sscanf(name_, XYO_QUANTUMSCRIPT_FORMAT_UINT32, &symbolId) != 1) {
 				symbolId = 0;
 			};
 			XYO_QUANTUMSCRIPT_ASM_INSTRUCTION(ArgumentsPushSymbol, VariableSymbol::newVariable(symbolId));
@@ -820,7 +820,7 @@ namespace XYO::QuantumScript {
 
 		case ParserAsm::LocalVariablesPushObjectReference: {
 			uint32_t symbolId;
-			if (sscanf(name_, XYO_QUANTUMSCRIPT_FORMAT_DWORD, &symbolId) != 1) {
+			if (sscanf(name_, XYO_QUANTUMSCRIPT_FORMAT_UINT32, &symbolId) != 1) {
 				symbolId = 0;
 			};
 			XYO_QUANTUMSCRIPT_ASM_INSTRUCTION(LocalVariablesPushObjectReference, VariableSymbol::newVariable(symbolId));
@@ -832,7 +832,7 @@ namespace XYO::QuantumScript {
 
 		case ParserAsm::LocalVariablesPushSymbol: {
 			uint32_t symbolId;
-			if (sscanf(name_, XYO_QUANTUMSCRIPT_FORMAT_DWORD, &symbolId) != 1) {
+			if (sscanf(name_, XYO_QUANTUMSCRIPT_FORMAT_UINT32, &symbolId) != 1) {
 				symbolId = 0;
 			};
 			XYO_QUANTUMSCRIPT_ASM_INSTRUCTION(LocalVariablesPushSymbol, VariableSymbol::newVariable(symbolId));

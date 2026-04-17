@@ -1,7 +1,7 @@
 ﻿// Quantum Script
-// Copyright (c) 2016-2025 Grigore Stefan <g_stefan@yahoo.com>
+// Copyright (c) 2016-2026 Grigore Stefan <g_stefan@yahoo.com>
 // MIT License (MIT) <http://opensource.org/licenses/MIT>
-// SPDX-FileCopyrightText: 2016-2025 Grigore Stefan <g_stefan@yahoo.com>
+// SPDX-FileCopyrightText: 2016-2026 Grigore Stefan <g_stefan@yahoo.com>
 // SPDX-License-Identifier: MIT
 
 #ifndef XYO_QUANTUMSCRIPT_VARIABLE_HPP
@@ -58,22 +58,22 @@ namespace XYO::QuantumScript {
 #	define XYO_QUANTUMSCRIPT_FORMAT_NUMBER "%g"
 #	define XYO_QUANTUMSCRIPT_FORMAT_NUMBER_INTEGER "%.0lf"
 #	define XYO_QUANTUMSCRIPT_FORMAT_NUMBER_INPUT "%lf"
-#	define XYO_QUANTUMSCRIPT_FORMAT_DWORD "%u"
+#	define XYO_QUANTUMSCRIPT_FORMAT_UINT32 "%u"
 #endif
 
 #ifdef XYO_PLATFORM_OS_LINUX
 #	ifdef XYO_PLATFORM_64BIT
-#		define XYO_QUANTUMSCRIPT_FORMAT_INTEGER "%ld"
-#		define XYO_QUANTUMSCRIPT_FORMAT_NUMBER "%g"
-#		define XYO_QUANTUMSCRIPT_FORMAT_NUMBER_INTEGER "%.0lf"
-#		define XYO_QUANTUMSCRIPT_FORMAT_NUMBER_INPUT "%lf"
-#		define XYO_QUANTUMSCRIPT_FORMAT_DWORD "%u"
-#	else
 #		define XYO_QUANTUMSCRIPT_FORMAT_INTEGER "%lld"
 #		define XYO_QUANTUMSCRIPT_FORMAT_NUMBER "%g"
 #		define XYO_QUANTUMSCRIPT_FORMAT_NUMBER_INTEGER "%.0lf"
 #		define XYO_QUANTUMSCRIPT_FORMAT_NUMBER_INPUT "%lf"
-#		define XYO_QUANTUMSCRIPT_FORMAT_DWORD "%lu"
+#		define XYO_QUANTUMSCRIPT_FORMAT_UINT32 "%u"
+#	else
+#		define XYO_QUANTUMSCRIPT_FORMAT_INTEGER "%ld"
+#		define XYO_QUANTUMSCRIPT_FORMAT_NUMBER "%g"
+#		define XYO_QUANTUMSCRIPT_FORMAT_NUMBER_INTEGER "%.0lf"
+#		define XYO_QUANTUMSCRIPT_FORMAT_NUMBER_INPUT "%lf"
+#		define XYO_QUANTUMSCRIPT_FORMAT_UINT32 "%u"
 #	endif
 #endif
 
