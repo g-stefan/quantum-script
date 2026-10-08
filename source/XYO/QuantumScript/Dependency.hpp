@@ -46,6 +46,11 @@
 #	define XYO_QUANTUMSCRIPT_DEFAULT_STACK_TRACE_LEVEL 16
 #endif
 
+// Instruction contexts kept for reuse by native code calling script functions
+#ifndef XYO_QUANTUMSCRIPT_CALL_CONTEXT_POOL_SIZE
+#	define XYO_QUANTUMSCRIPT_CALL_CONTEXT_POOL_SIZE 16
+#endif
+
 // --
 
 namespace XYO::QuantumScript {

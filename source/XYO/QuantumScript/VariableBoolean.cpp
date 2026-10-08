@@ -29,6 +29,14 @@ namespace XYO::QuantumScript {
 	};
 
 	Variable *VariableBoolean::newVariable(bool value) {
+		Variable *retV = Context::getValueBoolean(value);
+		if (retV) {
+			return retV;
+		};
+		return newVariableX(value);
+	};
+
+	Variable *VariableBoolean::newVariableX(bool value) {
 		VariableBoolean *retV;
 		retV = TMemory<VariableBoolean>::newMemory();
 		retV->value = value;
@@ -40,7 +48,7 @@ namespace XYO::QuantumScript {
 	};
 
 	Variable *VariableBoolean::clone(SymbolList &inSymbolList) {
-		return newVariable(value);
+		return newVariableX(value);
 	};
 
 	bool VariableBoolean::toBoolean() {

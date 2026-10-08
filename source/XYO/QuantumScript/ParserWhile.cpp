@@ -15,13 +15,13 @@ namespace XYO::QuantumScript {
 
 	bool Parser::statementWhile() {
 		if (token.isSymbolX("while")) {
-			ProgramCounter *linkWhileBegin;
-			ProgramCounter *linkWhile;
-			ProgramCounter *linkWhileIf;
-			ProgramCounter *linkWhileEnd;
-			ProgramCounter *linkWhileBreak;
-			ProgramCounter *linkWhileContinue;
-			ProgramCounter *linkWhileEndBreak;
+			AsmLabel linkWhileBegin;
+			AsmLabel linkWhile;
+			AsmLabel linkWhileIf;
+			AsmLabel linkWhileEnd;
+			AsmLabel linkWhileBreak;
+			AsmLabel linkWhileContinue;
+			AsmLabel linkWhileEndBreak;
 
 			parserEnterContext();
 
@@ -32,7 +32,7 @@ namespace XYO::QuantumScript {
 
 			if (expressionParentheses()) {
 
-				linkWhileIf = assembleProgramCounter(ParserAsm::IfFalseGoto, nullptr);
+				linkWhileIf = assembleProgramCounter(ParserAsm::IfFalseGoto, 0);
 
 				if (token.checkIs1("{")) {
 

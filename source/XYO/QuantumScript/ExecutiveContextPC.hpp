@@ -50,8 +50,10 @@ namespace XYO::QuantumScript {
 			ProgramCounter *tryReturn_;
 			ProgramCounter *tryThrow_;
 			ProgramCounter *pc_;
+			ProgramCounter *tryFinally_;  // finally of the try, not a call (pc_ is not set)
+			ProgramCounter *finallyNext_; // a finally context: continue here at the end of the finally
 
-			Stack::Node *stackLink_;
+			size_t stackLink_; // operand stack depth + 1, 0 - not set
 
 			ExecutiveContextFunction *functionContext;
 
@@ -71,7 +73,9 @@ namespace XYO::QuantumScript {
 				tryReturn_ = nullptr;
 				tryThrow_ = nullptr;
 				pc_ = nullptr;
-				stackLink_ = nullptr;
+				tryFinally_ = nullptr;
+				finallyNext_ = nullptr;
+				stackLink_ = 0;
 			};
 
 			inline void activeConstructor() {
@@ -84,7 +88,9 @@ namespace XYO::QuantumScript {
 				tryReturn_ = nullptr;
 				tryThrow_ = nullptr;
 				pc_ = nullptr;
-				stackLink_ = nullptr;
+				tryFinally_ = nullptr;
+				finallyNext_ = nullptr;
+				stackLink_ = 0;
 			};
 
 			inline void activeDestructor() {

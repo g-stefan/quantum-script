@@ -43,6 +43,9 @@ namespace XYO::QuantumScript {
 			char inputChar;
 			bool doCapture;
 			String capture;
+			// captures can be nested (function in function), they share the capture buffer
+			TStack<size_t> captureBegin;
+			TStack<String> capturePrefix;
 
 			XYO_QUANTUMSCRIPT_EXPORT Input();
 			XYO_QUANTUMSCRIPT_EXPORT ~Input();
@@ -74,19 +77,32 @@ namespace XYO::QuantumScript {
 			XYO_QUANTUMSCRIPT_EXPORT bool isN(const char *name);
 
 			inline void beginCapture() {
-				doCapture = true;
-				capture = "";
+				beginCapture("");
 			};
 
 			inline void beginCapture(const String prefix) {
-				doCapture = true;
-				capture = prefix;
+				if (!doCapture) {
+					doCapture = true;
+					capture = "";
+				};
+				size_t begin = capture.length();
+				String prefix_(prefix);
+				captureBegin.push(begin);
+				capturePrefix.push(prefix_);
 			};
 
 			inline String endCapture() {
-				String retV(capture);
-				doCapture = false;
-				capture = "";
+				size_t begin;
+				String retV;
+				if (!captureBegin.pop(begin)) {
+					return retV;
+				};
+				capturePrefix.pop(retV);
+				retV << capture.substring(begin);
+				if (captureBegin.isEmpty()) {
+					doCapture = false;
+					capture = "";
+				};
 				return retV;
 			};
 	};

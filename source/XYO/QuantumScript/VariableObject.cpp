@@ -56,14 +56,22 @@ namespace XYO::QuantumScript {
 	TPointer<Variable> VariableObject::getPropertyByIndex(size_t index) {
 		char buffer[22];
 		sprintf(buffer, "%zu", index);
-		return getPropertyBySymbol(Context::getSymbol(buffer));
+		Symbol symbolId;
+		if (Context::findSymbol(buffer, symbolId)) {
+			return getPropertyBySymbol(symbolId);
+		};
+		return Context::getValueUndefined();
 	};
 
 	TPointer<Variable> VariableObject::getPropertyByVariable(Variable *index) {
 		if (TIsType<VariableSymbol>(index)) {
 			return getPropertyBySymbol(((VariableSymbol *)index)->value);
 		};
-		return getPropertyBySymbol(Context::getSymbol(index->toString()));
+		Symbol symbolId;
+		if (Context::findSymbol(index->toString(), symbolId)) {
+			return getPropertyBySymbol(symbolId);
+		};
+		return Context::getValueUndefined();
 	};
 
 	void VariableObject::setPropertyBySymbol(Symbol symbolId, Variable *valueToSet) {
@@ -75,7 +83,7 @@ namespace XYO::QuantumScript {
 		};
 		node = Property::newNode();
 		node->key = symbolId;
-		node->value.pointerLink(this);
+		node->value.pointerLink(value);
 		node->value = valueToSet;
 		value->insertNode(node);
 	};
@@ -101,14 +109,22 @@ namespace XYO::QuantumScript {
 	bool VariableObject::deletePropertyByIndex(size_t index) {
 		char buffer[22];
 		sprintf(buffer, "%zu", index);
-		return deletePropertyBySymbol(Context::getSymbol(buffer));
+		Symbol symbolId;
+		if (Context::findSymbol(buffer, symbolId)) {
+			return deletePropertyBySymbol(symbolId);
+		};
+		return true;
 	};
 
 	bool VariableObject::deletePropertyByVariable(Variable *index) {
 		if (TIsType<VariableSymbol>(index)) {
 			return deletePropertyBySymbol(((VariableSymbol *)index)->value);
 		};
-		return deletePropertyBySymbol(Context::getSymbol(index->toString()));
+		Symbol symbolId;
+		if (Context::findSymbol(index->toString(), symbolId)) {
+			return deletePropertyBySymbol(symbolId);
+		};
+		return true;
 	};
 
 	Variable *VariableObject::instancePrototype() {
@@ -123,15 +139,13 @@ namespace XYO::QuantumScript {
 
 	TPointer<Iterator> VariableObject::getIteratorKey() {
 		ObjectIteratorKey *iterator_ = TMemory<ObjectIteratorKey>::newMemory();
-		iterator_->value_ = this;
-		iterator_->value = value->begin();
+		iterator_->setProperty(this, value);
 		return iterator_;
 	};
 
 	TPointer<Iterator> VariableObject::getIteratorValue() {
 		ObjectIteratorValue *iterator_ = TMemory<ObjectIteratorValue>::newMemory();
-		iterator_->value_ = this;
-		iterator_->value = value->begin();
+		iterator_->setProperty(this, value);
 		return iterator_;
 	};
 
@@ -160,7 +174,10 @@ namespace XYO::QuantumScript {
 
 	bool VariableObject::hasPropertyByVariable(Variable *variable) {
 		PropertyNode *outX;
-		Symbol symbolId = Context::getSymbol(variable->toString());
+		Symbol symbolId;
+		if (!Context::findSymbol(variable->toString(), symbolId)) {
+			return false;
+		};
 		outX = value->find(symbolId);
 		if (outX) {
 			return true;

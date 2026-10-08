@@ -26,6 +26,8 @@ namespace XYO::QuantumScript {
 			XYO_QUANTUMSCRIPT_EXPORT static Executive &getExecutive();
 			XYO_QUANTUMSCRIPT_EXPORT static bool executeFile(const char *fileName);
 			XYO_QUANTUMSCRIPT_EXPORT static bool executeString(const char *strSource);
+			// run a unit as the main script (embedded bytecode)
+			XYO_QUANTUMSCRIPT_EXPORT static bool executeUnit(CodeUnit &unit);
 			XYO_QUANTUMSCRIPT_EXPORT static TPointer<Variable> returnValue();
 			XYO_QUANTUMSCRIPT_EXPORT static void endProcessing();
 			XYO_QUANTUMSCRIPT_EXPORT static void setIncludeSource(String fileName, String source);

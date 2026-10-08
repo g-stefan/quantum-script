@@ -22,5 +22,6 @@
 #include <XYO/QuantumScript/VariableAssociativeArray.hpp>
 #include <XYO/QuantumScript/VariableResource.hpp>
 #include <XYO/QuantumScript/ExecutiveX.hpp>
+#include <XYO/QuantumScript/Bytecode.hpp>
 
 #endif

@@ -27,6 +27,8 @@ namespace XYO::QuantumScript {
 			// SymbolList
 			//
 			XYO_QUANTUMSCRIPT_EXPORT static Symbol getSymbol(String name);
+			// find only, a property with a symbol that does not exist can not exist
+			XYO_QUANTUMSCRIPT_EXPORT static bool findSymbol(const String &name, Symbol &out);
 			XYO_QUANTUMSCRIPT_EXPORT static String getSymbolMirror(Symbol id);
 			XYO_QUANTUMSCRIPT_EXPORT static SymbolList &getSymbolList();
 
@@ -34,6 +36,8 @@ namespace XYO::QuantumScript {
 			// Variables
 			//
 			XYO_QUANTUMSCRIPT_EXPORT static TPointer<Variable> getValueUndefined();
+			// shared value, nullptr outside a context
+			XYO_QUANTUMSCRIPT_EXPORT static Variable *getValueBoolean(bool value);
 			XYO_QUANTUMSCRIPT_EXPORT static TPointer<Variable> getGlobalObject();
 
 			XYO_QUANTUMSCRIPT_EXPORT static Symbol getSymbolLength();

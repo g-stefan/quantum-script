@@ -1,0 +1,11 @@
+// Quantum Script Native Runtime
+// Copyright (c) 2016-2026 Grigore Stefan <g_stefan@yahoo.com>
+// MIT License (MIT) <http://opensource.org/licenses/MIT>
+// SPDX-FileCopyrightText: 2016-2026 Grigore Stefan <g_stefan@yahoo.com>
+// SPDX-License-Identifier: MIT
+
+#include <XYO/QuantumScript.NativeRuntime/Library.rh>
+#include <XYO/QuantumScript.NativeRuntime/Copyright.rh>
+#include <XYO/QuantumScript.NativeRuntime/Version.rh>
+
+XYO_PLATFORM_VERSION_INFO(XYO_QUANTUMSCRIPT_NATIVERUNTIME,"quantum-script.native-runtime.dll","Quantum Script Native Runtime")

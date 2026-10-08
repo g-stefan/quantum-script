@@ -191,6 +191,30 @@ namespace XYO::QuantumScript {
 		return false;
 	};
 
+	// The unit runs as the body of a function called with this = Script, as Script.include
+	bool ExecutiveX::executeUnit(CodeUnit &unit) {
+		Executive &executive = (TSingletonThread<ExecutiveX_>::getValue())->executive;
+		String &error = (TSingletonThread<ExecutiveX_>::getValue())->error;
+
+		try {
+			TPointer<Variable> function(executive.newFunctionFromUnit(unit));
+			TPointer<VariableArray> arguments(VariableArray::newArray());
+			TPointer<Variable> script_((Context::getGlobalObject())->getPropertyBySymbol(Context::getSymbol("Script")));
+			(TSingletonThread<ExecutiveX_>::getValue())->returnValue = function->functionApply(script_, arguments);
+			return true;
+		} catch (const Error &e) {
+			error = "Error: ";
+			error << (const_cast<Error &>(e)).getMessage();
+		} catch (const std::exception &e) {
+			error = "Error: ";
+			error << e.what();
+		} catch (...) {
+			error = "Error: Unknown\n";
+		};
+
+		return false;
+	};
+
 	TPointer<Variable> ExecutiveX::returnValue() {
 		return (TSingletonThread<ExecutiveX_>::getValue())->returnValue;
 	};

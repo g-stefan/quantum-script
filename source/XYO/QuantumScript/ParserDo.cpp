@@ -15,9 +15,10 @@ namespace XYO::QuantumScript {
 
 	bool Parser::statementDo() {
 		if (token.isSymbolX("do")) {
-			ProgramCounter *linkDo;
-			ProgramCounter *linkDoEnd;
-			ProgramCounter *linkDoBreak;
+			AsmLabel linkDo;
+			AsmLabel linkDoEnd;
+			AsmLabel linkDoBreak;
+			AsmLabel linkDoContinue;
 
 			linkDo = assemble(ParserAsm::Mark);
 
@@ -25,13 +26,15 @@ namespace XYO::QuantumScript {
 
 				parserEnterContext();
 				assemble(ParserAsm::EnterContext);
-				linkDoBreak = assembleProgramCounter(ParserAsm::ContextSetBreak, nullptr);
-				assembleProgramCounter(ParserAsm::ContextSetContinue, linkDo);
+				linkDoBreak = assembleProgramCounter(ParserAsm::ContextSetBreak, 0);
+				linkDoContinue = assembleProgramCounter(ParserAsm::ContextSetContinue, 0);
 
 				if (isBlockStatement()) {
 
 					parserLeaveContext();
 					assemble(ParserAsm::LeaveContext);
+					// continue: the condition
+					linkProgramCounter(linkDoContinue, assemble(ParserAsm::Mark));
 
 					if (token.isSymbolX("while")) {
 

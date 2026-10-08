@@ -24,6 +24,10 @@ namespace XYO::QuantumScript {
 		return (TSingletonThread<SymbolList>::getValue())->getSymbol(name);
 	};
 
+	bool Context::findSymbol(const String &name, Symbol &out) {
+		return (TSingletonThread<SymbolList>::getValue())->findSymbol(name, out);
+	};
+
 	String Context::getSymbolMirror(Symbol id) {
 		return (TSingletonThread<SymbolList>::getValue())->getSymbolMirror(id);
 	};
@@ -47,6 +51,30 @@ namespace XYO::QuantumScript {
 
 	TPointer<Variable> Context::getValueUndefined() {
 		return (TSingletonThread<XValueUndefined>::getValue())->valueUndefined;
+	};
+
+	// shared boolean values, a boolean value is never changed after creation
+	class XValueBoolean : public Object {
+		public:
+			TPointer<Variable> valueTrue;
+			TPointer<Variable> valueFalse;
+			XValueBoolean();
+			static void initMemory();
+	};
+
+	XValueBoolean::XValueBoolean(){};
+
+	void XValueBoolean::initMemory() {
+		TMemory<Variable>::initMemory();
+		TMemory<VariableBoolean>::initMemory();
+	};
+
+	Variable *Context::getValueBoolean(bool value) {
+		XValueBoolean *valueBoolean = TSingletonThread<XValueBoolean>::getValue();
+		if (value) {
+			return valueBoolean->valueTrue.value();
+		};
+		return valueBoolean->valueFalse.value();
 	};
 
 	class XGlobalObject : public Object {
@@ -308,6 +336,7 @@ namespace XYO::QuantumScript {
 	void Context::initMemory() {
 		TSingletonThread<SymbolList>::initMemory();
 		TSingletonThread<XValueUndefined>::initMemory();
+		TSingletonThread<XValueBoolean>::initMemory();
 		TSingletonThread<XContext>::initMemory();
 		TSingletonThread<XGlobalObject>::initMemory();
 	};
@@ -316,6 +345,8 @@ namespace XYO::QuantumScript {
 		(TSingletonThread<SymbolList>::getValue())->symbolList.empty();
 		(TSingletonThread<SymbolList>::getValue())->symbolListMirror.empty();
 		(TSingletonThread<XValueUndefined>::getValue())->valueUndefined.newMemory();
+		(TSingletonThread<XValueBoolean>::getValue())->valueTrue = VariableBoolean::newVariableX(true);
+		(TSingletonThread<XValueBoolean>::getValue())->valueFalse = VariableBoolean::newVariableX(false);
 		(TSingletonThread<XGlobalObject>::getValue())->globalObject = VariableObject::newVariable();
 		(TSingletonThread<XContext>::getValue())->newContext();
 	};
@@ -324,6 +355,8 @@ namespace XYO::QuantumScript {
 		(TSingletonThread<XContext>::getValue())->deleteContext();
 		(TSingletonThread<XGlobalObject>::getValue())->globalObject.deleteMemory();
 		(TSingletonThread<XValueUndefined>::getValue())->valueUndefined.deleteMemory();
+		(TSingletonThread<XValueBoolean>::getValue())->valueTrue.deleteMemory();
+		(TSingletonThread<XValueBoolean>::getValue())->valueFalse.deleteMemory();
 		(TSingletonThread<SymbolList>::getValue())->symbolList.empty();
 		(TSingletonThread<SymbolList>::getValue())->symbolListMirror.empty();
 	};

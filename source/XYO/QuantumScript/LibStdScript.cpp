@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <limits.h>
 
 #include <XYO/QuantumScript/Dependency.hpp>
 
@@ -182,7 +183,43 @@ namespace XYO::QuantumScript {
 #ifdef XYO_QUANTUMSCRIPT_DEBUG_RUNTIME
 			printf("- script-stack-trace-with-level\n");
 #endif
-			return VariableString::newVariable((((VariableStackTrace *)(arguments->index(0)).value()))->toString((Integer)((arguments->index(1))->toNumber())));
+			TPointerX<Variable> &stackTrace = arguments->index(0);
+			if (!TIsType<VariableStackTrace>(stackTrace)) {
+				throw Error("stackTraceWithLevel: first argument is not a stack trace");
+			};
+			return VariableString::newVariable(((VariableStackTrace *)stackTrace.value())->toString((int)((arguments->index(1))->toIndex())));
+		};
+
+		// code compiled from a string without a tag has no file name
+		static void compileErrorMessage(char *buf, size_t size, Executive *executive) {
+			if ((executive->errorInfo.compileFileName == nullptr) || (strlen(executive->errorInfo.compileFileName) == 0)) {
+				snprintf(buf, size, "Compile error on line %u", executive->errorInfo.compileLineNumber);
+				return;
+			};
+			snprintf(buf, size, "Compile error in %s line %u",
+			        executive->errorInfo.compileFileName,
+			        executive->errorInfo.compileLineNumber);
+		};
+
+		static void throwBytecodeError(InstructionContext *context, Executive *executive) {
+			char buf[2048];
+			snprintf(buf, sizeof(buf), "Invalid bytecode in %s: %s",
+			        executive->errorInfo.compileFileName,
+			        executive->errorInfo.bytecodeError.value());
+			context->push(context->newError(buf));
+			InstructionVmThrow(context, nullptr);
+		};
+
+		// a named unit compiled to a function: called with the this and the arguments
+		// of the include, the result of the function is the result of the include
+		static bool includeFunction(InstructionContext *context, Executive *executive, const String &name, Variable *arguments) {
+			TPointer<Variable> function;
+			if (!executive->includeFunction->get(name, function)) {
+				return false;
+			};
+			context->push(function->functionApply(context->functionContext->this_, (VariableArray *)arguments));
+			InstructionVmReturn(context, nullptr);
+			return true;
 		};
 
 		static XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(LibStdScript_include) {
@@ -244,17 +281,18 @@ namespace XYO::QuantumScript {
 						if (retV == VmParserError::None) {
 							return;
 						} else if (retV == VmParserError::Compile) {
-							sprintf(buf, "Compile error in %s line %u",
-							        executive->errorInfo.compileFileName,
-							        executive->errorInfo.compileLineNumber);
+							compileErrorMessage(buf, sizeof(buf), executive);
 							context->push(context->newError(buf));
 							InstructionVmThrow(context, nullptr);
 							return;
 						} else if (retV == VmParserError::FileNotFound) {
-							sprintf(buf, "File not found \"%s\"",
+							snprintf(buf, sizeof(buf), "File not found \"%s\"",
 							        ((VariableString *)operand1.value())->value.value());
 							context->push(context->newError(buf));
 							InstructionVmThrow(context, nullptr);
+							return;
+						} else if (retV == VmParserError::Bytecode) {
+							throwBytecodeError(context, executive);
 							return;
 						};
 					};
@@ -265,16 +303,24 @@ namespace XYO::QuantumScript {
 						if (retV == VmParserError::None) {
 							return;
 						} else if (retV == VmParserError::Compile) {
-							sprintf(buf, "Compile error in %s line %u",
-							        executive->errorInfo.compileFileName,
-							        executive->errorInfo.compileLineNumber);
+							compileErrorMessage(buf, sizeof(buf), executive);
 							context->push(context->newError(buf));
 							InstructionVmThrow(context, nullptr);
 							return;
 						};
 					};
 
-					sprintf(buf, "Unable to open \"%s\"",
+					TPointer<CodeUnit> unit;
+					if (executive->includeUnit->get(((VariableString *)operand1.value())->value, unit)) {
+						executive->includeAndExecuteUnit(context, *(unit.value()));
+						return;
+					};
+
+					if (includeFunction(context, executive, ((VariableString *)operand1.value())->value, operand2)) {
+						return;
+					};
+
+					snprintf(buf, sizeof(buf), "Unable to open \"%s\"",
 					        ((VariableString *)operand1.value())->value.value());
 
 					context->push(context->newError(buf));
@@ -357,17 +403,18 @@ namespace XYO::QuantumScript {
 							if (retV == VmParserError::None) {
 								return;
 							} else if (retV == VmParserError::Compile) {
-								sprintf(buf, "Compile error in %s line %u",
-								        executive->errorInfo.compileFileName,
-								        executive->errorInfo.compileLineNumber);
+								compileErrorMessage(buf, sizeof(buf), executive);
 								context->push(context->newError(buf));
 								InstructionVmThrow(context, nullptr);
 								return;
 							} else if (retV == VmParserError::FileNotFound) {
-								sprintf(buf, "File not found \"%s\"",
+								snprintf(buf, sizeof(buf), "File not found \"%s\"",
 								        ((VariableString *)operand1.value())->value.value());
 								context->push(context->newError(buf));
 								InstructionVmThrow(context, nullptr);
+								return;
+							} else if (retV == VmParserError::Bytecode) {
+								throwBytecodeError(context, executive);
 								return;
 							};
 						};
@@ -379,16 +426,39 @@ namespace XYO::QuantumScript {
 						if (retV == VmParserError::None) {
 							return;
 						} else if (retV == VmParserError::Compile) {
-							sprintf(buf, "Compile error in %s line %u",
-							        executive->errorInfo.compileFileName,
-							        executive->errorInfo.compileLineNumber);
+							compileErrorMessage(buf, sizeof(buf), executive);
 							context->push(context->newError(buf));
 							InstructionVmThrow(context, nullptr);
 							return;
 						};
 					};
 
-					sprintf(buf, "Unable to open \"%s\"\n",
+					TPointer<CodeUnit> unit;
+					if (executive->includeUnit->get(((VariableString *)operand1.value())->value, unit)) {
+						String onceKey("#unit:");
+						onceKey << ((VariableString *)operand1.value())->value;
+						if (context->listIncludeOnce.find(onceKey)) {
+							return;
+						};
+						bool included = true;
+						context->listIncludeOnce.set(onceKey, included);
+						executive->includeAndExecuteUnit(context, *(unit.value()));
+						return;
+					};
+
+					if (executive->includeFunction->find(((VariableString *)operand1.value())->value)) {
+						String onceKey("#unit:");
+						onceKey << ((VariableString *)operand1.value())->value;
+						if (context->listIncludeOnce.find(onceKey)) {
+							return;
+						};
+						bool included = true;
+						context->listIncludeOnce.set(onceKey, included);
+						includeFunction(context, executive, ((VariableString *)operand1.value())->value, operand2);
+						return;
+					};
+
+					snprintf(buf, sizeof(buf), "Unable to open \"%s\"\n",
 					        ((VariableString *)operand1.value())->value.value());
 
 					context->push(context->newError(buf));
@@ -461,17 +531,18 @@ namespace XYO::QuantumScript {
 						if (retV == VmParserError::None) {
 							return;
 						} else if (retV == VmParserError::Compile) {
-							sprintf(buf, "Compile error in %s line %u",
-							        executive->errorInfo.compileFileName,
-							        executive->errorInfo.compileLineNumber);
+							compileErrorMessage(buf, sizeof(buf), executive);
 							context->push(context->newError(buf));
 							InstructionVmThrow(context, nullptr);
 							return;
 						} else if (retV == VmParserError::FileNotFound) {
-							sprintf(buf, "File not found \"%s\"",
+							snprintf(buf, sizeof(buf), "File not found \"%s\"",
 							        ((VariableString *)operand1.value())->value.value());
 							context->push(context->newError(buf));
 							InstructionVmThrow(context, nullptr);
+							return;
+						} else if (retV == VmParserError::Bytecode) {
+							throwBytecodeError(context, executive);
 							return;
 						};
 					};
@@ -482,16 +553,24 @@ namespace XYO::QuantumScript {
 						if (retV == VmParserError::None) {
 							return;
 						} else if (retV == VmParserError::Compile) {
-							sprintf(buf, "Compile error in %s line %u",
-							        executive->errorInfo.compileFileName,
-							        executive->errorInfo.compileLineNumber);
+							compileErrorMessage(buf, sizeof(buf), executive);
 							context->push(context->newError(buf));
 							InstructionVmThrow(context, nullptr);
 							return;
 						};
 					};
 
-					sprintf(buf, "Unable to open \"%s\"",
+					TPointer<CodeUnit> unit;
+					if (executive->includeUnit->get(((VariableString *)operand1.value())->value, unit)) {
+						executive->includeAndExecuteUnit(context, *(unit.value()));
+						return;
+					};
+
+					if (includeFunction(context, executive, ((VariableString *)operand1.value())->value, operand2)) {
+						return;
+					};
+
+					snprintf(buf, sizeof(buf), "Unable to open \"%s\"",
 					        ((VariableString *)operand1.value())->value.value());
 
 					context->push(context->newError(buf));
@@ -543,9 +622,7 @@ namespace XYO::QuantumScript {
 					if (retV == VmParserError::None) {
 						return;
 					} else if (retV == VmParserError::Compile) {
-						sprintf(buf, "Compile error in %s line %u",
-						        executive->errorInfo.compileFileName,
-						        executive->errorInfo.compileLineNumber);
+						compileErrorMessage(buf, sizeof(buf), executive);
 						context->push(context->newError(buf));
 						InstructionVmThrow(context, nullptr);
 						return;
@@ -597,9 +674,7 @@ namespace XYO::QuantumScript {
 					if (retV == VmParserError::None) {
 						return;
 					} else if (retV == VmParserError::Compile) {
-						sprintf(buf, "Compile error in %s line %u",
-						        executive->errorInfo.compileFileName,
-						        executive->errorInfo.compileLineNumber);
+						compileErrorMessage(buf, sizeof(buf), executive);
 						context->push(context->newError(buf));
 						InstructionVmThrow(context, nullptr);
 						return;
@@ -751,7 +826,7 @@ namespace XYO::QuantumScript {
 							};
 						};
 					};
-					sprintf(buf, "Unable to open \"%s\"\n",
+					snprintf(buf, sizeof(buf), "Unable to open \"%s\"\n",
 					        ((VariableString *)operand1.value())->value.value());
 
 					context->push(context->newError(buf));
@@ -808,7 +883,7 @@ namespace XYO::QuantumScript {
 						};
 					};
 
-					sprintf(buf, "Unable to open \"%s\"\n",
+					snprintf(buf, sizeof(buf), "Unable to open \"%s\"\n",
 					        ((VariableString *)operand1.value())->value.value());
 
 					context->push(context->newError(buf));
@@ -955,14 +1030,12 @@ namespace XYO::QuantumScript {
 								if (retV == VmParserError::None) {
 									return;
 								} else if (retV == VmParserError::Compile) {
-									sprintf(buf, "Compile error in %s line %u",
-									        executive->errorInfo.compileFileName,
-									        executive->errorInfo.compileLineNumber);
+									compileErrorMessage(buf, sizeof(buf), executive);
 									context->push(context->newError(buf));
 									InstructionVmThrow(context, nullptr);
 									return;
 								} else if (retV == VmParserError::FileNotFound) {
-									sprintf(buf, "File not found \"%s\"",
+									snprintf(buf, sizeof(buf), "File not found \"%s\"",
 									        ((VariableString *)operand1.value())->value.value());
 									context->push(context->newError(buf));
 									InstructionVmThrow(context, nullptr);
@@ -970,7 +1043,7 @@ namespace XYO::QuantumScript {
 								};
 							};
 
-							sprintf(buf, "Unable to open \"%s\"",
+							snprintf(buf, sizeof(buf), "Unable to open \"%s\"",
 							        ((VariableString *)operand1.value())->value.value());
 
 							context->push(context->newError(buf));
@@ -1019,9 +1092,7 @@ namespace XYO::QuantumScript {
 							if (retV == VmParserError::None) {
 								return;
 							} else if (retV == VmParserError::Compile) {
-								sprintf(buf, "Compile error in %s line %u",
-								        executive->errorInfo.compileFileName,
-								        executive->errorInfo.compileLineNumber);
+								compileErrorMessage(buf, sizeof(buf), executive);
 								context->push(context->newError(buf));
 								InstructionVmThrow(context, nullptr);
 								return;
@@ -1067,13 +1138,31 @@ namespace XYO::QuantumScript {
 			return VariableBoolean::newVariable(((Executive *)function->valueSuper)->hasIncludeSource(arguments->index(0)->toString()));
 		};
 
+		// undefined is success, a value that is not a number is failure
+		static int toExitCode(Variable *value) {
+			if (TIsTypeExact<VariableUndefined>(value)) {
+				return 0;
+			};
+			Number exitCode = value->toNumber();
+			if (isnan(exitCode) || isinf(exitCode)) {
+				return 1;
+			};
+			if (exitCode < (Number)INT_MIN) {
+				return INT_MIN;
+			};
+			if (exitCode > (Number)INT_MAX) {
+				return INT_MAX;
+			};
+			return (int)exitCode;
+		};
+
 		static XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(LibStdScript_exit) {
 #ifdef XYO_QUANTUMSCRIPT_DEBUG_RUNTIME
 			printf("- script-exit\n");
 #endif
 			Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
 			executive->isExit = true;
-			executive->exitCode = context->getArgument(0)->toNumber();
+			executive->exitCode = toExitCode(context->getArgument(0));
 			context->nextProgramCounter = nullptr;
 		};
 
@@ -1082,7 +1171,7 @@ namespace XYO::QuantumScript {
 			printf("- script-set-exit-code\n");
 #endif
 			Executive *executive = (Executive *)(((VariableResource *)operand)->resource);
-			executive->exitCode = context->getArgument(0)->toNumber();
+			executive->exitCode = toExitCode(context->getArgument(0));
 		};
 
 		void initExecutive(Executive *executive, void *extensionId) {

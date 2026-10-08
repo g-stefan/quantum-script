@@ -16,6 +16,7 @@
 #include <XYO/QuantumScript/LibStdConvert.hpp>
 #include <XYO/QuantumScript/LibStdString.hpp>
 #include <XYO/QuantumScript/LibStdArray.hpp>
+#include <XYO/QuantumScript/LibStdResource.hpp>
 
 namespace XYO::QuantumScript {
 
@@ -30,6 +31,7 @@ namespace XYO::QuantumScript {
 			executive->initExtension(LibStdConvert::initExecutive);
 			executive->initExtension(LibStdString::initExecutive);
 			executive->initExtension(LibStdArray::initExecutive);
+			executive->initExtension(LibStdResource::initExecutive);
 #endif
 		};
 

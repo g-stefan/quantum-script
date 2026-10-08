@@ -20,7 +20,8 @@ namespace XYO::QuantumScript {
 	typedef uint32_t Symbol;
 	typedef TRedBlackTree<Symbol, TPointerX<Variable>, TMemoryPoolActive> Property;
 
-	typedef TStackPointerUnsafe<Variable, TMemoryPoolActive> Stack;
+	class OperandStack;
+	typedef OperandStack Stack;
 };
 
 namespace XYO::ManagedMemory {
@@ -44,6 +45,22 @@ namespace XYO::QuantumScript {
 	typedef double Number;
 
 	typedef Property::Node PropertyNode;
+
+	// first node with key greater than key, used by iterators,
+	// a node pointer can't be kept, the node can be removed while iterating
+	inline PropertyNode *propertyNodeNext(Property *property, Symbol key) {
+		PropertyNode *scan = property->root;
+		PropertyNode *retV = nullptr;
+		while (scan) {
+			if (key < scan->key) {
+				retV = scan;
+				scan = scan->left;
+				continue;
+			};
+			scan = scan->right;
+		};
+		return retV;
+	};
 
 	class SymbolList;
 	class Context;
@@ -167,6 +184,123 @@ namespace XYO::QuantumScript {
 
 			//
 			XYO_QUANTUMSCRIPT_EXPORT virtual bool isFunction();
+	};
+
+	//
+	// Operand stack of the virtual machine, contiguous memory,
+	// push/pop without allocation
+	//
+	class OperandStack : public Object {
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(OperandStack);
+
+		protected:
+			TPointer<Variable> *stack_;
+			size_t size_;
+			size_t capacity_;
+
+			XYO_QUANTUMSCRIPT_EXPORT void grow();
+
+		public:
+			inline OperandStack() {
+				stack_ = nullptr;
+				size_ = 0;
+				capacity_ = 0;
+			};
+
+			inline ~OperandStack() {
+				empty();
+				delete[] stack_;
+			};
+
+			inline void push(const Variable *value) {
+				if (size_ == capacity_) {
+					grow();
+				};
+				stack_[size_] = value;
+				++size_;
+			};
+
+			inline void push() {
+				if (size_ == capacity_) {
+					grow();
+				};
+				++size_;
+			};
+
+			inline void pop(TPointer<Variable> &value) {
+				--size_;
+				value = std::move(stack_[size_]);
+			};
+
+			inline void pop(TPointerX<Variable> &value) {
+				--size_;
+				value = stack_[size_].value();
+				stack_[size_].deleteMemory();
+			};
+
+			inline void popExecutive(TPointerX<Variable> &value) {
+				--size_;
+				value.setExecutive(std::move(stack_[size_]));
+			};
+
+			inline TTransfer<Variable> *popTransfer() {
+				--size_;
+				return stack_[size_].transfer();
+			};
+
+			inline void pop() {
+				--size_;
+				stack_[size_].deleteMemory();
+			};
+
+			inline void peek(TPointer<Variable> &value) {
+				value = stack_[size_ - 1];
+			};
+
+			inline void peek(TPointerX<Variable> &value) {
+				value = stack_[size_ - 1].value();
+			};
+
+			inline void peek(Variable *&value) {
+				value = stack_[size_ - 1].value();
+			};
+
+			inline void duplicate() {
+				if (size_ == capacity_) {
+					grow();
+				};
+				stack_[size_] = stack_[size_ - 1];
+				++size_;
+			};
+
+			inline void swap() {
+				TPointer<Variable> top(std::move(stack_[size_ - 1]));
+				stack_[size_ - 1] = std::move(stack_[size_ - 2]);
+				stack_[size_ - 2] = std::move(top);
+			};
+
+			inline bool isEmpty() const {
+				return (size_ == 0);
+			};
+
+			inline size_t getDepth() const {
+				return size_;
+			};
+
+			// pop until depth
+			inline void unwindTo(size_t depth) {
+				while (size_ > depth) {
+					pop();
+				};
+			};
+
+			inline void empty() {
+				unwindTo(0);
+			};
+
+			inline void activeDestructor() {
+				empty();
+			};
 	};
 
 };

@@ -10,6 +10,10 @@
 #include <XYO/QuantumScript/ArrayIteratorKey.cpp>
 #include <XYO/QuantumScript/ArrayIteratorValue.cpp>
 #include <XYO/QuantumScript/Asm.cpp>
+#include <XYO/QuantumScript/AsmOpcode.cpp>
+#include <XYO/QuantumScript/Bytecode.cpp>
+#include <XYO/QuantumScript/CodeUnit.cpp>
+#include <XYO/QuantumScript/Linker.cpp>
 #include <XYO/QuantumScript/AssociativeArrayIteratorKey.cpp>
 #include <XYO/QuantumScript/AssociativeArrayIteratorValue.cpp>
 #include <XYO/QuantumScript/Context.cpp>

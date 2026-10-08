@@ -12,6 +12,66 @@
 
 namespace XYO::QuantumScript {
 
+	static bool hexDigitValue(char value, uint32_t &out) {
+		if (value >= '0' && value <= '9') {
+			out = value - '0';
+			return true;
+		};
+		if (value >= 'A' && value <= 'F') {
+			out = value - 'A' + 10;
+			return true;
+		};
+		if (value >= 'a' && value <= 'f') {
+			out = value - 'a' + 10;
+			return true;
+		};
+		return false;
+	};
+
+	// read exactly 4 hexadecimal digits
+	static bool readHex4(Input *input, uint32_t &out) {
+		uint32_t digit;
+		int k;
+		out = 0;
+		for (k = 0; k < 4; ++k) {
+			if (!input->read()) {
+				return false;
+			};
+			if (!hexDigitValue(input->inputChar, digit)) {
+				return false;
+			};
+			out = (out << 4) | digit;
+		};
+		return true;
+	};
+
+	static void appendUTF8(String &value, uint32_t code) {
+		char buffer[4];
+		if (code < 0x80) {
+			buffer[0] = (char)code;
+			value.concatenate(buffer, 1);
+			return;
+		};
+		if (code < 0x800) {
+			buffer[0] = (char)(0xC0 | (code >> 6));
+			buffer[1] = (char)(0x80 | (code & 0x3F));
+			value.concatenate(buffer, 2);
+			return;
+		};
+		if (code < 0x10000) {
+			buffer[0] = (char)(0xE0 | (code >> 12));
+			buffer[1] = (char)(0x80 | ((code >> 6) & 0x3F));
+			buffer[2] = (char)(0x80 | (code & 0x3F));
+			value.concatenate(buffer, 3);
+			return;
+		};
+		buffer[0] = (char)(0xF0 | (code >> 18));
+		buffer[1] = (char)(0x80 | ((code >> 12) & 0x3F));
+		buffer[2] = (char)(0x80 | ((code >> 6) & 0x3F));
+		buffer[3] = (char)(0x80 | (code & 0x3F));
+		value.concatenate(buffer, 4);
+	};
+
 	Token::Token() {
 		reset();
 	};
@@ -181,32 +241,44 @@ namespace XYO::QuantumScript {
 								continue;
 							};
 							if (input->inputChar == 'u') {
-								char code[5];
-								code[4] = 0;
-								unsigned int code4;
-								if (!input->read()) {
+								uint32_t code4;
+								if (!readHex4(input, code4)) {
 									return false;
 								};
-								code[0] = input->inputChar;
-								if (!input->read()) {
-									return false;
+								// UTF-16 surrogate pair
+								if (code4 >= 0xD800 && code4 <= 0xDBFF) {
+									if (!input->read()) {
+										return false;
+									};
+									if (input->inputChar != '\\') {
+										appendUTF8(value, code4);
+										input->push();
+										continue;
+									};
+									if (!input->read()) {
+										return false;
+									};
+									if (input->inputChar != 'u') {
+										appendUTF8(value, code4);
+										// process the escape again
+										input->push();
+										input->inputChar = '\\';
+										input->push();
+										continue;
+									};
+									uint32_t codeLow;
+									if (!readHex4(input, codeLow)) {
+										return false;
+									};
+									if (codeLow >= 0xDC00 && codeLow <= 0xDFFF) {
+										appendUTF8(value, 0x10000 + ((code4 - 0xD800) << 10) + (codeLow - 0xDC00));
+										continue;
+									};
+									appendUTF8(value, code4);
+									appendUTF8(value, codeLow);
+									continue;
 								};
-								code[1] = input->inputChar;
-								if (!input->read()) {
-									return false;
-								};
-								code[2] = input->inputChar;
-								if (!input->read()) {
-									return false;
-								};
-								code[3] = input->inputChar;
-								if (sscanf(code, "%04X", &code4) != 1) {
-									return false;
-								};
-								code[0] = (code4 >> 8) & 0xFF;
-								code[1] = (code4)&0xFF;
-								code[2] = 0;
-								value.concatenate(code, 2);
+								appendUTF8(value, code4);
 								continue;
 							};
 							if (input->inputChar == 'x') {
@@ -229,27 +301,24 @@ namespace XYO::QuantumScript {
 								value.concatenate(code, 1);
 								continue;
 							};
-							if (input->inputChar >= '0' && input->inputChar <= '3') {
-								char code[4];
-								code[3] = 0;
-								int codeOctal;
-								if (!input->read()) {
-									return false;
+							if (input->inputChar >= '0' && input->inputChar <= '7') {
+								// 1 to 3 octal digits, max \377
+								char code[1];
+								int codeOctal = input->inputChar - '0';
+								int k;
+								for (k = 1; k < 3; ++k) {
+									if (!input->read()) {
+										return false;
+									};
+									if ((input->inputChar >= '0') && (input->inputChar <= '7') && ((codeOctal * 8 + (input->inputChar - '0')) <= 0377)) {
+										codeOctal = codeOctal * 8 + (input->inputChar - '0');
+										continue;
+									};
+									// not part of the escape, process it again
+									input->push();
+									break;
 								};
-								code[0] = input->inputChar;
-								if (!input->read()) {
-									return false;
-								};
-								code[1] = input->inputChar;
-								if (!input->read()) {
-									return false;
-								};
-								code[2] = input->inputChar;
-								if (sscanf(code, "%03o", &codeOctal) != 1) {
-									return false;
-								};
-								code[0] = (uint8_t)codeOctal;
-								code[1] = 0;
+								code[0] = (char)(uint8_t)codeOctal;
 								value.concatenate(code, 1);
 								continue;
 							};

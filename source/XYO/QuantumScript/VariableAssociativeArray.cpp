@@ -61,7 +61,7 @@ namespace XYO::QuantumScript {
 			return (*(value->arrayValue))[x->value];
 		};
 
-		return VariableUndefined::newVariable();
+		return Context::getValueUndefined();
 	};
 
 	void VariableAssociativeArray::setPropertyByIndex(size_t index, Variable *valueToSet) {

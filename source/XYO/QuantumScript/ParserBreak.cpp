@@ -15,14 +15,20 @@ namespace XYO::QuantumScript {
 
 	bool Parser::statementBreak() {
 		if (token.isSymbolX("break")) {
-			if (parserContext.head->value->isLoop) {
-				parserContext.head->value->pcBreak.push(assembleProgramCounter(ParserAsm::Goto, nullptr));
-				return true;
-			};
-			assemble(ParserAsm::Break);
+			assembleBreak();
 			return true;
 		};
 		return false;
+	};
+
+	// a loop without context (for, while): goto, else break of the contexts
+	AsmLabel Parser::assembleBreak() {
+		if (parserContext.head->value->isLoop) {
+			AsmLabel retV = assembleProgramCounter(ParserAsm::Goto, 0);
+			parserContext.head->value->pcBreak.push(retV);
+			return retV;
+		};
+		return assemble(ParserAsm::Break);
 	};
 
 };

@@ -44,12 +44,12 @@ namespace XYO::QuantumScript {
 
 		public:
 			bool isLoop;
-			TStack<ProgramCounter *> pcBreak;
-			ProgramCounter *pcContinue;
+			TStack<AsmLabel> pcBreak;
+			AsmLabel pcContinue;
 
 			inline ParserContext() {
 				isLoop = false;
-				pcContinue = nullptr;
+				pcContinue = 0;
 			};
 	};
 
@@ -95,12 +95,12 @@ namespace XYO::QuantumScript {
 
 			XYO_QUANTUMSCRIPT_EXPORT bool statementOrExpression();
 			XYO_QUANTUMSCRIPT_EXPORT int parse();
-			XYO_QUANTUMSCRIPT_EXPORT ProgramCounter *assembleProgramCounter(int type, ProgramCounter *value);
-			XYO_QUANTUMSCRIPT_EXPORT ProgramCounter *assemble(int type);
-			XYO_QUANTUMSCRIPT_EXPORT ProgramCounter *assemble1(int type, const char *value);
-			XYO_QUANTUMSCRIPT_EXPORT ProgramCounter *assembleX(int type, const char *value, const char *valueX);
-			XYO_QUANTUMSCRIPT_EXPORT void linkProgramCounter(ProgramCounter *old_, ProgramCounter *new_);
-			XYO_QUANTUMSCRIPT_EXPORT void linkProgramCounterEnd(ProgramCounter *old_, ProgramCounter *new_);
+			XYO_QUANTUMSCRIPT_EXPORT AsmLabel assembleProgramCounter(int type, AsmLabel value);
+			XYO_QUANTUMSCRIPT_EXPORT AsmLabel assemble(int type);
+			XYO_QUANTUMSCRIPT_EXPORT AsmLabel assemble1(int type, const char *value);
+			XYO_QUANTUMSCRIPT_EXPORT AsmLabel assembleX(int type, const char *value, const char *valueX);
+			XYO_QUANTUMSCRIPT_EXPORT void linkProgramCounter(AsmLabel old_, AsmLabel new_);
+			XYO_QUANTUMSCRIPT_EXPORT void linkProgramCounterEnd(AsmLabel old_, AsmLabel new_);
 			XYO_QUANTUMSCRIPT_EXPORT bool isBlockStatement();
 			XYO_QUANTUMSCRIPT_EXPORT bool statement();
 
@@ -108,7 +108,7 @@ namespace XYO::QuantumScript {
 			XYO_QUANTUMSCRIPT_EXPORT bool expressionStep(Token *backOperator, Token *levelOperator = nullptr);
 			XYO_QUANTUMSCRIPT_EXPORT bool expressionParentheses();
 			XYO_QUANTUMSCRIPT_EXPORT bool expressionTerm(Token *backToken, int hasSymbol, int isNew);
-			XYO_QUANTUMSCRIPT_EXPORT ProgramCounter *expressionProcessToken(Token *token_);
+			XYO_QUANTUMSCRIPT_EXPORT AsmLabel expressionProcessToken(Token *token_);
 			XYO_QUANTUMSCRIPT_EXPORT bool expressionTermPrefix(Token *backToken);
 			XYO_QUANTUMSCRIPT_EXPORT bool expressionTermCheckLValue();
 			XYO_QUANTUMSCRIPT_EXPORT bool expressionTermProcessLValue(Token *backToken, int processBackToken);
@@ -131,6 +131,8 @@ namespace XYO::QuantumScript {
 			XYO_QUANTUMSCRIPT_EXPORT bool statementReturn();
 			XYO_QUANTUMSCRIPT_EXPORT bool statementBreak();
 			XYO_QUANTUMSCRIPT_EXPORT bool statementContinue();
+			XYO_QUANTUMSCRIPT_EXPORT AsmLabel assembleBreak();
+			XYO_QUANTUMSCRIPT_EXPORT AsmLabel assembleContinue();
 			XYO_QUANTUMSCRIPT_EXPORT bool statementWhile();
 			XYO_QUANTUMSCRIPT_EXPORT bool statementTry();
 			XYO_QUANTUMSCRIPT_EXPORT bool statementThrow();

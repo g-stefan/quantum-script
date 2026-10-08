@@ -32,11 +32,42 @@ namespace XYO::QuantumScript {
 			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(ObjectIteratorValue);
 
 		public:
-			TPointer<Variable> value_;
-			PropertyNode *value;
+			TPointer<Variable> value_; // keep owner of property alive
+			Property *property;
+			Symbol key;
+			bool hasKey;
+			bool isEnd;
 			TRedBlackTree<uint32_t, String, TMemoryPoolActive> *mirrorList;
 
-			inline ObjectIteratorValue(){};
+			inline ObjectIteratorValue() {
+				property = nullptr;
+				key = 0;
+				hasKey = false;
+				isEnd = false;
+				mirrorList = nullptr;
+			};
+
+			inline void setProperty(Variable *owner, Property *property_) {
+				value_ = owner;
+				property = property_;
+				key = 0;
+				hasKey = false;
+				isEnd = false;
+			};
+
+			inline PropertyNode *nextNode() {
+				if (isEnd) {
+					return nullptr;
+				};
+				PropertyNode *node = hasKey ? propertyNodeNext(property, key) : property->begin();
+				if (node) {
+					key = node->key;
+					hasKey = true;
+					return node;
+				};
+				isEnd = true;
+				return nullptr;
+			};
 
 			XYO_QUANTUMSCRIPT_EXPORT bool next(Variable *out);
 

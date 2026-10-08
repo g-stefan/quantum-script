@@ -95,7 +95,7 @@ namespace XYO::QuantumScript {
 			printf("- string-match-ascii\n");
 #endif
 
-			return VariableBoolean::newVariable(this_->toString().matchASCII((arguments->index(1))->toString()));
+			return VariableBoolean::newVariable(this_->toString().matchASCII((arguments->index(0))->toString()));
 		};
 
 		static TPointer<Variable> getElement(VariableFunction *function, Variable *this_, VariableArray *arguments) {
@@ -134,6 +134,29 @@ namespace XYO::QuantumScript {
 			String sig = (arguments->index(0))->toString();
 			TPointer<Variable> retV(VariableArray::newVariable());
 			if ((src.length() == 0) && (sig.length() == 0)) {
+				return retV;
+			};
+			// empty separator, split in characters, a UTF-8 sequence is kept whole
+			if (sig.length() == 0) {
+				size_t step;
+				uint8_t lead;
+				ln = 0;
+				for (pos = 0; pos < src.length(); pos += step) {
+					lead = (uint8_t)src[pos];
+					step = 1;
+					if ((lead & 0xE0) == 0xC0) {
+						step = 2;
+					} else if ((lead & 0xF0) == 0xE0) {
+						step = 3;
+					} else if ((lead & 0xF8) == 0xF0) {
+						step = 4;
+					};
+					if (pos + step > src.length()) {
+						step = src.length() - pos;
+					};
+					retV->setPropertyByIndex(ln, VariableString::newVariable(src.substring(pos, step)));
+					++ln;
+				};
 				return retV;
 			};
 			if (src.indexOf(sig, 0, index)) {

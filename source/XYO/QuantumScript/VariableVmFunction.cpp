@@ -66,14 +66,22 @@ namespace XYO::QuantumScript {
 	TPointer<Variable> VariableVmFunction::getPropertyByIndex(size_t index) {
 		char buffer[22];
 		sprintf(buffer, "%zu", index);
-		return getPropertyBySymbol(Context::getSymbol(buffer));
+		Symbol symbolId;
+		if (Context::findSymbol(buffer, symbolId)) {
+			return getPropertyBySymbol(symbolId);
+		};
+		return Context::getValueUndefined();
 	};
 
 	TPointer<Variable> VariableVmFunction::getPropertyByVariable(Variable *index) {
 		if (TIsType<VariableSymbol>(index)) {
 			return getPropertyBySymbol(((VariableSymbol *)index)->value);
 		};
-		return getPropertyBySymbol(Context::getSymbol(index->toString()));
+		Symbol symbolId;
+		if (Context::findSymbol(index->toString(), symbolId)) {
+			return getPropertyBySymbol(symbolId);
+		};
+		return Context::getValueUndefined();
 	};
 
 	void VariableVmFunction::setPropertyBySymbol(Symbol symbolId, Variable *valueToSet) {
@@ -90,7 +98,7 @@ namespace XYO::QuantumScript {
 		};
 		node = Property::newNode();
 		node->key = symbolId;
-		node->value.pointerLink(this);
+		node->value.pointerLink(object);
 		node->value = valueToSet;
 		object->insertNode(node);
 	};
@@ -116,14 +124,22 @@ namespace XYO::QuantumScript {
 	bool VariableVmFunction::deletePropertyByIndex(size_t index) {
 		char buffer[22];
 		sprintf(buffer, "%zu", index);
-		return deletePropertyBySymbol(Context::getSymbol(buffer));
+		Symbol symbolId;
+		if (Context::findSymbol(buffer, symbolId)) {
+			return deletePropertyBySymbol(symbolId);
+		};
+		return true;
 	};
 
 	bool VariableVmFunction::deletePropertyByVariable(Variable *index) {
 		if (TIsType<VariableSymbol>(index)) {
 			return deletePropertyBySymbol(((VariableSymbol *)index)->value);
 		};
-		return deletePropertyBySymbol(Context::getSymbol(index->toString()));
+		Symbol symbolId;
+		if (Context::findSymbol(index->toString(), symbolId)) {
+			return deletePropertyBySymbol(symbolId);
+		};
+		return true;
 	};
 
 	TPointer<Variable> VariableVmFunction::functionApply(Variable *this_, VariableArray *arguments) {
@@ -152,15 +168,13 @@ namespace XYO::QuantumScript {
 
 	TPointer<Iterator> VariableVmFunction::getIteratorKey() {
 		ObjectIteratorKey *iterator_ = TMemory<ObjectIteratorKey>::newMemory();
-		iterator_->value_ = this;
-		iterator_->value = object->begin();
+		iterator_->setProperty(this, object);
 		return iterator_;
 	};
 
 	TPointer<Iterator> VariableVmFunction::getIteratorValue() {
 		ObjectIteratorValue *iterator_ = TMemory<ObjectIteratorValue>::newMemory();
-		iterator_->value_ = this;
-		iterator_->value = object->begin();
+		iterator_->setProperty(this, object);
 		return iterator_;
 	};
 

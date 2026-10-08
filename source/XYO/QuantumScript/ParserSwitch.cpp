@@ -15,7 +15,7 @@ namespace XYO::QuantumScript {
 
 	bool Parser::statementSwitch() {
 		if (token.isSymbolX("switch")) {
-			ProgramCounter *linkSwitchBreak;
+			AsmLabel linkSwitchBreak;
 
 			if (expressionParentheses()) {
 
@@ -23,7 +23,7 @@ namespace XYO::QuantumScript {
 
 					parserEnterContext();
 					assemble(ParserAsm::EnterContext);
-					linkSwitchBreak = assembleProgramCounter(ParserAsm::ContextSetBreak, nullptr);
+					linkSwitchBreak = assembleProgramCounter(ParserAsm::ContextSetBreak, 0);
 					assemble(ParserAsm::ContextSetRegisterValue);
 
 					if (statementSwitchCase()) {
@@ -47,8 +47,8 @@ namespace XYO::QuantumScript {
 
 	bool Parser::statementSwitchCase() {
 		if (token.isSymbolX("case")) {
-			ProgramCounter *linkCaseIf;
-			ProgramCounter *linkCaseSkip;
+			AsmLabel linkCaseIf;
+			AsmLabel linkCaseSkip;
 
 			if (expression(0)) {
 
@@ -56,18 +56,18 @@ namespace XYO::QuantumScript {
 
 					assemble(ParserAsm::ContextPushRegisterValue);
 					assemble(ParserAsm::OperatorEqual);
-					linkCaseIf = assembleProgramCounter(ParserAsm::IfFalseGoto, nullptr);
+					linkCaseIf = assembleProgramCounter(ParserAsm::IfFalseGoto, 0);
 
 					while (!token.isEof()) {
 						if (token.isSymbolX("case")) {
-							linkCaseSkip = assembleProgramCounter(ParserAsm::Goto, nullptr);
+							linkCaseSkip = assembleProgramCounter(ParserAsm::Goto, 0);
 							linkProgramCounter(linkCaseIf,
 							                   assemble(ParserAsm::Mark));
 							if (expression(0)) {
 								if (token.is1(":")) {
 									assemble(ParserAsm::ContextPushRegisterValue);
 									assemble(ParserAsm::OperatorEqual);
-									linkCaseIf = assembleProgramCounter(ParserAsm::IfFalseGoto, nullptr);
+									linkCaseIf = assembleProgramCounter(ParserAsm::IfFalseGoto, 0);
 
 									linkProgramCounter(linkCaseSkip,
 									                   assemble(ParserAsm::Mark));
@@ -78,11 +78,11 @@ namespace XYO::QuantumScript {
 						};
 						if (token.isSymbolX("default")) {
 							if (token.is1(":")) {
-								if (linkCaseIf != nullptr) {
+								if (linkCaseIf != 0) {
 									linkProgramCounter(linkCaseIf,
 									                   assemble(ParserAsm::Mark));
 								};
-								linkCaseIf = nullptr;
+								linkCaseIf = 0;
 								continue;
 							};
 							error = ParserError::Compile;
@@ -96,7 +96,7 @@ namespace XYO::QuantumScript {
 							return false;
 						};
 						if (token.checkIs1("}")) {
-							if (linkCaseIf != nullptr) {
+							if (linkCaseIf != 0) {
 								linkProgramCounter(linkCaseIf,
 								                   assemble(ParserAsm::Mark));
 							};

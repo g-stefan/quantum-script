@@ -19,7 +19,7 @@ namespace XYO::QuantumScript {
 			out->referenceSet(Context::getValueUndefined());
 			return false;
 		};
-		out->referenceSet((*(sourceArray->value))[index]);
+		out->referenceSet(sourceArray->getPropertyByIndex(index));
 		index++;
 		return true;
 	};

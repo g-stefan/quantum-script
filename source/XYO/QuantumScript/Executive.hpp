@@ -15,6 +15,10 @@
 #	include <XYO/QuantumScript/Asm.hpp>
 #endif
 
+#ifndef XYO_QUANTUMSCRIPT_BYTECODE_HPP
+#	include <XYO/QuantumScript/Bytecode.hpp>
+#endif
+
 #ifndef XYO_QUANTUMSCRIPT_VARIABLEFUNCTIONWITHYIELD_HPP
 #	include <XYO/QuantumScript/VariableFunctionWithYield.hpp>
 #endif
@@ -28,7 +32,8 @@ namespace XYO::QuantumScript {
 			enum {
 				None = ParserError::None,
 				Compile = ParserError::Compile,
-				FileNotFound
+				FileNotFound,
+				Bytecode // invalid bytecode file, ErrorInfo::bytecodeError
 			};
 	};
 
@@ -37,6 +42,7 @@ namespace XYO::QuantumScript {
 			int compileError;
 			uint32_t compileLineNumber;
 			const char *compileFileName;
+			String bytecodeError;
 	};
 
 	class Executive;
@@ -66,11 +72,25 @@ namespace XYO::QuantumScript {
 			QuantumScriptExtensionInitProc extensionProc;
 	};
 
+	class ExecutiveInclude {
+		public:
+			AsmLabel linkBegin;
+			AsmLabel linkStart;
+			AsmLabel linkFinally;
+	};
+
 	class Executive : public Object {
 			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(Executive);
 
 		protected:
 			XYO_QUANTUMSCRIPT_EXPORT void errorInfoInit();
+			XYO_QUANTUMSCRIPT_EXPORT void includeBegin(ExecutiveInclude &include);
+			XYO_QUANTUMSCRIPT_EXPORT void includeEnd(InstructionContext *context, ExecutiveInclude &include, bool clearIncludedFile);
+			XYO_QUANTUMSCRIPT_EXPORT void includeAbort(ExecutiveInclude &include);
+			XYO_QUANTUMSCRIPT_EXPORT size_t assembleNameReference(const char *name);
+			XYO_QUANTUMSCRIPT_EXPORT int compileFile_(Asm *target, const char *fileName, size_t skipLines);
+			XYO_QUANTUMSCRIPT_EXPORT int compileString_(Asm *target, const char *data_, size_t skipLines, const char *tag);
+			XYO_QUANTUMSCRIPT_EXPORT int includeAndExecuteBytecodeFile_(InstructionContext *context, const char *fileName);
 			XYO_QUANTUMSCRIPT_EXPORT int execute_(InstructionContext *);
 			ProgramCounter *currentContextExit;
 			ProgramCounter *currentContextReturn;
@@ -89,6 +109,11 @@ namespace XYO::QuantumScript {
 			TPointer<TDoubleEndedQueue<Extension_>> extensionList;
 			TPointer<TDoubleEndedQueue<InternalExtension_>> internalExtensionList;
 			TPointer<TRedBlackTree<String, String>> includeSource;
+			// named units, included by name, from bytecode bundles
+			TPointer<CodeUnitMap> includeUnit;
+			// named units as functions (compiled code), included by name:
+			// called with the this and the arguments of the include, the result is the result of the include
+			TPointer<TRedBlackTree<String, TPointer<Variable>>> includeFunction;
 
 			QuantumScriptInitExecutiveProc applicationInitExecutive;
 
@@ -96,6 +121,8 @@ namespace XYO::QuantumScript {
 			int configPrintStackTraceLimit;
 
 			TPointer<Asm> assembler;
+			// linked code, the assembler output is added by the linker
+			TPointer<InstructionList> instructionList;
 			ErrorInfo errorInfo;
 
 			XYO_QUANTUMSCRIPT_EXPORT Executive();
@@ -130,6 +157,14 @@ namespace XYO::QuantumScript {
 
 			XYO_QUANTUMSCRIPT_EXPORT void compileEnd();
 
+			// compile to a separate unit, not linked, to save as bytecode
+			XYO_QUANTUMSCRIPT_EXPORT int compileFileToUnit(const char *fileName, CodeUnit &unit, size_t skipLines = 0);
+			XYO_QUANTUMSCRIPT_EXPORT int compileStringToUnit(const char *data_, CodeUnit &unit, const char *tag = nullptr);
+			// run a unit (compiled or loaded) as included code
+			XYO_QUANTUMSCRIPT_EXPORT int includeAndExecuteUnit(InstructionContext *context, CodeUnit &unit);
+			// a new script function with unit as its code, see Linker::unlinkFunction
+			XYO_QUANTUMSCRIPT_EXPORT TPointer<Variable> newFunctionFromUnit(CodeUnit &unit, int functionHint = ParserFunctionHint::All);
+
 			XYO_QUANTUMSCRIPT_EXPORT int executeExtension(InstructionContext *context, QuantumScriptExtensionProc extensionProc, void *extensionId);
 
 			XYO_QUANTUMSCRIPT_EXPORT TPointer<Variable> callVmFunction(Variable *fnProcedure, Variable *fnThis, Variable *fnParameters);
@@ -154,6 +189,21 @@ namespace XYO::QuantumScript {
 			XYO_QUANTUMSCRIPT_EXPORT void setIncludeSource(String fileName, String source);
 			XYO_QUANTUMSCRIPT_EXPORT void removeIncludeSource(String fileName);
 			XYO_QUANTUMSCRIPT_EXPORT bool hasIncludeSource(String fileName);
+
+			XYO_QUANTUMSCRIPT_EXPORT void setIncludeUnit(String name, CodeUnit *unit);
+			XYO_QUANTUMSCRIPT_EXPORT void removeIncludeUnit(String name);
+			XYO_QUANTUMSCRIPT_EXPORT bool hasIncludeUnit(String name);
+
+			XYO_QUANTUMSCRIPT_EXPORT void setIncludeFunction(String name, Variable *function);
+			XYO_QUANTUMSCRIPT_EXPORT void removeIncludeFunction(String name);
+			XYO_QUANTUMSCRIPT_EXPORT bool hasIncludeFunction(String name);
+
+		protected:
+			// reuse instruction context for callVmFunction, native code calling script functions
+			TStack<TPointer<InstructionContext>> callContextPool;
+			size_t callContextPoolSize;
+
+			XYO_QUANTUMSCRIPT_EXPORT void callContextRelease(TPointer<InstructionContext> &fnContext);
 	};
 
 };

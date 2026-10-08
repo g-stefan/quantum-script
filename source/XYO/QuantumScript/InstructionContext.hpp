@@ -122,14 +122,14 @@ namespace XYO::QuantumScript {
 				if (index < ((int)((VariableArray *)(functionContext->functionLocalVariables.value()))->value->length())) {
 					return (*(((VariableArray *)(functionContext->functionLocalVariables.value()))->value.value()))[index];
 				};
-				return VariableUndefined::newVariable();
+				return Context::getValueUndefined();
 			};
 
 			inline TPointer<Variable> getArgument(int index) {
 				if (index < ((int)((VariableArray *)(functionContext->functionArguments.value()))->value->length())) {
 					return (*(((VariableArray *)(functionContext->functionArguments.value()))->value.value()))[index];
 				};
-				return TPointer<Variable>(VariableUndefined::newVariable());
+				return Context::getValueUndefined();
 			};
 
 #ifndef XYO_QUANTUMSCRIPT_DISABLE_CLOSURE

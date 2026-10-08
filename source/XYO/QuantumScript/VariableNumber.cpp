@@ -73,16 +73,23 @@ namespace XYO::QuantumScript {
 				return "Infinity";
 			};
 		};
-		if ((value_ > 0 && value_ < 1e+11) || (value_ < 0 && value_ > -1e+11)) {
+		if (value_ == 0.0) {
+			return "0";
+		};
+		if (value_ < 1e+21 && value_ > -1e+21) {
 			Number fractpart, intpart;
 			fractpart = modf(value_, &intpart);
 			if (fractpart == 0.0) {
-				sprintf(buf, XYO_QUANTUMSCRIPT_FORMAT_NUMBER_INTEGER, value_);
-			} else {
-				sprintf(buf, XYO_QUANTUMSCRIPT_FORMAT_NUMBER, value_);
+				snprintf(buf, sizeof(buf), XYO_QUANTUMSCRIPT_FORMAT_NUMBER_INTEGER, value_);
+				return buf;
 			};
-		} else {
-			sprintf(buf, XYO_QUANTUMSCRIPT_FORMAT_NUMBER, value_);
+		};
+		// shortest representation that converts back to the same value
+		for (int precision = 15; precision <= 17; ++precision) {
+			snprintf(buf, sizeof(buf), "%.*g", precision, value_);
+			if (strtod(buf, nullptr) == value_) {
+				break;
+			};
 		};
 		return buf;
 	};

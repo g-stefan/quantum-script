@@ -70,6 +70,8 @@ namespace XYO::QuantumScript {
 		extensionList.newMemory();
 		internalExtensionList.newMemory();
 		includeSource.newMemory();
+		includeUnit.newMemory();
+		includeFunction.newMemory();
 		errorInfoInit();
 
 		// for sys extension
@@ -78,9 +80,13 @@ namespace XYO::QuantumScript {
 
 		isExit = false;
 		exitCode = 0;
+
+		callContextPoolSize = 0;
 	};
 
 	Executive::~Executive() {
+		callContextPool.empty();
+		callContextPoolSize = 0;
 		instructionContext.deleteMemory();
 
 		//
@@ -106,6 +112,7 @@ namespace XYO::QuantumScript {
 		errorInfo.compileError = 0;
 		errorInfo.compileLineNumber = 0;
 		errorInfo.compileFileName = "";
+		errorInfo.bytecodeError = "";
 	};
 
 	void Executive::initExecutive() {
@@ -123,16 +130,24 @@ namespace XYO::QuantumScript {
 		instructionContext->pcContext = instructionContext->functionContext;
 		instructionContext->functionContext->this_.newMemory(); // undefined
 
-		assembler->instructionList.newMemory();
-		ProgramCounter *skipFiberExit;
+		instructionList.newMemory();
 
-		skipFiberExit = assembler->assembleProgramCounter(ParserAsm::Goto, nullptr, 0, 0);
-		currentContextExit = assembler->assemble(ParserAsm::CurrentContextExit, "", 0, 0);
-		currentContextReturn = assembler->assemble(ParserAsm::Return, "", 0, 0);
-		currentContextThrow = assembler->assemble(ParserAsm::Throw, "", 0, 0);
-		currentContextContinue = assembler->assemble(ParserAsm::Continue, "", 0, 0);
-		currentContextBreak = assembler->assemble(ParserAsm::Break, "", 0, 0);
+		AsmLabel skipFiberExit = assembler->assembleProgramCounter(ParserAsm::Goto, 0, 0, 0);
+		AsmLabel linkExit = assembler->assemble(ParserAsm::CurrentContextExit, "", 0, 0);
+		AsmLabel linkReturn = assembler->assemble(ParserAsm::Return, "", 0, 0);
+		AsmLabel linkThrow = assembler->assemble(ParserAsm::Throw, "", 0, 0);
+		AsmLabel linkContinue = assembler->assemble(ParserAsm::Continue, "", 0, 0);
+		AsmLabel linkBreak = assembler->assemble(ParserAsm::Break, "", 0, 0);
 		assembler->linkProgramCounter(skipFiberExit, assembler->assemble(ParserAsm::Mark, "", 0, 0));
+
+		// runtime generated code links to these
+		Linker linker;
+		assembler->link(linker, *(instructionList.value()));
+		currentContextExit = linker.getProgramCounter(linkExit);
+		currentContextReturn = linker.getProgramCounter(linkReturn);
+		currentContextThrow = linker.getProgramCounter(linkThrow);
+		currentContextContinue = linker.getProgramCounter(linkContinue);
+		currentContextBreak = linker.getProgramCounter(linkBreak);
 
 		initExtension(LibStd::initExecutive);
 		if (applicationInitExecutive) {
@@ -191,6 +206,30 @@ namespace XYO::QuantumScript {
 		return includeSource->get(fileName, dummy);
 	};
 
+	void Executive::setIncludeUnit(String name, CodeUnit *unit) {
+		includeUnit->set(name, TPointer<CodeUnit>(unit));
+	};
+
+	void Executive::removeIncludeUnit(String name) {
+		includeUnit->remove(name);
+	};
+
+	bool Executive::hasIncludeUnit(String name) {
+		return includeUnit->find(name) != nullptr;
+	};
+
+	void Executive::setIncludeFunction(String name, Variable *function) {
+		includeFunction->set(name, TPointer<Variable>(function));
+	};
+
+	void Executive::removeIncludeFunction(String name) {
+		includeFunction->remove(name);
+	};
+
+	bool Executive::hasIncludeFunction(String name) {
+		return includeFunction->find(name) != nullptr;
+	};
+
 	void Executive::registerInternalExtension(String extensionName, QuantumScriptExtensionInitProc extensionProc) {
 		TDoubleEndedQueue<InternalExtension_>::Node *scan;
 		String extensionName_ = extensionName.toLowerCaseASCII();
@@ -216,8 +255,11 @@ namespace XYO::QuantumScript {
 	int Executive::execute() {
 		instructionContext->error = InstructionError::None;
 		instructionContext->contextStack->enter(instructionContext->pcContext);
-		instructionContext->instructionListExecutive = assembler->instructionList.value();
-		instructionContext->currentProgramCounter = reinterpret_cast<ProgramCounter *>(assembler->instructionList->head);
+		Linker linker;
+		assembler->link(linker, *(instructionList.value()));
+
+		instructionContext->instructionListExecutive = instructionList.value();
+		instructionContext->currentProgramCounter = reinterpret_cast<ProgramCounter *>(instructionList->head);
 
 		return execute_(instructionContext.value());
 	};
@@ -252,6 +294,24 @@ namespace XYO::QuantumScript {
 	};
 
 	int Executive::compileFile(const char *fileName) {
+		return compileFile_(assembler, fileName, 0);
+	};
+
+	int Executive::compileFileSkipLines(const char *fileName, size_t skipLines) {
+		return compileFile_(assembler, fileName, skipLines);
+	};
+
+	int Executive::compileFileToUnit(const char *fileName, CodeUnit &unit, size_t skipLines) {
+		TPointer<Asm> unitAssembler;
+		unitAssembler.newMemory();
+		int retV = compileFile_(unitAssembler, fileName, skipLines);
+		if (retV == VmParserError::None) {
+			unit.append(*(unitAssembler->code.value()));
+		};
+		return retV;
+	};
+
+	int Executive::compileFile_(Asm *target, const char *fileName, size_t skipLines) {
 		Parser parser;
 		Input input;
 		File in;
@@ -264,10 +324,25 @@ namespace XYO::QuantumScript {
 
 			if (in.openRead(fullFile)) {
 				if (input.init(&in)) {
+
+					// nothing to skip, do not underflow skipLines
+					if (skipLines > 0) {
+						uint32_t lineNumber = input.lineNumber;
+						while (input.read()) {
+							if (input.lineNumber > lineNumber) {
+								lineNumber = input.lineNumber;
+								--skipLines;
+								if (skipLines == 0) {
+									break;
+								};
+							};
+						};
+					};
+
 					String strSymbol("#");
 					strSymbol << fullFile;
 					Symbol symbolSource = Context::getSymbol(strSymbol);
-					if (parser.init(&input, assembler, symbolSource)) {
+					if (parser.init(&input, target, symbolSource)) {
 						retV = parser.parse();
 					};
 				};
@@ -280,28 +355,136 @@ namespace XYO::QuantumScript {
 			retV = VmParserError::FileNotFound;
 		};
 
-		assembler->resetLinks();
-
 		errorInfo.compileError = retV;
 		errorInfo.compileLineNumber = input.lineNumber;
 		errorInfo.compileFileName = fileName;
 		return retV;
 	};
 
-	int Executive::compileFileSkipLines(const char *fileName, size_t skipLines) {
+	// Code included at runtime runs in its own context, is linked after the current
+	// instruction and is removed from the instruction list after execution
+	void Executive::includeBegin(ExecutiveInclude &include) {
+		include.linkBegin = assembler->assembleProgramCounter(ParserAsm::Goto, 0, 0, 0);
+		include.linkStart = assembler->assemble(ParserAsm::Nop, "", 0, 0); // don't use mark, next instruction can be removed
+
+		assembler->assemble(ParserAsm::EnterContext, "", 0, 0);
+		assembler->assemble(ParserAsm::ContextSetStack, "", 0, 0);
+		include.linkFinally = assembler->assembleProgramCounter(ParserAsm::ContextSetFinally, 0, 0, 0);
+		assembler->assembleProgramCounterExternal(ParserAsm::ContextSetTryReturn, currentContextReturn, 0, 0);
+		assembler->assembleProgramCounterExternal(ParserAsm::ContextSetTryThrow, currentContextThrow, 0, 0);
+		assembler->assembleProgramCounterExternal(ParserAsm::ContextSetTryContinue, currentContextContinue, 0, 0);
+		assembler->assembleProgramCounterExternal(ParserAsm::ContextSetTryBreak, currentContextBreak, 0, 0);
+	};
+
+	void Executive::includeEnd(InstructionContext *context, ExecutiveInclude &include, bool clearIncludedFile) {
+		AsmLabel linkEnd;
+		AsmLabel linkCallPC;
+		AsmLabel linkPC;
+		AsmLabel linkEntry;
+
+		assembler->assemble(ParserAsm::LeaveContext, "", 0, 0);
+		linkEntry = assembler->assemble(ParserAsm::EnterContext, "", 0, 0);
+		linkCallPC = assembler->assembleProgramCounter(ParserAsm::ContextSetPC, 0, 0, 0);
+
+		linkPC = assembler->assemble(ParserAsm::Nop, "", 0, 0);
+		assembler->linkProgramCounter(include.linkFinally, linkPC);
+
+		if (clearIncludedFile) {
+			assembler->assemble(ParserAsm::ClearIncludedFile, "", 0, 0);
+		};
+
+		linkEnd = assembler->assembleProgramCounter(ParserAsm::InstructionListExtractAndDelete, include.linkBegin, 0, 0);
+		assembler->linkProgramCounter(include.linkBegin, linkEntry);
+		assembler->linkProgramCounterExternal(linkEnd, currentContextReturn);
+		assembler->linkProgramCounterExternal(linkCallPC, context->nextProgramCounter);
+
+		Linker linker;
+		assembler->link(linker, *(instructionList.value()));
+		context->nextProgramCounter = linker.getProgramCounter(include.linkStart);
+	};
+
+	// Remove the code assembled since includeBegin
+	void Executive::includeAbort(ExecutiveInclude &include) {
+		assembler->discard(include.linkBegin);
+	};
+
+	int Executive::includeAndExecuteFile(InstructionContext *context, const char *fileName) {
+		if (Bytecode::isBytecodeFile(fileName)) {
+			return includeAndExecuteBytecodeFile_(context, fileName);
+		};
+		ExecutiveInclude include;
+		includeBegin(include);
+		int retV = compileFile(fileName);
+		if (retV == VmParserError::None) {
+			context->includedFile.push(fileName);
+			includeEnd(context, include, true);
+			return 0;
+		};
+		includeAbort(include);
+		return retV;
+	};
+
+	int Executive::includeAndExecuteFileSkipLines(InstructionContext *context, const char *fileName, size_t skipLines) {
+		// a bytecode file has no lines
+		if (Bytecode::isBytecodeFile(fileName)) {
+			return includeAndExecuteBytecodeFile_(context, fileName);
+		};
+		ExecutiveInclude include;
+		includeBegin(include);
+		int retV = compileFileSkipLines(fileName, skipLines);
+		if (retV == VmParserError::None) {
+			context->includedFile.push(fileName);
+			includeEnd(context, include, true);
+			return 0;
+		};
+		includeAbort(include);
+		return retV;
+	};
+
+	int Executive::executeExtension(InstructionContext *context, QuantumScriptExtensionProc extensionProc, void *extensionId) {
+		ExecutiveInclude include;
+		includeBegin(include);
+		try {
+			extensionProc(this, extensionId);
+			includeEnd(context, include, false);
+			return 0;
+		} catch (...) {
+		};
+		includeAbort(include);
+		return VmParserError::Compile;
+	};
+
+	int Executive::compileString(const char *data_, const char *tag) {
+		return compileString_(assembler, data_, 0, tag);
+	};
+
+	int Executive::compileStringSkipLines(const char *data_, size_t skipLines, const char *tag) {
+		return compileString_(assembler, data_, skipLines, tag);
+	};
+
+	int Executive::compileStringToUnit(const char *data_, CodeUnit &unit, const char *tag) {
+		TPointer<Asm> unitAssembler;
+		unitAssembler.newMemory();
+		int retV = compileString_(unitAssembler, data_, 0, tag);
+		if (retV == VmParserError::None) {
+			unit.append(*(unitAssembler->code.value()));
+		};
+		return retV;
+	};
+
+	int Executive::compileString_(Asm *target, const char *data_, size_t skipLines, const char *tag) {
 		Parser parser;
 		Input input;
-		File in;
+		MemoryRead in;
 		int retV;
-		char fullFile[4096];
 
 		retV = VmParserError::Compile;
 
-		if (Shell::realpath(fileName, fullFile, 4096)) {
+		if (in.open(data_, StringCore::length(data_))) {
+			if (input.init(&in)) {
 
-			if (in.openRead(fullFile)) {
-				if (input.init(&in)) {
-
+				// nothing to skip, do not underflow skipLines
+				if (skipLines > 0) {
 					uint32_t lineNumber = input.lineNumber;
 					while (input.read()) {
 						if (input.lineNumber > lineNumber) {
@@ -312,254 +495,6 @@ namespace XYO::QuantumScript {
 							};
 						};
 					};
-
-					String strSymbol("#");
-					strSymbol << fullFile;
-					Symbol symbolSource = Context::getSymbol(strSymbol);
-					if (parser.init(&input, assembler, symbolSource)) {
-						retV = parser.parse();
-					};
-				};
-				in.close();
-			} else {
-				retV = VmParserError::FileNotFound;
-			};
-
-		} else {
-			retV = VmParserError::FileNotFound;
-		};
-
-		assembler->resetLinks();
-
-		errorInfo.compileError = retV;
-		errorInfo.compileLineNumber = input.lineNumber;
-		errorInfo.compileFileName = fileName;
-		return retV;
-	};
-
-	int Executive::includeAndExecuteFile(InstructionContext *context, const char *fileName) {
-		ProgramCounter *linkBegin;
-		ProgramCounter *linkStart;
-		ProgramCounter *linkEnd;
-		ProgramCounter *nextProgramCounter_;
-		ProgramCounter *currentProgramCounter_;
-		ProgramCounter *linkFinally;
-		ProgramCounter *linkCallPC;
-		ProgramCounter *linkPC;
-		ProgramCounter *linkEntry;
-		int retV;
-
-		linkBegin = assembler->assembleProgramCounter(ParserAsm::Goto, nullptr, 0, 0);
-		linkStart = assembler->assemble(ParserAsm::Nop, "", 0, 0); // don't use mark, next instruction can be removed
-
-		assembler->assemble(ParserAsm::EnterContext, "", 0, 0);
-		assembler->assemble(ParserAsm::ContextSetStack, "", 0, 0);
-		linkFinally = assembler->assembleProgramCounter(ParserAsm::ContextSetFinally, nullptr, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryReturn, currentContextReturn, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryThrow, currentContextThrow, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryContinue, currentContextContinue, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryBreak, currentContextBreak, 0, 0);
-
-		retV = compileFile(fileName);
-		if (retV == VmParserError::None) {
-			context->includedFile.push(fileName);
-
-			assembler->assemble(ParserAsm::LeaveContext, "", 0, 0);
-			linkEntry = assembler->assemble(ParserAsm::EnterContext, "", 0, 0);
-			linkCallPC = assembler->assembleProgramCounter(ParserAsm::ContextSetPC, nullptr, 0, 0);
-
-			linkPC = assembler->assemble(ParserAsm::Nop, "", 0, 0);
-			assembler->linkProgramCounter(linkFinally, linkPC);
-
-			assembler->assemble(ParserAsm::ClearIncludedFile, "", 0, 0);
-
-			linkEnd = assembler->assembleProgramCounter(ParserAsm::InstructionListExtractAndDelete, linkBegin, 0, 0);
-			assembler->linkProgramCounter(linkBegin, linkEntry);
-			assembler->linkProgramCounter(linkEnd, currentContextReturn);
-			assembler->linkProgramCounter(linkCallPC, context->nextProgramCounter);
-			context->nextProgramCounter = linkStart;
-
-			assembler->resetLinks();
-			return 0;
-		};
-
-		InstructionList instructionList;
-		TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(linkBegin);
-		TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(assembler->assemble(ParserAsm::Nop, "", 0, 0));
-		context->instructionListExecutive->extractList(pcBegin, pcEnd);
-		instructionList.setList(pcBegin, pcEnd);
-		return retV;
-	};
-
-	int Executive::includeAndExecuteFileSkipLines(InstructionContext *context, const char *fileName, size_t skipLines) {
-		ProgramCounter *linkBegin;
-		ProgramCounter *linkStart;
-		ProgramCounter *linkEnd;
-		ProgramCounter *nextProgramCounter_;
-		ProgramCounter *currentProgramCounter_;
-		ProgramCounter *linkFinally;
-		ProgramCounter *linkCallPC;
-		ProgramCounter *linkPC;
-		ProgramCounter *linkEntry;
-		int retV;
-
-		linkBegin = assembler->assembleProgramCounter(ParserAsm::Goto, nullptr, 0, 0);
-		linkStart = assembler->assemble(ParserAsm::Nop, "", 0, 0); // don't use mark, next instruction can be removed
-
-		assembler->assemble(ParserAsm::EnterContext, "", 0, 0);
-		assembler->assemble(ParserAsm::ContextSetStack, "", 0, 0);
-		linkFinally = assembler->assembleProgramCounter(ParserAsm::ContextSetFinally, nullptr, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryReturn, currentContextReturn, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryThrow, currentContextThrow, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryContinue, currentContextContinue, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryBreak, currentContextBreak, 0, 0);
-
-		retV = compileFileSkipLines(fileName, skipLines);
-		if (retV == VmParserError::None) {
-			context->includedFile.push(fileName);
-
-			assembler->assemble(ParserAsm::LeaveContext, "", 0, 0);
-			linkEntry = assembler->assemble(ParserAsm::EnterContext, "", 0, 0);
-			linkCallPC = assembler->assembleProgramCounter(ParserAsm::ContextSetPC, nullptr, 0, 0);
-
-			linkPC = assembler->assemble(ParserAsm::Nop, "", 0, 0);
-			assembler->linkProgramCounter(linkFinally, linkPC);
-
-			assembler->assemble(ParserAsm::ClearIncludedFile, "", 0, 0);
-
-			linkEnd = assembler->assembleProgramCounter(ParserAsm::InstructionListExtractAndDelete, linkBegin, 0, 0);
-			assembler->linkProgramCounter(linkBegin, linkEntry);
-			assembler->linkProgramCounter(linkEnd, currentContextReturn);
-			assembler->linkProgramCounter(linkCallPC, context->nextProgramCounter);
-			context->nextProgramCounter = linkStart;
-
-			assembler->resetLinks();
-			return 0;
-		};
-
-		InstructionList instructionList;
-		TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(linkBegin);
-		TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(assembler->assemble(ParserAsm::Nop, "", 0, 0));
-		context->instructionListExecutive->extractList(pcBegin, pcEnd);
-		instructionList.setList(pcBegin, pcEnd);
-		return retV;
-	};
-
-	int Executive::executeExtension(InstructionContext *context, QuantumScriptExtensionProc extensionProc, void *extensionId) {
-		ProgramCounter *linkBegin;
-		ProgramCounter *linkStart;
-		ProgramCounter *linkEnd;
-		ProgramCounter *nextProgramCounter_;
-		ProgramCounter *currentProgramCounter_;
-		ProgramCounter *linkFinally;
-		ProgramCounter *linkCallPC;
-		ProgramCounter *linkPC;
-		ProgramCounter *linkEntry;
-		int retV;
-
-		linkBegin = assembler->assembleProgramCounter(ParserAsm::Goto, nullptr, 0, 0);
-		linkStart = assembler->assemble(ParserAsm::Nop, "", 0, 0); // don't use mark, next instruction can be removed
-
-		assembler->assemble(ParserAsm::EnterContext, "", 0, 0);
-		assembler->assemble(ParserAsm::ContextSetStack, "", 0, 0);
-		linkFinally = assembler->assembleProgramCounter(ParserAsm::ContextSetFinally, nullptr, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryReturn, currentContextReturn, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryThrow, currentContextThrow, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryContinue, currentContextContinue, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryBreak, currentContextBreak, 0, 0);
-
-		try {
-			extensionProc(this, extensionId);
-
-			assembler->assemble(ParserAsm::LeaveContext, "", 0, 0);
-			linkEntry = assembler->assemble(ParserAsm::EnterContext, "", 0, 0);
-			linkCallPC = assembler->assembleProgramCounter(ParserAsm::ContextSetPC, nullptr, 0, 0);
-
-			linkPC = assembler->assemble(ParserAsm::Nop, "", 0, 0);
-			assembler->linkProgramCounter(linkFinally, linkPC);
-
-			linkEnd = assembler->assembleProgramCounter(ParserAsm::InstructionListExtractAndDelete, linkBegin, 0, 0);
-			assembler->linkProgramCounter(linkBegin, linkEntry);
-			assembler->linkProgramCounter(linkEnd, currentContextReturn);
-			assembler->linkProgramCounter(linkCallPC, context->nextProgramCounter);
-			context->nextProgramCounter = linkStart;
-
-			assembler->resetLinks();
-			return 0;
-
-		} catch (...) {
-		};
-
-		InstructionList instructionList;
-		TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(linkBegin);
-		TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(assembler->assemble(ParserAsm::Nop, "", 0, 0));
-		context->instructionListExecutive->extractList(pcBegin, pcEnd);
-		instructionList.setList(pcBegin, pcEnd);
-		return VmParserError::Compile;
-	};
-
-	int Executive::compileString(const char *data_, const char *tag) {
-		Parser parser;
-		Input input;
-		MemoryRead in;
-		int retV;
-
-		retV = VmParserError::Compile;
-
-		if (in.open(data_, StringCore::length(data_))) {
-			if (input.init(&in)) {
-
-				String strSymbol;
-				if (tag) {
-					strSymbol = "!";
-					strSymbol << tag;
-				} else {
-#ifdef XYO_QUANTUMSCRIPT_STACK_TRACE_SHOW_MEMORY_SOURCE
-					strSymbol = "@";
-					strSymbol << data_;
-#endif
-				};
-
-				Symbol symbolSource = Context::getSymbol(strSymbol);
-				if (parser.init(&input, assembler, symbolSource)) {
-					retV = parser.parse();
-				};
-			};
-			in.close();
-		};
-		assembler->resetLinks();
-
-		errorInfo.compileError = retV;
-		errorInfo.compileLineNumber = input.lineNumber;
-		if (tag) {
-			errorInfo.compileFileName = tag;
-		} else {
-			errorInfo.compileFileName = "";
-		};
-
-		return retV;
-	};
-
-	int Executive::compileStringSkipLines(const char *data_, size_t skipLines, const char *tag) {
-		Parser parser;
-		Input input;
-		MemoryRead in;
-		int retV;
-
-		retV = VmParserError::Compile;
-
-		if (in.open(data_, StringCore::length(data_))) {
-			if (input.init(&in)) {
-
-				uint32_t lineNumber = input.lineNumber;
-				while (input.read()) {
-					if (input.lineNumber > lineNumber) {
-						lineNumber = input.lineNumber;
-						--skipLines;
-						if (skipLines == 0) {
-							break;
-						};
-					};
 				};
 
 				String strSymbol;
@@ -574,13 +509,12 @@ namespace XYO::QuantumScript {
 				};
 
 				Symbol symbolSource = Context::getSymbol(strSymbol);
-				if (parser.init(&input, assembler, symbolSource)) {
+				if (parser.init(&input, target, symbolSource)) {
 					retV = parser.parse();
 				};
 			};
 			in.close();
 		};
-		assembler->resetLinks();
 
 		errorInfo.compileError = retV;
 		errorInfo.compileLineNumber = input.lineNumber;
@@ -594,138 +528,109 @@ namespace XYO::QuantumScript {
 	};
 
 	int Executive::includeAndExecuteString(InstructionContext *context, const char *data_, const char *tag) {
-		ProgramCounter *linkBegin;
-		ProgramCounter *linkStart;
-		ProgramCounter *linkEnd;
-		ProgramCounter *nextProgramCounter_;
-		ProgramCounter *currentProgramCounter_;
-		ProgramCounter *linkFinally;
-		ProgramCounter *linkCallPC;
-		ProgramCounter *linkPC;
-		ProgramCounter *linkEntry;
-		int retV;
-
-		linkBegin = assembler->assembleProgramCounter(ParserAsm::Goto, nullptr, 0, 0);
-		linkStart = assembler->assemble(ParserAsm::Nop, "", 0, 0); // don't use mark, next instruction can be removed
-
-		assembler->assemble(ParserAsm::EnterContext, "", 0, 0);
-		assembler->assemble(ParserAsm::ContextSetStack, "", 0, 0);
-		linkFinally = assembler->assembleProgramCounter(ParserAsm::ContextSetFinally, nullptr, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryReturn, currentContextReturn, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryThrow, currentContextThrow, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryContinue, currentContextContinue, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryBreak, currentContextBreak, 0, 0);
-
-		retV = compileString(data_, tag);
+		ExecutiveInclude include;
+		includeBegin(include);
+		int retV = compileString(data_, tag);
 		if (retV == VmParserError::None) {
-			assembler->assemble(ParserAsm::LeaveContext, "", 0, 0);
-			linkEntry = assembler->assemble(ParserAsm::EnterContext, "", 0, 0);
-			linkCallPC = assembler->assembleProgramCounter(ParserAsm::ContextSetPC, nullptr, 0, 0);
-
-			linkPC = assembler->assemble(ParserAsm::Nop, "", 0, 0);
-			assembler->linkProgramCounter(linkFinally, linkPC);
-
-			linkEnd = assembler->assembleProgramCounter(ParserAsm::InstructionListExtractAndDelete, linkBegin, 0, 0);
-			assembler->linkProgramCounter(linkBegin, linkEntry);
-			assembler->linkProgramCounter(linkEnd, currentContextReturn);
-			assembler->linkProgramCounter(linkCallPC, context->nextProgramCounter);
-			context->nextProgramCounter = linkStart;
-
-			assembler->resetLinks();
+			includeEnd(context, include, false);
 			return 0;
 		};
-
-		InstructionList instructionList;
-		TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(linkBegin);
-		TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(assembler->assemble(ParserAsm::Nop, "", 0, 0));
-		context->instructionListExecutive->extractList(pcBegin, pcEnd);
-		instructionList.setList(pcBegin, pcEnd);
+		includeAbort(include);
 		return retV;
 	};
 
 	int Executive::includeAndExecuteStringSkipLines(InstructionContext *context, const char *data_, size_t skipLines, const char *tag) {
-		ProgramCounter *linkBegin;
-		ProgramCounter *linkStart;
-		ProgramCounter *linkEnd;
-		ProgramCounter *nextProgramCounter_;
-		ProgramCounter *currentProgramCounter_;
-		ProgramCounter *linkFinally;
-		ProgramCounter *linkCallPC;
-		ProgramCounter *linkPC;
-		ProgramCounter *linkEntry;
-		int retV;
-
-		linkBegin = assembler->assembleProgramCounter(ParserAsm::Goto, nullptr, 0, 0);
-		linkStart = assembler->assemble(ParserAsm::Nop, "", 0, 0); // don't use mark, next instruction can be removed
-
-		assembler->assemble(ParserAsm::EnterContext, "", 0, 0);
-		assembler->assemble(ParserAsm::ContextSetStack, "", 0, 0);
-		linkFinally = assembler->assembleProgramCounter(ParserAsm::ContextSetFinally, nullptr, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryReturn, currentContextReturn, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryThrow, currentContextThrow, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryContinue, currentContextContinue, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryBreak, currentContextBreak, 0, 0);
-
-		retV = compileStringSkipLines(data_, skipLines, tag);
+		ExecutiveInclude include;
+		includeBegin(include);
+		int retV = compileStringSkipLines(data_, skipLines, tag);
 		if (retV == VmParserError::None) {
-			assembler->assemble(ParserAsm::LeaveContext, "", 0, 0);
-			linkEntry = assembler->assemble(ParserAsm::EnterContext, "", 0, 0);
-			linkCallPC = assembler->assembleProgramCounter(ParserAsm::ContextSetPC, nullptr, 0, 0);
-
-			linkPC = assembler->assemble(ParserAsm::Nop, "", 0, 0);
-			assembler->linkProgramCounter(linkFinally, linkPC);
-
-			linkEnd = assembler->assembleProgramCounter(ParserAsm::InstructionListExtractAndDelete, linkBegin, 0, 0);
-			assembler->linkProgramCounter(linkBegin, linkEntry);
-			assembler->linkProgramCounter(linkEnd, currentContextReturn);
-			assembler->linkProgramCounter(linkCallPC, context->nextProgramCounter);
-			context->nextProgramCounter = linkStart;
-
-			assembler->resetLinks();
+			includeEnd(context, include, false);
 			return 0;
 		};
-
-		InstructionList instructionList;
-		TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(linkBegin);
-		TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(assembler->assemble(ParserAsm::Nop, "", 0, 0));
-		context->instructionListExecutive->extractList(pcBegin, pcEnd);
-		instructionList.setList(pcBegin, pcEnd);
+		includeAbort(include);
 		return retV;
 	};
 
-	void Executive::setVmFunction(const char *name, InstructionProcedure procedure, Variable *operand) {
-		ProgramCounter *linkFunctionBegin;
-		ProgramCounter *linkFunctionEnd;
-		ProgramCounter *linkFunctionEnter;
+	// The named units of a bundle are added to includeUnit
+	int Executive::includeAndExecuteBytecodeFile_(InstructionContext *context, const char *fileName) {
+		CodeUnit unit;
+		CodeUnitMap units;
+		String error;
 
+		errorInfo.compileFileName = fileName;
+		errorInfo.compileLineNumber = 0;
+		if (!Bytecode::loadFile(fileName, unit, error, &units)) {
+			errorInfo.compileError = VmParserError::Bytecode;
+			errorInfo.bytecodeError = error;
+			return VmParserError::Bytecode;
+		};
+		errorInfo.compileError = VmParserError::None;
+
+		CodeUnitMap::Node *scan;
+		for (scan = units.begin(); scan; scan = scan->successor()) {
+			includeUnit->set(scan->key, scan->value);
+		};
+
+		context->includedFile.push(fileName);
+		ExecutiveInclude include;
+		includeBegin(include);
+		assembler->append(unit);
+		includeEnd(context, include, true);
+		return 0;
+	};
+
+	int Executive::includeAndExecuteUnit(InstructionContext *context, CodeUnit &unit) {
+		ExecutiveInclude include;
+		includeBegin(include);
+		assembler->append(unit);
+		includeEnd(context, include, false);
+		return 0;
+	};
+
+	TPointer<Variable> Executive::newFunctionFromUnit(CodeUnit &unit, int functionHint) {
+		TPointer<Asm> unitAssembler;
+		unitAssembler.newMemory();
+
+		// the code is linked at the end of the instruction list, never executed in sequence
+		AsmLabel linkSkip = unitAssembler->assembleProgramCounter(ParserAsm::Goto, 0, 0, 0);
+		AsmLabel linkBegin = unitAssembler->assemble(ParserAsm::Nop, "", 0, 0);
+		unitAssembler->append(unit);
+		unitAssembler->assemble(ParserAsm::PushUndefined, "", 0, 0);
+		AsmLabel linkEnd = unitAssembler->assemble(ParserAsm::Return, "", 0, 0);
+		unitAssembler->linkProgramCounter(linkSkip, unitAssembler->assemble(ParserAsm::Nop, "", 0, 0));
+
+		Linker linker;
+		unitAssembler->link(linker, *(instructionList.value()));
+
+		TPointer<Variable> function(VariableVmFunction::newVariable(linker.getProgramCounter(linkBegin)));
+		((VariableVmFunction *)function.value())->valueEnd = linker.getProgramCounter(linkEnd);
+		((VariableVmFunction *)function.value())->functionHint = functionHint;
+#ifndef XYO_QUANTUMSCRIPT_DISABLE_CLOSURE
+		((VariableVmFunction *)function.value())->functionParent.newMemory();
+#endif
+		return function;
+	};
+
+	// Assemble the reference to "a.b.c(x,y)" for assign
+	// returns the index of '(' or of the end of name
+	size_t Executive::assembleNameReference(const char *name) {
 		String buf;
 		char bufx[2];
-		int lk;
-		int k;
-		int isFirst;
+		bool isFirst = true;
+		size_t k;
 
-		int isEmpty;
-		int retV;
-		int level;
-		char sLevel[32];
-
-		retV = 0;
-		isFirst = 1;
 		bufx[1] = 0;
-
 		for (k = 0; name[k] != 0; ++k) {
 			if (name[k] == '(') {
 				break;
 			};
 			if (name[k] == '.') {
-
 				if (isFirst) {
-					isFirst = 0;
+					isFirst = false;
 					assembler->assemble(ParserAsm::PushSymbol, buf, 0, 0);
 				} else {
 					assembler->assemble(ParserAsm::Reference, buf, 0, 0);
 				};
-
 				buf = "";
 				continue;
 			};
@@ -738,151 +643,63 @@ namespace XYO::QuantumScript {
 		} else {
 			assembler->assemble(ParserAsm::ReferenceObjectReference, buf, 0, 0);
 		};
+		return k;
+	};
 
-		linkFunctionBegin = assembler->assembleProgramCounter(ParserAsm::XPushFunction, nullptr, 0, 0);
-		linkFunctionEnd = assembler->assembleProgramCounter(ParserAsm::Goto, nullptr, 0, 0);
+	// "function(x,y)" from the arguments of "a.b.c(x,y)", k is the index of '('
+	static String functionSourceHeader(const char *name, size_t k) {
+		String fnSource = "function(";
+		bool isEmpty = true;
+		if (name[k] == '(') {
+			++k;
+			isEmpty = (name[k] == 0) || (name[k] == ')');
+		};
+		if (isEmpty) {
+			fnSource << ")";
+			return fnSource;
+		};
+		for (; name[k] != 0; ++k) {
+			fnSource << name[k];
+			if (name[k] == ')') {
+				break;
+			};
+		};
+		return fnSource;
+	};
+
+	void Executive::setVmFunction(const char *name, InstructionProcedure procedure, Variable *operand) {
+		AsmLabel linkFunctionBegin;
+		AsmLabel linkFunctionEnd;
+
+		assembleNameReference(name);
+
+		linkFunctionBegin = assembler->assembleProgramCounter(ParserAsm::XPushFunction, 0, 0, 0);
+		linkFunctionEnd = assembler->assembleProgramCounter(ParserAsm::Goto, 0, 0, 0);
 
 		assembler->linkProgramCounter(linkFunctionBegin, assembler->assemble(ParserAsm::Mark, "", 0, 0));
 
-		isEmpty = 0;
-		if (name[k] == '(') {
-			++k;
-			if (name[k] == 0) {
-				isEmpty = 1;
-			} else if (name[k] == ')') {
-				isEmpty = 1;
-			};
-		} else {
-			isEmpty = 1;
-		};
-
-		level = 0;
-
-		if (isEmpty) {
-		} else {
-			buf = "";
-			for (; name[k] != 0; ++k) {
-				if (name[k] == ')') {
-
-					/* - no need - */
-
-					break;
-				};
-				if (name[k] == ',') {
-
-					/* - no need - */
-
-					buf = "";
-					continue;
-				};
-				bufx[0] = name[k];
-				buf << bufx;
-			};
-		};
-
-		assembler->assembleDirect(InstructionVmCallNative, VariableNativeVmFunction::newVariable(procedure, operand));
+		assembler->assembleNative(ParserAsm::CallNative, VariableNativeVmFunction::newVariable(procedure, operand));
 
 		assembler->assemble(ParserAsm::PushUndefined, "", 0, 0);
 		assembler->linkProgramCounterEnd(linkFunctionBegin, assembler->assemble(ParserAsm::Return, "", 0, 0));
 
 		assembler->linkProgramCounter(linkFunctionEnd, assembler->assemble(ParserAsm::Assign, "", 0, 0));
 
-		assembler->resetLinks();
 	};
 
 	int Executive::setVmFunctionFromFile(const char *name, const char *fileName) {
-		ProgramCounter *linkFunctionBegin;
-		ProgramCounter *linkFunctionEnd;
-		ProgramCounter *linkFunctionEnter;
-
-		String buf;
-		char bufx[2];
-		int lk;
-		int k;
-		int isFirst;
-
-		int isEmpty;
+		AsmLabel linkFunctionBegin;
+		AsmLabel linkFunctionEnd;
 		int retV;
-		int level;
-		char sLevel[32];
 
-		retV = 0;
-		isFirst = 1;
+		size_t k = assembleNameReference(name);
 
-		bufx[1] = 0;
-
-		for (k = 0; name[k] != 0; ++k) {
-			if (name[k] == '(') {
-				break;
-			};
-			if (name[k] == '.') {
-
-				if (isFirst) {
-					isFirst = 0;
-					assembler->assemble(ParserAsm::PushSymbol, buf, 0, 0);
-				} else {
-					assembler->assemble(ParserAsm::Reference, buf, 0, 0);
-				};
-
-				buf = "";
-				continue;
-			};
-			bufx[0] = name[k];
-			buf << bufx;
-		};
-
-		if (isFirst) {
-			assembler->assemble(ParserAsm::PushObjectReference, buf, 0, 0);
-		} else {
-			assembler->assemble(ParserAsm::ReferenceObjectReference, buf, 0, 0);
-		};
-
-		linkFunctionBegin = assembler->assembleProgramCounter(ParserAsm::XPushFunction, nullptr, 0, 0);
-
-		linkFunctionEnd = assembler->assembleProgramCounter(ParserAsm::Goto, nullptr, 0, 0);
+		linkFunctionBegin = assembler->assembleProgramCounter(ParserAsm::XPushFunction, 0, 0, 0);
+		linkFunctionEnd = assembler->assembleProgramCounter(ParserAsm::Goto, 0, 0, 0);
 
 		assembler->linkProgramCounter(linkFunctionBegin, assembler->assemble(ParserAsm::Mark, "", 0, 0));
 
-		String fnSource = "function(";
-
-		isEmpty = 0;
-		if (name[k] == '(') {
-			++k;
-			if (name[k] == 0) {
-				isEmpty = 1;
-			} else if (name[k] == ')') {
-				isEmpty = 1;
-			};
-		} else {
-			isEmpty = 1;
-		};
-
-		level = 0;
-
-		if (isEmpty) {
-			fnSource << ")";
-		} else {
-			buf = "";
-			for (; name[k] != 0; ++k) {
-				fnSource << name[k];
-
-				if (name[k] == ')') {
-
-					/* - no need - */
-
-					break;
-				};
-				if (name[k] == ',') {
-
-					/* - no need - */
-
-					buf = "";
-					continue;
-				};
-				bufx[0] = name[k];
-				buf << bufx;
-			};
-		};
+		String fnSource = functionSourceHeader(name, k);
 
 		String content;
 		if (!Shell::fileGetContents(fileName, content)) {
@@ -901,101 +718,22 @@ namespace XYO::QuantumScript {
 
 		assembler->linkProgramCounter(linkFunctionEnd, assembler->assemble(ParserAsm::Assign, "", 0, 0));
 
-		assembler->resetLinks();
 		return retV;
 	};
 
 	int Executive::setVmFunctionFromString(const char *name, const char *data, const char *tag) {
-		ProgramCounter *linkFunctionBegin;
-		ProgramCounter *linkFunctionEnd;
-		ProgramCounter *linkFunctionEnter;
-
-		String buf;
-		char bufx[2];
-		int lk;
-		int k;
-		int isFirst;
-
-		int isEmpty;
+		AsmLabel linkFunctionBegin;
+		AsmLabel linkFunctionEnd;
 		int retV;
-		int level;
-		char sLevel[32];
 
-		isFirst = 1;
-		bufx[1] = 0;
+		size_t k = assembleNameReference(name);
 
-		for (k = 0; name[k] != 0; ++k) {
-			if (name[k] == '(') {
-				break;
-			};
-			if (name[k] == '.') {
-
-				if (isFirst) {
-					isFirst = 0;
-					assembler->assemble(ParserAsm::PushSymbol, buf, 0, 0);
-				} else {
-					assembler->assemble(ParserAsm::Reference, buf, 0, 0);
-				};
-
-				buf = "";
-				continue;
-			};
-			bufx[0] = name[k];
-			buf << bufx;
-		};
-
-		if (isFirst) {
-			assembler->assemble(ParserAsm::PushObjectReference, buf, 0, 0);
-		} else {
-			assembler->assemble(ParserAsm::ReferenceObjectReference, buf, 0, 0);
-		};
-
-		String fnSource = "function(";
-
-		linkFunctionBegin = assembler->assembleProgramCounter(ParserAsm::XPushFunction, nullptr, 0, 0);
-
-		linkFunctionEnd = assembler->assembleProgramCounter(ParserAsm::Goto, nullptr, 0, 0);
+		linkFunctionBegin = assembler->assembleProgramCounter(ParserAsm::XPushFunction, 0, 0, 0);
+		linkFunctionEnd = assembler->assembleProgramCounter(ParserAsm::Goto, 0, 0, 0);
 
 		assembler->linkProgramCounter(linkFunctionBegin, assembler->assemble(ParserAsm::Mark, "", 0, 0));
 
-		isEmpty = 0;
-		if (name[k] == '(') {
-			++k;
-			if (name[k] == 0) {
-				isEmpty = 1;
-			} else if (name[k] == ')') {
-				isEmpty = 1;
-			};
-		} else {
-			isEmpty = 1;
-		};
-
-		level = 0;
-
-		if (isEmpty) {
-			fnSource << ")";
-		} else {
-			buf = "";
-			for (; name[k] != 0; ++k) {
-				fnSource << name[k];
-				if (name[k] == ')') {
-
-					/* - no need - */
-
-					break;
-				};
-				if (name[k] == ',') {
-
-					/* - no need - */
-
-					buf = "";
-					continue;
-				};
-				bufx[0] = name[k];
-				buf << bufx;
-			};
-		};
-
+		String fnSource = functionSourceHeader(name, k);
 		fnSource << "{" << data << "}";
 
 		retV = compileString(data, tag);
@@ -1008,108 +746,52 @@ namespace XYO::QuantumScript {
 
 		assembler->linkProgramCounter(linkFunctionEnd, assembler->assemble(ParserAsm::Assign, "", 0, 0));
 
-		assembler->resetLinks();
 		return retV;
 	};
 
 	int Executive::setVmFunctionFromFileX(InstructionContext *context, const char *name, const char *fileName) {
-		ProgramCounter *linkBegin;
-		ProgramCounter *linkStart;
-		ProgramCounter *linkEnd;
-		ProgramCounter *nextProgramCounter_;
-		ProgramCounter *currentProgramCounter_;
-		ProgramCounter *linkFinally;
-		ProgramCounter *linkCallPC;
-		ProgramCounter *linkPC;
-		ProgramCounter *linkEntry;
-		int retV;
-
-		linkBegin = assembler->assembleProgramCounter(ParserAsm::Goto, nullptr, 0, 0);
-		linkStart = assembler->assemble(ParserAsm::Nop, "", 0, 0); // don't use mark, next instruction can be removed
-
-		assembler->assemble(ParserAsm::EnterContext, "", 0, 0);
-		assembler->assemble(ParserAsm::ContextSetStack, "", 0, 0);
-		linkFinally = assembler->assembleProgramCounter(ParserAsm::ContextSetFinally, nullptr, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryReturn, currentContextReturn, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryThrow, currentContextThrow, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryContinue, currentContextContinue, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryBreak, currentContextBreak, 0, 0);
-
-		retV = setVmFunctionFromFile(name, fileName);
+		ExecutiveInclude include;
+		includeBegin(include);
+		int retV = setVmFunctionFromFile(name, fileName);
 		if (retV == VmParserError::None) {
-			assembler->assemble(ParserAsm::LeaveContext, "", 0, 0);
-			linkEntry = assembler->assemble(ParserAsm::EnterContext, "", 0, 0);
-			linkCallPC = assembler->assembleProgramCounter(ParserAsm::ContextSetPC, nullptr, 0, 0);
-
-			linkPC = assembler->assemble(ParserAsm::Nop, "", 0, 0);
-			assembler->linkProgramCounter(linkFinally, linkPC);
-
-			linkEnd = assembler->assembleProgramCounter(ParserAsm::InstructionListExtractAndDelete, linkBegin, 0, 0);
-			assembler->linkProgramCounter(linkBegin, linkEntry);
-			assembler->linkProgramCounter(linkEnd, currentContextReturn);
-			assembler->linkProgramCounter(linkCallPC, context->nextProgramCounter);
-			context->nextProgramCounter = linkStart;
-
-			assembler->resetLinks();
+			includeEnd(context, include, false);
 			return 0;
 		};
-
-		InstructionList instructionList;
-		TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(linkBegin);
-		TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(assembler->assemble(ParserAsm::Nop, "", 0, 0));
-		context->instructionListExecutive->extractList(pcBegin, pcEnd);
-		instructionList.setList(pcBegin, pcEnd);
+		includeAbort(include);
 		return retV;
 	};
 
 	int Executive::setVmFunctionFromStringX(InstructionContext *context, const char *name, const char *data, const char *tag) {
-		ProgramCounter *linkBegin;
-		ProgramCounter *linkStart;
-		ProgramCounter *linkEnd;
-		ProgramCounter *nextProgramCounter_;
-		ProgramCounter *currentProgramCounter_;
-		ProgramCounter *linkFinally;
-		ProgramCounter *linkCallPC;
-		ProgramCounter *linkPC;
-		ProgramCounter *linkEntry;
-		int retV;
-
-		linkBegin = assembler->assembleProgramCounter(ParserAsm::Goto, nullptr, 0, 0);
-		linkStart = assembler->assemble(ParserAsm::Nop, "", 0, 0); // don't use mark, next instruction can be removed
-
-		assembler->assemble(ParserAsm::EnterContext, "", 0, 0);
-		assembler->assemble(ParserAsm::ContextSetStack, "", 0, 0);
-		linkFinally = assembler->assembleProgramCounter(ParserAsm::ContextSetFinally, nullptr, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryReturn, currentContextReturn, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryThrow, currentContextThrow, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryContinue, currentContextContinue, 0, 0);
-		assembler->assembleProgramCounter(ParserAsm::ContextSetTryBreak, currentContextBreak, 0, 0);
-
-		retV = setVmFunctionFromString(name, data, tag);
+		ExecutiveInclude include;
+		includeBegin(include);
+		int retV = setVmFunctionFromString(name, data, tag);
 		if (retV == VmParserError::None) {
-			assembler->assemble(ParserAsm::LeaveContext, "", 0, 0);
-			linkEntry = assembler->assemble(ParserAsm::EnterContext, "", 0, 0);
-			linkCallPC = assembler->assembleProgramCounter(ParserAsm::ContextSetPC, nullptr, 0, 0);
-
-			linkPC = assembler->assemble(ParserAsm::Nop, "", 0, 0);
-			assembler->linkProgramCounter(linkFinally, linkPC);
-
-			linkEnd = assembler->assembleProgramCounter(ParserAsm::InstructionListExtractAndDelete, linkBegin, 0, 0);
-			assembler->linkProgramCounter(linkBegin, linkEntry);
-			assembler->linkProgramCounter(linkEnd, currentContextReturn);
-			assembler->linkProgramCounter(linkCallPC, context->nextProgramCounter);
-			context->nextProgramCounter = linkStart;
-
-			assembler->resetLinks();
+			includeEnd(context, include, false);
 			return 0;
 		};
-
-		InstructionList instructionList;
-		TDoubleEndedQueue<InstructionX>::Node *pcBegin = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(linkBegin);
-		TDoubleEndedQueue<InstructionX>::Node *pcEnd = reinterpret_cast<TDoubleEndedQueue<InstructionX>::Node *>(assembler->assemble(ParserAsm::Nop, "", 0, 0));
-		context->instructionListExecutive->extractList(pcBegin, pcEnd);
-		instructionList.setList(pcBegin, pcEnd);
+		includeAbort(include);
 		return retV;
+	};
+
+	// reset and keep for reuse, allocation and init of a context is expensive
+	void Executive::callContextRelease(TPointer<InstructionContext> &fnContext) {
+		if (callContextPoolSize >= XYO_QUANTUMSCRIPT_CALL_CONTEXT_POOL_SIZE) {
+			return;
+		};
+		fnContext->empty();
+		fnContext->contextStack->empty();
+		fnContext->stackTrace.deleteMemory();
+		fnContext->returnValue = Context::getValueUndefined();
+		fnContext->error = InstructionError::None;
+		fnContext->errorInfo = "";
+		fnContext->includedFile.empty();
+		fnContext->listIncludeOnce.empty();
+		fnContext->pcContext = nullptr;
+		fnContext->functionContext = nullptr;
+		fnContext->currentProgramCounter = nullptr;
+		fnContext->nextProgramCounter = nullptr;
+		callContextPool.push(fnContext);
+		++callContextPoolSize;
 	};
 
 	TPointer<Variable> Executive::callVmFunction(Variable *fnProcedure, Variable *fnThis, Variable *fnParameters) {
@@ -1128,17 +810,22 @@ namespace XYO::QuantumScript {
 				};
 				if (TIsType<VariableArray>(fnParametersX)) {
 					TPointer<InstructionContext> fnContext;
-					fnContext.newMemory();
+					if (!callContextPool.pop(fnContext)) {
+						fnContext.newMemory();
+						fnContext->executiveSuper = this;
+						fnContext->init();
+						fnContext->contextStack.newMemory();
+					} else {
+						--callContextPoolSize;
+					};
 
 					fnContext->configPrintStackTraceLimit = configPrintStackTraceLimit;
-					fnContext->executiveSuper = this;
-					fnContext->init();
-					fnContext->contextStack.newMemory();
+					fnContext->returnValue = Context::getValueUndefined();
 					fnContext->contextStack->enterMaster(fnContext->functionContext);
 					fnContext->functionContext->this_ = Context::getValueUndefined();
 					fnContext->pcContext = fnContext->functionContext;
 					fnContext->pcContext->pc_ = currentContextExit;
-					fnContext->instructionListExecutive = assembler->instructionList.value();
+					fnContext->instructionListExecutive = instructionList.value();
 
 					fnContext->error = InstructionError::None;
 					fnContext->currentProgramCounter = nullptr;
@@ -1146,7 +833,7 @@ namespace XYO::QuantumScript {
 
 					TPointer<Variable> functionArguments;
 					functionArguments = VariableArray::newVariable();
-					(*(((VariableArray *)(functionArguments.value()))->value))[0] = fnParameters;
+					(*(((VariableArray *)(functionArguments.value()))->value))[0] = fnParametersX;
 
 					TPointer<Variable> fnThisX(fnThis);
 
@@ -1164,7 +851,9 @@ namespace XYO::QuantumScript {
 					// -- executor
 					int error = Executive::execute_(fnContext.value());
 					if (error == InstructionError::None) {
-						return fnContext->returnValue;
+						TPointer<Variable> retV(fnContext->returnValue);
+						callContextRelease(fnContext);
+						return retV;
 					};
 					if (error == InstructionError::Throw) {
 						TPointer<Variable> throwValue;
@@ -1174,9 +863,12 @@ namespace XYO::QuantumScript {
 						ExecutiveX::setStackTrace(stackTrace->toString());
 						stackTrace.deleteMemory();
 						fnContext->stackTrace.deleteMemory();
+						callContextRelease(fnContext);
 						throw Error((throwValue->getPropertyBySymbol(Context::getSymbol("message")))->toString());
 					};
-					throw Error(fnContext->errorInfo);
+					String errorInfo(fnContext->errorInfo);
+					callContextRelease(fnContext);
+					throw Error(errorInfo);
 				};
 			};
 		};
@@ -1188,59 +880,18 @@ namespace XYO::QuantumScript {
 			throw Error("setFunction require native function");
 		};
 
-		String buf;
-		char bufx[2];
-		int lk;
-		int k;
-		int isFirst;
-
-		int isEmpty;
-		int retV;
-		int level;
-		char sLevel[32];
-
-		retV = 0;
-		isFirst = 1;
-
-		bufx[1] = 0;
-
-		for (k = 0; name[k] != 0; ++k) {
-			if (name[k] == '(') {
-				break;
-			};
-			if (name[k] == '.') {
-
-				if (isFirst) {
-					isFirst = 0;
-					assembler->assemble(ParserAsm::PushSymbol, buf, 0, 0);
-				} else {
-					assembler->assemble(ParserAsm::Reference, buf, 0, 0);
-				};
-
-				buf = "";
-				continue;
-			};
-			bufx[0] = name[k];
-			buf << bufx;
-		};
-
-		if (isFirst) {
-			assembler->assemble(ParserAsm::PushObjectReference, buf, 0, 0);
-		} else {
-			assembler->assemble(ParserAsm::ReferenceObjectReference, buf, 0, 0);
-		};
-
-		assembler->assembleDirect(InstructionVmSetFunction, nativeFunction);
+		assembleNameReference(name);
+		assembler->assembleNative(ParserAsm::SetFunction, nativeFunction);
 	};
 
 	void Executive::compileStringX(const char *source, const char *tag) {
 		if (compileString(source, tag) != 0) {
 			char buf[2048];
 			if (strlen(errorInfo.compileFileName) == 0) {
-				sprintf(buf, "Compile error on line %u",
+				snprintf(buf, sizeof(buf), "Compile error on line %u",
 				        errorInfo.compileLineNumber);
 			} else {
-				sprintf(buf, "Compile error in %s line %u",
+				snprintf(buf, sizeof(buf), "Compile error in %s line %u",
 				        errorInfo.compileFileName,
 				        errorInfo.compileLineNumber);
 			};
@@ -1330,7 +981,6 @@ namespace XYO::QuantumScript {
 		TMemory<VariableStackTrace>::initMemory();
 		TMemory<VariableVmProgramCounter>::initMemory();
 		TMemory<VariableVmFunction>::initMemory();
-		TMemory<Stack>::initMemory();
 		TMemory<Array>::initMemory();
 		ExecutiveContext::initMemory();
 	};
@@ -1340,6 +990,12 @@ namespace XYO::QuantumScript {
 			assembler->endProcessing();
 		};
 		assembler.deleteMemory();
+		includeUnit.deleteMemory();
+		includeFunction.deleteMemory();
+		if (instructionList) {
+			instructionList->empty();
+		};
+		instructionList.deleteMemory();
 		includePath.deleteMemory();
 		//
 		//
@@ -1359,6 +1015,8 @@ namespace XYO::QuantumScript {
 		extensionList.deleteMemory();
 		internalExtensionList.deleteMemory();
 
+		callContextPool.empty();
+		callContextPoolSize = 0;
 		instructionContext.deleteMemory();
 		Context::deleteContext();
 	};

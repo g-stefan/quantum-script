@@ -106,47 +106,47 @@ namespace XYO::QuantumScript {
 		return error;
 	};
 
-	ProgramCounter *Parser::assembleProgramCounter(int type, ProgramCounter *value) {
-		ProgramCounter *retV;
+	AsmLabel Parser::assembleProgramCounter(int type, AsmLabel value) {
+		AsmLabel retV;
 		retV = assembler->assembleProgramCounter(type, value, sourceSymbol, sourceLineNumber);
-		if (retV == nullptr) {
+		if (retV == 0) {
 			error = ParserError::Compile;
 		};
 		return retV;
 	};
 
-	ProgramCounter *Parser::assemble(int type) {
-		ProgramCounter *retV;
+	AsmLabel Parser::assemble(int type) {
+		AsmLabel retV;
 		retV = assembler->assemble(type, "", sourceSymbol, sourceLineNumber);
-		if (retV == nullptr) {
+		if (retV == 0) {
 			error = ParserError::Compile;
 		};
 		return retV;
 	};
 
-	ProgramCounter *Parser::assemble1(int type, const char *value) {
-		ProgramCounter *retV;
+	AsmLabel Parser::assemble1(int type, const char *value) {
+		AsmLabel retV;
 		retV = assembler->assemble(type, value, sourceSymbol, sourceLineNumber);
-		if (retV == nullptr) {
+		if (retV == 0) {
 			error = ParserError::Compile;
 		};
 		return retV;
 	};
 
-	ProgramCounter *Parser::assembleX(int type, const char *value, const char *valueX) {
-		ProgramCounter *retV;
+	AsmLabel Parser::assembleX(int type, const char *value, const char *valueX) {
+		AsmLabel retV;
 		retV = assembler->assembleX(type, value, valueX, sourceSymbol, sourceLineNumber);
-		if (retV == nullptr) {
+		if (retV == 0) {
 			error = ParserError::Compile;
 		};
 		return retV;
 	};
 
-	void Parser::linkProgramCounter(ProgramCounter *old_, ProgramCounter *new_) {
+	void Parser::linkProgramCounter(AsmLabel old_, AsmLabel new_) {
 		assembler->linkProgramCounter(old_, new_);
 	};
 
-	void Parser::linkProgramCounterEnd(ProgramCounter *old_, ProgramCounter *new_) {
+	void Parser::linkProgramCounterEnd(AsmLabel old_, AsmLabel new_) {
 		assembler->linkProgramCounterEnd(old_, new_);
 	};
 

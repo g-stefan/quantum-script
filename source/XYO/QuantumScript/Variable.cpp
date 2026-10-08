@@ -14,6 +14,7 @@
 #include <XYO/QuantumScript/Context.hpp>
 #include <XYO/QuantumScript/VariableNull.hpp>
 #include <XYO/QuantumScript/VariableNumber.hpp>
+#include <XYO/QuantumScript/VariableBoolean.hpp>
 #include <XYO/QuantumScript/VariableString.hpp>
 #include <XYO/QuantumScript/VariableArray.hpp>
 #include <XYO/QuantumScript/VariableSymbol.hpp>
@@ -298,6 +299,9 @@ namespace XYO::QuantumScript {
 			if (TIsType<VariableNull>(this)) {
 				return true;
 			};
+			if (TIsType<VariableBoolean>(this)) {
+				return ((static_cast<VariableBoolean *>(this))->value == (static_cast<VariableBoolean *>(b))->value);
+			};
 			if (TIsType<VariableNumber>(this)) {
 				if (isnan((static_cast<VariableNumber *>(this))->value)) {
 					return false;
@@ -361,6 +365,9 @@ namespace XYO::QuantumScript {
 		if (TIsType<VariableNull>(this)) {
 			return true;
 		};
+		if (TIsType<VariableBoolean>(this)) {
+			return ((static_cast<VariableBoolean *>(this))->value == (static_cast<VariableBoolean *>(b))->value);
+		};
 		if (TIsType<VariableNumber>(this)) {
 			if (isnan((static_cast<VariableNumber *>(this))->value)) {
 				return false;
@@ -384,21 +391,56 @@ namespace XYO::QuantumScript {
 
 	int Variable::compare(Variable *b) {
 		if (isString() && b->isString()) {
-			return (toString()).compare(b->toString());
+			int retV = (toString()).compare(b->toString());
+			if (retV < 0) {
+				return -1;
+			};
+			if (retV > 0) {
+				return 1;
+			};
+			return 0;
 		};
+
 		Number na = toNumber();
-
-		if (isnan(na)) {
-			return -1;
-		};
-
 		Number nb = b->toNumber();
 
-		if (isnan(nb)) {
-			return -1;
+		if (!(isnan(na) || isnan(nb))) {
+			if (na < nb) {
+				return -1;
+			};
+			if (na > nb) {
+				return 1;
+			};
+			return 0;
 		};
 
-		return (na - nb);
+		// total order, required by sort and associative array keys
+		// values without a number representation are placed before numbers
+		if (!isnan(nb)) {
+			return -1;
+		};
+		if (!isnan(na)) {
+			return 1;
+		};
+
+		// both without number representation, order by type, then by identity
+		if (!isSameType(b)) {
+			int retV = getVariableType().compare(b->getVariableType());
+			if (retV != 0) {
+				return (retV < 0) ? -1 : 1;
+			};
+			return ((uintptr_t)(objectType_->type) < (uintptr_t)(b->objectType_->type)) ? -1 : 1;
+		};
+		if (TIsTypeExact<VariableUndefined>(this) || TIsType<VariableNull>(this) || TIsType<VariableNumber>(this)) {
+			return 0;
+		};
+		if ((uintptr_t)this < (uintptr_t)b) {
+			return -1;
+		};
+		if ((uintptr_t)this > (uintptr_t)b) {
+			return 1;
+		};
+		return 0;
 	};
 
 	TPointer<Variable> Variable::operatorPlus(Variable *b) {
@@ -410,5 +452,17 @@ namespace XYO::QuantumScript {
 
 	bool Variable::isFunction() {
 		return false;
+	};
+
+	void OperandStack::grow() {
+		size_t newCapacity = (capacity_ == 0) ? 256 : capacity_ * 2;
+		TPointer<Variable> *newStack = new TPointer<Variable>[newCapacity];
+		size_t k;
+		for (k = 0; k < size_; ++k) {
+			newStack[k] = std::move(stack_[k]);
+		};
+		delete[] stack_;
+		stack_ = newStack;
+		capacity_ = newCapacity;
 	};
 };

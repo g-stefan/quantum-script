@@ -15,10 +15,9 @@
 namespace XYO::QuantumScript {
 
 	bool ObjectIteratorValue::next(Variable *out) {
-		PropertyNode *next_;
-		if (value) {
-			out->referenceSet(value->value);
-			value = value->successor();
+		PropertyNode *node = nextNode();
+		if (node) {
+			out->referenceSet(node->value);
 			return true;
 		};
 		out->referenceSet(Context::getValueUndefined());

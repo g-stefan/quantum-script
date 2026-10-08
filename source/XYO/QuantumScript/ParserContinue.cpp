@@ -15,14 +15,18 @@ namespace XYO::QuantumScript {
 
 	bool Parser::statementContinue() {
 		if (token.isSymbolX("continue")) {
-			if (parserContext.head->value->isLoop) {
-				assembleProgramCounter(ParserAsm::Goto, parserContext.head->value->pcContinue);
-				return true;
-			};
-			assemble(ParserAsm::Continue);
+			assembleContinue();
 			return true;
 		};
 		return false;
+	};
+
+	// a loop without context (for, while): goto, else continue of the contexts
+	AsmLabel Parser::assembleContinue() {
+		if (parserContext.head->value->isLoop) {
+			return assembleProgramCounter(ParserAsm::Goto, parserContext.head->value->pcContinue);
+		};
+		return assemble(ParserAsm::Continue);
 	};
 
 };

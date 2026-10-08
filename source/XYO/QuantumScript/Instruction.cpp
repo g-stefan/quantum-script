@@ -37,6 +37,89 @@
 
 namespace XYO::QuantumScript {
 
+	//
+	// Bitwise helpers - 64 bit integer semantics, no undefined behavior
+	//
+
+	static inline UInteger bitwiseToUInteger(Number value) {
+		// modulo 2^64, as two's complement
+		// 2^64 + negative value can't be represented exactly, use unsigned negation
+		bool isNegative = false;
+		value = trunc(value);
+		if (value < 0) {
+			isNegative = true;
+			value = -value;
+		};
+		UInteger retV = (UInteger)fmod(value, 18446744073709551616.0);
+		if (isNegative) {
+			return ((UInteger)0) - retV;
+		};
+		return retV;
+	};
+
+	static inline Integer bitwiseToInteger(Number value) {
+		return (Integer)bitwiseToUInteger(value);
+	};
+
+	static inline bool bitwiseIsValid(Number value) {
+		return !(isnan(value) || isinf(value));
+	};
+
+	static inline Number bitwiseOr(Number value, Number x) {
+		if (!(bitwiseIsValid(value) && bitwiseIsValid(x))) {
+			return NAN;
+		};
+		return (Number)(bitwiseToInteger(value) | bitwiseToInteger(x));
+	};
+
+	static inline Number bitwiseAnd(Number value, Number x) {
+		if (!(bitwiseIsValid(value) && bitwiseIsValid(x))) {
+			return NAN;
+		};
+		return (Number)(bitwiseToInteger(value) & bitwiseToInteger(x));
+	};
+
+	static inline Number bitwiseXor(Number value, Number x) {
+		if (!(bitwiseIsValid(value) && bitwiseIsValid(x))) {
+			return NAN;
+		};
+		return (Number)(bitwiseToInteger(value) ^ bitwiseToInteger(x));
+	};
+
+	static inline Number bitwiseLeftShift(Number value, Number x) {
+		if (!(bitwiseIsValid(value) && bitwiseIsValid(x)) || (x < 0)) {
+			return NAN;
+		};
+		UInteger shift = bitwiseToUInteger(x);
+		if (shift >= 64) {
+			return 0;
+		};
+		return (Number)((Integer)(bitwiseToUInteger(value) << shift));
+	};
+
+	static inline Number bitwiseRightShift(Number value, Number x) {
+		if (!(bitwiseIsValid(value) && bitwiseIsValid(x)) || (x < 0)) {
+			return NAN;
+		};
+		Integer value_ = bitwiseToInteger(value);
+		UInteger shift = bitwiseToUInteger(x);
+		if (shift >= 64) {
+			return (value_ < 0) ? -1 : 0;
+		};
+		return (Number)(value_ >> shift);
+	};
+
+	static inline Number bitwiseRightShiftZero(Number value, Number x) {
+		if (!(bitwiseIsValid(value) && bitwiseIsValid(x)) || (x < 0)) {
+			return NAN;
+		};
+		UInteger shift = bitwiseToUInteger(x);
+		if (shift >= 64) {
+			return 0;
+		};
+		return (Number)(bitwiseToUInteger(value) >> shift);
+	};
+
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmPushUndefined) {
 #ifdef XYO_QUANTUMSCRIPT_DEBUG_RUNTIME
 		printf(">%p    push-undefined\n", context->currentProgramCounter);
@@ -163,14 +246,7 @@ namespace XYO::QuantumScript {
 		Number value = operand1->referenceToNumber();
 		Number x = operand2->toNumber();
 
-		if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
-			context->push(operand1->referenceSet(VariableNumber::newVariable(
-			    NAN)));
-			return;
-		};
-
-		context->push(operand1->referenceSet(VariableNumber::newVariable(
-		    ((Integer)value) % ((Integer)x))));
+		context->push(operand1->referenceSet(VariableNumber::newVariable(fmod(value, x))));
 	};
 
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorAssignBitwiseOr) {
@@ -185,15 +261,7 @@ namespace XYO::QuantumScript {
 		Number value = operand1->referenceToNumber();
 		Number x = operand2->toNumber();
 
-		if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
-
-			context->push(operand1->referenceSet(VariableNumber::newVariable(
-			    NAN)));
-			return;
-		};
-
-		context->push(operand1->referenceSet(VariableNumber::newVariable(
-		    ((Integer)value) | ((Integer)x))));
+		context->push(operand1->referenceSet(VariableNumber::newVariable(bitwiseOr(value, x))));
 	};
 
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorAssignBitwiseAnd) {
@@ -208,15 +276,7 @@ namespace XYO::QuantumScript {
 		Number value = operand1->referenceToNumber();
 		Number x = operand2->toNumber();
 
-		if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
-
-			context->push(operand1->referenceSet(VariableNumber::newVariable(
-			    NAN)));
-			return;
-		};
-
-		context->push(operand1->referenceSet(VariableNumber::newVariable(
-		    ((Integer)value) & ((Integer)x))));
+		context->push(operand1->referenceSet(VariableNumber::newVariable(bitwiseAnd(value, x))));
 	};
 
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorAssignBitwiseLeftShift) {
@@ -231,15 +291,7 @@ namespace XYO::QuantumScript {
 		Number value = operand1->referenceToNumber();
 		Number x = operand2->toNumber();
 
-		if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
-
-			context->push(operand1->referenceSet(VariableNumber::newVariable(
-			    NAN)));
-			return;
-		};
-
-		context->push(operand1->referenceSet(VariableNumber::newVariable(
-		    ((Integer)value) << ((Integer)x))));
+		context->push(operand1->referenceSet(VariableNumber::newVariable(bitwiseLeftShift(value, x))));
 	};
 
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorAssignBitwiseRightShift) {
@@ -254,15 +306,7 @@ namespace XYO::QuantumScript {
 		Number value = operand1->referenceToNumber();
 		Number x = operand2->toNumber();
 
-		if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
-
-			context->push(operand1->referenceSet(VariableNumber::newVariable(
-			    NAN)));
-			return;
-		};
-
-		context->push(operand1->referenceSet(VariableNumber::newVariable(
-		    ((Integer)value) >> ((Integer)x))));
+		context->push(operand1->referenceSet(VariableNumber::newVariable(bitwiseRightShift(value, x))));
 	};
 
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorAssignBitwiseRightShiftZero) {
@@ -277,15 +321,7 @@ namespace XYO::QuantumScript {
 		Number value = operand1->referenceToNumber();
 		Number x = operand2->toNumber();
 
-		if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
-
-			context->push(operand1->referenceSet(VariableNumber::newVariable(
-			    NAN)));
-			return;
-		};
-
-		context->push(operand1->referenceSet(VariableNumber::newVariable(
-		    ((UInteger)value) >> ((Integer)x))));
+		context->push(operand1->referenceSet(VariableNumber::newVariable(bitwiseRightShiftZero(value, x))));
 	};
 
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorAssignBitwiseXor) {
@@ -300,15 +336,7 @@ namespace XYO::QuantumScript {
 		Number value = operand1->referenceToNumber();
 		Number x = operand2->toNumber();
 
-		if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
-
-			context->push(operand1->referenceSet(VariableNumber::newVariable(
-			    NAN)));
-			return;
-		};
-
-		context->push(operand1->referenceSet(VariableNumber::newVariable(
-		    ((Integer)value) ^ ((Integer)x))));
+		context->push(operand1->referenceSet(VariableNumber::newVariable(bitwiseXor(value, x))));
 	};
 
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorEqual) {
@@ -520,11 +548,7 @@ namespace XYO::QuantumScript {
 
 		Number value = operand1->toNumber();
 		Number x = operand2->toNumber();
-		if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
-			context->push(VariableNumber::newVariable(NAN));
-			return;
-		};
-		context->push(VariableNumber::newVariable(((Integer)value) | ((Integer)x)));
+		context->push(VariableNumber::newVariable(bitwiseOr(value, x)));
 	};
 
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorLogicalAnd) {
@@ -556,11 +580,7 @@ namespace XYO::QuantumScript {
 
 		Number value = operand1->toNumber();
 		Number x = operand2->toNumber();
-		if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
-			context->push(VariableNumber::newVariable(NAN));
-			return;
-		};
-		context->push(VariableNumber::newVariable(((Integer)value) & ((Integer)x)));
+		context->push(VariableNumber::newVariable(bitwiseAnd(value, x)));
 	};
 
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorBitwiseNot) {
@@ -576,7 +596,7 @@ namespace XYO::QuantumScript {
 			context->push(VariableNumber::newVariable(NAN));
 			return;
 		};
-		context->push(VariableNumber::newVariable(~((Integer)value)));
+		context->push(VariableNumber::newVariable((Number)(~bitwiseToInteger(value))));
 	};
 
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorBitwiseLeftShift) {
@@ -589,11 +609,7 @@ namespace XYO::QuantumScript {
 
 		Number value = operand1->toNumber();
 		Number x = operand2->toNumber();
-		if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
-			context->push(VariableNumber::newVariable(NAN));
-			return;
-		};
-		context->push(VariableNumber::newVariable(((Integer)value) << ((Integer)x)));
+		context->push(VariableNumber::newVariable(bitwiseLeftShift(value, x)));
 	};
 
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorBitwiseRightShift) {
@@ -607,11 +623,7 @@ namespace XYO::QuantumScript {
 
 		Number value = operand1->toNumber();
 		Number x = operand2->toNumber();
-		if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
-			context->push(VariableNumber::newVariable(NAN));
-			return;
-		};
-		context->push(VariableNumber::newVariable(((Integer)value) >> ((Integer)x)));
+		context->push(VariableNumber::newVariable(bitwiseRightShift(value, x)));
 	};
 
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorBitwiseRightShiftZero) {
@@ -624,11 +636,7 @@ namespace XYO::QuantumScript {
 
 		Number value = operand1->toNumber();
 		Number x = operand2->toNumber();
-		if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
-			context->push(VariableNumber::newVariable(NAN));
-			return;
-		};
-		context->push(VariableNumber::newVariable(((UInteger)value) >> ((Integer)x)));
+		context->push(VariableNumber::newVariable(bitwiseRightShiftZero(value, x)));
 	};
 
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorBitwiseXor) {
@@ -642,11 +650,7 @@ namespace XYO::QuantumScript {
 
 		Number value = operand1->toNumber();
 		Number x = operand2->toNumber();
-		if (isnan(value) || isinf(value) || isnan(x) || isinf(x) || signbit(x)) {
-			context->push(VariableNumber::newVariable(NAN));
-			return;
-		};
-		context->push(VariableNumber::newVariable(((Integer)value) ^ ((Integer)x)));
+		context->push(VariableNumber::newVariable(bitwiseXor(value, x)));
 	};
 
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmOperatorIn) {
@@ -708,6 +712,19 @@ namespace XYO::QuantumScript {
 		context->contextStack->leave(context->pcContext, context->functionContext);
 	};
 
+	// try / finally: the try context was left, the finally runs in a new context;
+	// break / continue in the finally leave the try, at its end continue at next_.
+	// The pending value (return value, exception) is above stackDepth, dropped
+	// by a return / break / continue / throw out of the finally
+	static inline void enterTryFinally(InstructionContext *context, ProgramCounter *tryFinally_, ProgramCounter *next_, ProgramCounter *tryBreak_, ProgramCounter *tryContinue_, size_t stackDepth) {
+		context->contextStack->enter(context->pcContext);
+		context->pcContext->finallyNext_ = next_;
+		context->pcContext->break_ = tryBreak_;
+		context->pcContext->continue_ = tryContinue_;
+		context->pcContext->stackLink_ = stackDepth + 1;
+		context->nextProgramCounter = tryFinally_;
+	};
+
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmBreak) {
 #ifdef XYO_QUANTUMSCRIPT_DEBUG_RUNTIME
 		printf(">%p    break\n", context->currentProgramCounter);
@@ -716,9 +733,12 @@ namespace XYO::QuantumScript {
 
 		ProgramCounter *break_;
 		ProgramCounter *finally_;
+		ProgramCounter *tryFinally_;
 		ProgramCounter *tryBreak_;
+		ProgramCounter *tryContinue_;
+		size_t stackLink_;
 
-		do {
+		for (;;) {
 			if (context->pcContext == nullptr) {
 				break;
 			};
@@ -728,12 +748,23 @@ namespace XYO::QuantumScript {
 
 			break_ = context->pcContext->break_;
 			finally_ = context->pcContext->finally_;
+			tryFinally_ = context->pcContext->tryFinally_;
 			tryBreak_ = context->pcContext->tryBreak_;
+			tryContinue_ = context->pcContext->tryContinue_;
+			stackLink_ = context->pcContext->stackLink_;
 			context->contextStack->leave(context->pcContext, context->functionContext);
-			if (finally_ != nullptr) {
-				if (tryBreak_ != nullptr) {
-
-					context->push(VariableVmProgramCounter::newVariable(tryBreak_));
+			if (stackLink_) {
+				context->unwindTo(stackLink_ - 1);
+			};
+			if (tryBreak_ != nullptr) {
+				if (tryFinally_ != nullptr) {
+					enterTryFinally(context, tryFinally_, tryBreak_, tryBreak_, tryContinue_, context->getDepth());
+					return;
+				};
+				// the finally ends with return to pc_
+				if (finally_ != nullptr) {
+					context->contextStack->enter(context->pcContext);
+					context->pcContext->pc_ = tryBreak_;
 					context->nextProgramCounter = finally_;
 					return;
 				};
@@ -742,7 +773,7 @@ namespace XYO::QuantumScript {
 				context->nextProgramCounter = break_;
 				return;
 			};
-		} while (break_ == nullptr);
+		};
 
 		context->error = InstructionError::Error;
 		context->errorInfo = "break without loop/switch";
@@ -757,10 +788,12 @@ namespace XYO::QuantumScript {
 
 		ProgramCounter *continue_;
 		ProgramCounter *finally_;
+		ProgramCounter *tryFinally_;
+		ProgramCounter *tryBreak_;
 		ProgramCounter *tryContinue_;
-		TPointer<Variable> pc;
+		size_t stackLink_;
 
-		do {
+		for (;;) {
 			if (context->pcContext == nullptr) {
 				break;
 			};
@@ -770,11 +803,23 @@ namespace XYO::QuantumScript {
 
 			continue_ = context->pcContext->continue_;
 			finally_ = context->pcContext->finally_;
+			tryFinally_ = context->pcContext->tryFinally_;
+			tryBreak_ = context->pcContext->tryBreak_;
 			tryContinue_ = context->pcContext->tryContinue_;
+			stackLink_ = context->pcContext->stackLink_;
 			context->contextStack->leave(context->pcContext, context->functionContext);
-			if (finally_ != nullptr) {
-				if (tryContinue_ != nullptr) {
-					context->push(VariableVmProgramCounter::newVariable(tryContinue_));
+			if (stackLink_) {
+				context->unwindTo(stackLink_ - 1);
+			};
+			if (tryContinue_ != nullptr) {
+				if (tryFinally_ != nullptr) {
+					enterTryFinally(context, tryFinally_, tryContinue_, tryBreak_, tryContinue_, context->getDepth());
+					return;
+				};
+				// the finally ends with return to pc_
+				if (finally_ != nullptr) {
+					context->contextStack->enter(context->pcContext);
+					context->pcContext->pc_ = tryContinue_;
 					context->nextProgramCounter = finally_;
 					return;
 				};
@@ -783,7 +828,7 @@ namespace XYO::QuantumScript {
 				context->nextProgramCounter = continue_;
 				return;
 			};
-		} while (continue_ == nullptr);
+		};
 
 		context->error = InstructionError::Error;
 		context->errorInfo = "continue without loop";
@@ -830,7 +875,12 @@ namespace XYO::QuantumScript {
 
 		ProgramCounter *return_;
 		ProgramCounter *finally_;
+		ProgramCounter *tryFinally_;
 		ProgramCounter *tryReturn_;
+		ProgramCounter *tryBreak_;
+		ProgramCounter *tryContinue_;
+		size_t stackLink_;
+		size_t stackDepth;
 
 		// coroutine - reset this function
 		if (context->functionContext->thisFunction_) {
@@ -838,17 +888,36 @@ namespace XYO::QuantumScript {
 			((VariableVmFunction *)(context->functionContext->thisFunction_.value()))->value = ((VariableVmFunction *)(context->functionContext->thisFunction_.value()))->originalValue;
 		};
 
-		do {
+		for (;;) {
 			if (context->pcContext == nullptr) {
 				break;
 			};
 
 			return_ = context->pcContext->pc_;
 			finally_ = context->pcContext->finally_;
+			tryFinally_ = context->pcContext->tryFinally_;
 			tryReturn_ = context->pcContext->tryReturn_;
+			tryBreak_ = context->pcContext->tryBreak_;
+			tryContinue_ = context->pcContext->tryContinue_;
+			stackLink_ = context->pcContext->stackLink_;
 			context->contextStack->leave(context->pcContext, context->functionContext);
-			if (finally_ != nullptr) {
-				if (tryReturn_ != nullptr) {
+			// the return value stays on top
+			if (stackLink_ && (context->getDepth() >= stackLink_)) {
+				TPointer<Variable> value(context->popTransfer());
+				context->unwindTo(stackLink_ - 1);
+				context->push(value);
+			};
+			if (tryReturn_ != nullptr) {
+				if (tryFinally_ != nullptr) {
+					stackDepth = context->getDepth();
+					if (stackDepth) {
+						--stackDepth;
+					};
+					enterTryFinally(context, tryFinally_, tryReturn_, tryBreak_, tryContinue_, stackDepth);
+					return;
+				};
+				// the finally ends with return to pc_
+				if (finally_ != nullptr) {
 					context->contextStack->enter(context->pcContext);
 					context->pcContext->pc_ = tryReturn_;
 					context->nextProgramCounter = finally_;
@@ -859,7 +928,7 @@ namespace XYO::QuantumScript {
 				context->nextProgramCounter = return_;
 				return;
 			};
-		} while (return_ == nullptr);
+		};
 		context->error = InstructionError::Error;
 		context->errorInfo = "return without call";
 		context->nextProgramCounter = nullptr;
@@ -873,7 +942,10 @@ namespace XYO::QuantumScript {
 
 		ProgramCounter *catch_;
 		ProgramCounter *finally_;
+		ProgramCounter *tryFinally_;
 		ProgramCounter *tryThrow_;
+		ProgramCounter *tryBreak_;
+		ProgramCounter *tryContinue_;
 
 		TPointer<Variable> operand1(context->popTransfer());
 
@@ -900,17 +972,15 @@ namespace XYO::QuantumScript {
 			};
 			catch_ = context->pcContext->catch_;
 			finally_ = context->pcContext->finally_;
+			tryFinally_ = context->pcContext->tryFinally_;
 			tryThrow_ = context->pcContext->tryThrow_;
+			tryBreak_ = context->pcContext->tryBreak_;
+			tryContinue_ = context->pcContext->tryContinue_;
 
 			// reset context stack if set ...
 			if (context->pcContext->stackLink_) {
-				while (context->pcContext->stackLink_ != context->head) {
-					if (context->isEmpty()) {
-						break;
-					};
-					context->pop();
-				};
-				context->pcContext->stackLink_ = nullptr;
+				context->unwindTo(context->pcContext->stackLink_ - 1);
+				context->pcContext->stackLink_ = 0;
 			};
 			context->contextStack->leave(context->pcContext, context->functionContext);
 
@@ -919,6 +989,14 @@ namespace XYO::QuantumScript {
 				context->nextProgramCounter = catch_;
 				return;
 			};
+			if (tryThrow_ != nullptr) {
+				if (tryFinally_ != nullptr) {
+					enterTryFinally(context, tryFinally_, tryThrow_, tryBreak_, tryContinue_, context->getDepth());
+					context->push(operand1);
+					return;
+				};
+			};
+			// the finally ends with return to pc_
 			if (finally_ != nullptr) {
 				if (tryThrow_ != nullptr) {
 					context->push(operand1);
@@ -1294,7 +1372,7 @@ namespace XYO::QuantumScript {
 		context->pcContext->pc_ = context->nextProgramCounter;
 
 		if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::This) {
-			context->functionContext->this_ = VariableUndefined::newVariable();
+			context->functionContext->this_ = Context::getValueUndefined();
 		};
 		if ((((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Yield) ||
 		    (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Self)) {
@@ -1376,7 +1454,7 @@ namespace XYO::QuantumScript {
 		context->pcContext->pc_ = context->nextProgramCounter;
 
 		if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::This) {
-			context->functionContext->this_ = VariableUndefined::newVariable();
+			context->functionContext->this_ = Context::getValueUndefined();
 		};
 		if ((((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Yield) ||
 		    (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Self)) {
@@ -1426,7 +1504,7 @@ namespace XYO::QuantumScript {
 			((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 			context->contextStack->push(contextTemp);
 
-			context->functionContext->this_ = operand2;
+			(context->contextStack->head)->value->functionContext->this_ = operand2;
 
 			(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
 			(context->contextStack->head)->value->functionContext->functionArguments = functionArguments;
@@ -1498,6 +1576,7 @@ namespace XYO::QuantumScript {
 
 		if (!TIsType<VariableVmFunction>(operand1)) {
 			context->push(operand1->functionApply(operand2, functionArguments));
+			return;
 		};
 
 		if (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
@@ -1506,7 +1585,7 @@ namespace XYO::QuantumScript {
 			((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 			context->contextStack->push(contextTemp);
 
-			context->functionContext->this_ = operand2;
+			(context->contextStack->head)->value->functionContext->this_ = operand2;
 			(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
 			(context->contextStack->head)->value->functionContext->functionArguments = functionArguments;
 
@@ -1578,7 +1657,7 @@ namespace XYO::QuantumScript {
 				((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
 				context->contextStack->push(contextTemp);
 
-				context->functionContext->this_ = operand2;
+				(context->contextStack->head)->value->functionContext->this_ = operand2;
 				(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
 				(context->contextStack->head)->value->functionContext->functionArguments = static_cast<VariableArray *>(operandX.value());
 
@@ -1669,7 +1748,7 @@ namespace XYO::QuantumScript {
 				((VariableVmFunction *)result.value())->coroutineContext->pop(contextTemp);
 				context->contextStack->push(contextTemp);
 
-				context->functionContext->this_ = operand1;
+				(context->contextStack->head)->value->functionContext->this_ = operand1;
 				(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
 				(context->contextStack->head)->value->functionContext->functionArguments = functionArguments;
 
@@ -1865,7 +1944,7 @@ namespace XYO::QuantumScript {
 #ifndef XYO_QUANTUMSCRIPT_DISABLE_CLOSURE
 		functionArguments = context->getFunctionArgumentsLevel(((VariableArgumentLevel *)operand)->level);
 		if (functionArguments) {
-			context->push(VariableReferenceIndex::newVariable(context->functionContext->functionArguments, ((VariableArgumentLevel *)operand)->value));
+			context->push(VariableReferenceIndex::newVariable(functionArguments, ((VariableArgumentLevel *)operand)->value));
 			return;
 		};
 #endif
@@ -2314,7 +2393,7 @@ namespace XYO::QuantumScript {
 		printf(">%p    context-set-stack\n", context->currentProgramCounter);
 		fflush(stdout);
 #endif
-		context->pcContext->stackLink_ = context->head;
+		context->pcContext->stackLink_ = context->getDepth() + 1;
 	};
 
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmClearIncludedFile) {
@@ -2340,6 +2419,35 @@ namespace XYO::QuantumScript {
 		context->push(VariableNumber::newVariable((operandX->toNumber()) * (operandX->toNumber())));
 	};
 
+	// Tail call reuse the current function context, not possible for coroutines:
+	// - the called function must save/restore its own context on yield
+	// - the current function must be reset on return
+	static inline bool isTailCallAllowed(InstructionContext *context, Variable *function_) {
+		VariableVmFunction *fn = (VariableVmFunction *)function_;
+		if (fn->functionHint & ParserFunctionHint::Yield) {
+			return false;
+		};
+		if (!fn->coroutineContext->isEmpty()) {
+			return false;
+		};
+		if (context->functionContext->thisFunction_) {
+			if (((VariableVmFunction *)(context->functionContext->thisFunction_.value()))->functionHint & ParserFunctionHint::Yield) {
+				return false;
+			};
+		};
+		// in a try: the catch / finally runs after the call
+		ExecutiveContext::Node *scan;
+		for (scan = context->contextStack->head; scan; scan = scan->next) {
+			if (scan->value == static_cast<ExecutiveContextPc *>(context->functionContext)) {
+				break;
+			};
+			if (scan->value->catch_ || scan->value->finally_ || scan->value->tryFinally_) {
+				return false;
+			};
+		};
+		return true;
+	};
+
 	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmXTailCall) {
 #ifdef XYO_QUANTUMSCRIPT_DEBUG_RUNTIME
 		printf(">%p    x-tail-call\n", context->currentProgramCounter);
@@ -2355,20 +2463,11 @@ namespace XYO::QuantumScript {
 			return;
 		};
 
-		if (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
-			TPointer<ExecutiveContextPc> contextTemp;
-			((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
-			context->contextStack->push(contextTemp);
-			(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
-			(context->contextStack->head)->value->functionContext->functionArguments = functionArguments;
-			while (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
-				((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
-				context->contextStack->push(contextTemp);
-			};
-			context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
-
-			context->pcContext = (context->contextStack->head)->value;
-			context->functionContext = context->pcContext->functionContext;
+		// coroutine - fallback to normal call, return follows
+		if (!isTailCallAllowed(context, operand1)) {
+			context->push(operand1);
+			context->push(functionArguments.value());
+			InstructionVmXCall(context, operand);
 			return;
 		};
 
@@ -2378,7 +2477,7 @@ namespace XYO::QuantumScript {
 #endif
 
 		if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::This) {
-			context->functionContext->this_ = VariableUndefined::newVariable();
+			context->functionContext->this_ = Context::getValueUndefined();
 		};
 		if ((((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Yield) ||
 		    (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Self)) {
@@ -2416,20 +2515,10 @@ namespace XYO::QuantumScript {
 			return;
 		};
 
-		if (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
-			TPointer<ExecutiveContextPc> contextTemp;
-			((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
-			context->contextStack->push(contextTemp);
-			(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
-			(context->contextStack->head)->value->functionContext->functionArguments = functionArguments;
-			while (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
-				((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
-				context->contextStack->push(contextTemp);
-			};
-			context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
-
-			context->pcContext = (context->contextStack->head)->value;
-			context->functionContext = context->pcContext->functionContext;
+		// coroutine - fallback to normal call, return follows
+		if (!isTailCallAllowed(context, operand1)) {
+			context->push(functionArguments.value());
+			InstructionVmXCallSymbol(context, operand);
 			return;
 		};
 
@@ -2439,7 +2528,7 @@ namespace XYO::QuantumScript {
 #endif
 
 		if (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::This) {
-			context->functionContext->this_ = VariableUndefined::newVariable();
+			context->functionContext->this_ = Context::getValueUndefined();
 		};
 		if ((((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Yield) ||
 		    (((VariableVmFunction *)operand1.value())->functionHint & ParserFunctionHint::Self)) {
@@ -2473,26 +2562,12 @@ namespace XYO::QuantumScript {
 			return;
 		};
 
-		if (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
-			TPointer<ExecutiveContextPc> contextTemp;
-
-			((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
-			context->contextStack->push(contextTemp);
-
-			context->functionContext->this_ = operand2;
-
-			(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
-			(context->contextStack->head)->value->functionContext->functionArguments = functionArguments;
-			while (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
-				((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
-				context->contextStack->push(contextTemp);
-			};
-
-			context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
-
-			context->pcContext = (context->contextStack->head)->value;
-			context->functionContext = context->pcContext->functionContext;
-
+		// coroutine - fallback to normal call, return follows
+		if (!isTailCallAllowed(context, operand1)) {
+			context->push(operand2);
+			context->push(operand1);
+			context->push(functionArguments.value());
+			InstructionVmXCallThis(context, operand);
 			return;
 		};
 
@@ -2539,25 +2614,12 @@ namespace XYO::QuantumScript {
 			return;
 		};
 
-		if (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
-			TPointer<ExecutiveContextPc> contextTemp;
-
-			((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
-			context->contextStack->push(contextTemp);
-
-			context->functionContext->this_ = operand2;
-			(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
-			(context->contextStack->head)->value->functionContext->functionArguments = functionArguments;
-
-			while (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
-				((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
-				context->contextStack->push(contextTemp);
-			};
-
-			context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
-
-			context->pcContext = (context->contextStack->head)->value;
-			context->functionContext = context->pcContext->functionContext;
+		// coroutine - fallback to normal call, return follows
+		if (!isTailCallAllowed(context, operand1)) {
+			context->push(operand1);
+			context->push(operand2);
+			context->push(functionArguments.value());
+			InstructionVmXCallThisModeCall(context, operand);
 			return;
 		};
 
@@ -2608,27 +2670,12 @@ namespace XYO::QuantumScript {
 				return;
 			};
 
-			if (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
-				TPointer<ExecutiveContextPc> contextTemp;
-
-				((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
-				context->contextStack->push(contextTemp);
-
-				context->functionContext->this_ = operand2;
-				(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
-				(context->contextStack->head)->value->functionContext->functionArguments = static_cast<VariableArray *>(operandX.value());
-
-				while (!(((VariableVmFunction *)operand1.value())->coroutineContext->isEmpty())) {
-					((VariableVmFunction *)operand1.value())->coroutineContext->pop(contextTemp);
-					context->contextStack->push(contextTemp);
-				};
-
-				context->nextProgramCounter = ((VariableVmFunction *)operand1.value())->value;
-
-				// functionArguments->decReferenceCount();
-
-				context->pcContext = (context->contextStack->head)->value;
-				context->functionContext = context->pcContext->functionContext;
+			// coroutine - fallback to normal call, return follows
+			if (!isTailCallAllowed(context, operand1)) {
+				context->push(operand1);
+				context->push(operand2);
+				context->push(functionArguments.value());
+				InstructionVmXCallThisModeApply(context, operand);
 				return;
 			};
 
@@ -2674,25 +2721,11 @@ namespace XYO::QuantumScript {
 				return;
 			};
 
-			if (!(((VariableVmFunction *)result.value())->coroutineContext->isEmpty())) {
-				TPointer<ExecutiveContextPc> contextTemp;
-
-				((VariableVmFunction *)result.value())->coroutineContext->pop(contextTemp);
-				context->contextStack->push(contextTemp);
-
-				context->functionContext->this_ = operand1;
-				(context->contextStack->head)->value->pc_ = context->nextProgramCounter;
-				(context->contextStack->head)->value->functionContext->functionArguments = functionArguments;
-
-				while (!(((VariableVmFunction *)result.value())->coroutineContext->isEmpty())) {
-					((VariableVmFunction *)result.value())->coroutineContext->pop(contextTemp);
-					context->contextStack->push(contextTemp);
-				};
-
-				context->nextProgramCounter = ((VariableVmFunction *)result.value())->value;
-
-				context->pcContext = (context->contextStack->head)->value;
-				context->functionContext = context->pcContext->functionContext;
+			// coroutine - fallback to normal call, return follows
+			if (!isTailCallAllowed(context, result)) {
+				context->push(operand1);
+				context->push(functionArguments.value());
+				InstructionVmXCallWithThisReference(context, operand);
 				return;
 			};
 
@@ -2747,6 +2780,33 @@ namespace XYO::QuantumScript {
 		fflush(stdout);
 #endif
 		context->pcContext->pc_ = (((VariableVmProgramCounter *)operand)->value);
+	};
+
+	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmContextSetTryFinally) {
+#ifdef XYO_QUANTUMSCRIPT_DEBUG_RUNTIME
+		printf(">%p    context-set-try-finally %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *)operand)->value);
+		fflush(stdout);
+#endif
+		context->pcContext->tryFinally_ = (((VariableVmProgramCounter *)operand)->value);
+	};
+
+	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmContextSetFinallyNext) {
+#ifdef XYO_QUANTUMSCRIPT_DEBUG_RUNTIME
+		printf(">%p    context-set-finally-next %p\n", context->currentProgramCounter, ((VariableVmProgramCounter *)operand)->value);
+		fflush(stdout);
+#endif
+		context->pcContext->finallyNext_ = (((VariableVmProgramCounter *)operand)->value);
+	};
+
+	// the end of a finally: leave its context, the pending value stays on the stack
+	XYO_QUANTUMSCRIPT_INSTRUCTION_IMPLEMENT(VmFinallyEnd) {
+#ifdef XYO_QUANTUMSCRIPT_DEBUG_RUNTIME
+		printf(">%p    finally-end\n", context->currentProgramCounter);
+		fflush(stdout);
+#endif
+		ProgramCounter *next_ = context->pcContext->finallyNext_;
+		context->contextStack->leave(context->pcContext, context->functionContext);
+		context->nextProgramCounter = next_;
 	};
 
 };

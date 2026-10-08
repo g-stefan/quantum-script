@@ -1,5 +1,6 @@
 {
 	"solution" : {
+		"namespace" : "xyo",
 		"name" : "quantum-script",
 		"type" : "xyo-cpp",
 		"projects" : [
@@ -44,12 +45,36 @@
 				"SPDX-License-Identifier": "MIT",
 				"sourcePath" : "XYO/QuantumScript.Extension/Console",
 				"dependency" : [
-					"quantum-script.static",
+					"quantum-script.static"
 				],
 				"dependencyDefines" : [
 					"XYO_QUANTUMSCRIPT_EXTENSION_CONSOLE_LIBRARY"
 				],
 				"linkVersion": "quantum-script--console",
+				"crt": "static"
+			},
+			{
+				"name" : "quantum-script.native-runtime",
+				"make" : "dll-or-lib",
+				"SPDX-License-Identifier": "MIT",
+				"sourcePath" : "XYO/QuantumScript.NativeRuntime",
+				"dependency" : [
+					"quantum-script"
+				]
+			},
+			{
+				"name": "quantum-script.native-runtime.static",
+				"make": "lib",
+				"category": "make",
+				"SPDX-License-Identifier": "MIT",
+				"sourcePath" : "XYO/QuantumScript.NativeRuntime",
+				"dependency" : [
+					"quantum-script.static"
+				],
+				"dependencyDefines" : [
+					"XYO_QUANTUMSCRIPT_NATIVERUNTIME_LIBRARY"
+				],
+				"linkVersion": "quantum-script.native-runtime",
 				"crt": "static"
 			},
 			{

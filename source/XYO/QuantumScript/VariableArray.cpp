@@ -44,17 +44,34 @@ namespace XYO::QuantumScript {
 		return Variable::getPropertyBySymbol(symbolId);
 	};
 
-	TPointer<Variable> VariableArray::getPropertyByIndex(size_t index) {
-		TPointerX<Variable> &retV = (*value)[index];
-		if (!retV) {
-			retV = VariableUndefined::newVariable();
+	// valid array index: finite, not negative, number or numeric string
+	static bool toArrayIndex(Variable *index, size_t &out) {
+		Number nr = index->toNumber();
+		if (isnan(nr) || isinf(nr) || (nr < 0) || (nr > 4294967295.0)) {
+			return false;
 		};
-		return retV;
+		out = (size_t)nr;
+		return true;
+	};
+
+	// read access, must not change the array
+	TPointer<Variable> VariableArray::getPropertyByIndex(size_t index) {
+		if (index < value->length()) {
+			TPointerX<Variable> &retV = (*value)[index];
+			if (retV) {
+				return retV;
+			};
+		};
+		return Context::getValueUndefined();
 	};
 
 	TPointer<Variable> VariableArray::getPropertyByVariable(Variable *index) {
 		if (TIsType<VariableNumber>(index)) {
-			return getPropertyByIndex(index->toIndex());
+			size_t index_;
+			if (toArrayIndex(index, index_)) {
+				return getPropertyByIndex(index_);
+			};
+			return Context::getValueUndefined();
 		};
 		if (TIsType<VariableSymbol>(index)) {
 			if ((static_cast<VariableSymbol *>(index))->value == Context::getSymbolLength()) {
@@ -69,17 +86,24 @@ namespace XYO::QuantumScript {
 	};
 
 	void VariableArray::setPropertyByVariable(Variable *index, Variable *valueToSet) {
-		(*value)[index->toIndex()] = valueToSet;
+		size_t index_;
+		if (toArrayIndex(index, index_)) {
+			(*value)[index_] = valueToSet;
+			return;
+		};
+		throw Error("invalid array index");
 	};
 
 	bool VariableArray::deletePropertyByIndex(size_t index) {
-		value->remove(index);
-		return true;
+		return value->remove(index);
 	};
 
 	bool VariableArray::deletePropertyByVariable(Variable *index) {
-		value->remove(index->toIndex());
-		return true;
+		size_t index_;
+		if (toArrayIndex(index, index_)) {
+			return value->remove(index_);
+		};
+		return false;
 	};
 
 	Variable *VariableArray::instancePrototype() {
@@ -112,15 +136,23 @@ namespace XYO::QuantumScript {
 		int k;
 		VariableArray *out = (VariableArray *)newVariable();
 		for (k = 0; k < value->length(); ++k) {
-			((*(out->value))[k]) = ((*value)[k])->clone(inSymbolList);
+			TPointerX<Variable> &item = (*value)[k];
+			if (item) {
+				((*(out->value))[k]) = item->clone(inSymbolList);
+				continue;
+			};
+			((*(out->value))[k]) = VariableUndefined::newVariable();
 		};
 		return out;
 	};
 
 	bool VariableArray::hasPropertyByVariable(Variable *variable) {
 		if (TIsType<VariableNumber>(variable)) {
-			if ((static_cast<VariableNumber *>(variable))->value < value->length()) {
-				return true;
+			size_t index_;
+			if (toArrayIndex(variable, index_)) {
+				if (index_ < value->length()) {
+					return true;
+				};
 			};
 		};
 		if (TIsType<VariableSymbol>(variable)) {
@@ -143,7 +175,7 @@ namespace XYO::QuantumScript {
 			if (scan > 0) {
 				retV << ",";
 			};
-			retV << (((*value)[scan])->toString());
+			retV << (getPropertyByIndex(scan)->toString());
 		};
 		return retV;
 	};
@@ -156,7 +188,7 @@ namespace XYO::QuantumScript {
 			if (scan > 0) {
 				retV << with_;
 			};
-			retV << (((*value)[scan])->toString());
+			retV << (getPropertyByIndex(scan)->toString());
 		};
 		return retV;
 	};

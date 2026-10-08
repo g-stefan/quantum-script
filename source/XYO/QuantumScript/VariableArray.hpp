@@ -11,6 +11,10 @@
 #	include <XYO/QuantumScript/Variable.hpp>
 #endif
 
+#ifndef XYO_QUANTUMSCRIPT_CONTEXT_HPP
+#	include <XYO/QuantumScript/Context.hpp>
+#endif
+
 namespace XYO::QuantumScript {
 
 	class VariableArray;
@@ -58,7 +62,7 @@ namespace XYO::QuantumScript {
 			inline TPointerX<Variable> &index(uint32_t index_) {
 				TPointerX<Variable> &retV = (*value)[index_];
 				if (!retV) {
-					retV = VariableUndefined::newVariable();
+					retV = Context::getValueUndefined();
 				};
 				return retV;
 			};

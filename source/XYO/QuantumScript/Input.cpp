@@ -30,6 +30,8 @@ namespace XYO::QuantumScript {
 		error = InputError::None;
 		doCapture = false;
 		capture = "";
+		captureBegin.empty();
+		capturePrefix.empty();
 		return true;
 	};
 

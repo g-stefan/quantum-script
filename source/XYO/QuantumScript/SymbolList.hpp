@@ -27,6 +27,8 @@ namespace XYO::QuantumScript {
 			XYO_QUANTUMSCRIPT_EXPORT SymbolList();
 
 			XYO_QUANTUMSCRIPT_EXPORT Symbol getSymbol(String name);
+			// find only, a symbol that does not exist is not created
+			XYO_QUANTUMSCRIPT_EXPORT bool findSymbol(const String &name, Symbol &out);
 			XYO_QUANTUMSCRIPT_EXPORT String getSymbolMirror(Symbol id);
 
 			XYO_QUANTUMSCRIPT_EXPORT static void initMemory();

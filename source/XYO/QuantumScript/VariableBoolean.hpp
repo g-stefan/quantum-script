@@ -37,7 +37,10 @@ namespace XYO::QuantumScript {
 
 			XYO_QUANTUMSCRIPT_EXPORT VariableBoolean();
 
+			// shared value, do not change value
 			XYO_QUANTUMSCRIPT_EXPORT static Variable *newVariable(bool value);
+			// new value
+			XYO_QUANTUMSCRIPT_EXPORT static Variable *newVariableX(bool value);
 
 			XYO_QUANTUMSCRIPT_EXPORT String getVariableType();
 

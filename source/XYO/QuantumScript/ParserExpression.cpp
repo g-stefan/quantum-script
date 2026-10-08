@@ -38,13 +38,13 @@ namespace XYO::QuantumScript {
 		isOk = 0;
 
 		if (backOperator->asmType == ParserAsm::OperatorConditional) {
-			ProgramCounter *linkIf;
-			linkIf = assembleProgramCounter(ParserAsm::IfFalseGoto, nullptr);
+			AsmLabel linkIf;
+			linkIf = assembleProgramCounter(ParserAsm::IfFalseGoto, 0);
 			if (expression(0)) {
 				token.reset();
 				if (token.is1(":")) {
-					ProgramCounter *linkElse;
-					linkElse = assembleProgramCounter(ParserAsm::Goto, nullptr);
+					AsmLabel linkElse;
+					linkElse = assembleProgramCounter(ParserAsm::Goto, 0);
 					linkProgramCounter(linkIf, assemble(ParserAsm::Mark));
 					if (expression(0)) {
 						// Nop, don't use Mark (can be replaced by optimizer, runtime error)
@@ -262,7 +262,7 @@ namespace XYO::QuantumScript {
 		return false;
 	};
 
-	ProgramCounter *Parser::expressionProcessToken(Token *token_) {
+	AsmLabel Parser::expressionProcessToken(Token *token_) {
 		int index;
 		int level;
 		char buffer1[22];
@@ -286,12 +286,12 @@ namespace XYO::QuantumScript {
 					return assemble1(ParserAsm::OperatorReferenceDeleteReference, token_->value);
 				};
 				error = ParserError::Compile;
-				return nullptr;
+				return 0;
 			};
 
 			if (token_->type == TokenType::Call) {
 				error = ParserError::Compile;
-				return nullptr;
+				return 0;
 			} else if (token_->type == TokenType::Index) {
 				tokenLastAsm = ParserAsm::OperatorReferenceReference;
 				tokenLastValue = "";
@@ -299,42 +299,42 @@ namespace XYO::QuantumScript {
 			} else if (token_->type == TokenType::Symbol) {
 				if (token_->is("undefined")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("null")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("this")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("self")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("true")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("false")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("NaN")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("Infinity")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("arguments")) {
 					(functionHint.head)->value |= ParserFunctionHint::Arguments;
 				};
 				if (token_->is("global")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 
 				tokenLastAsm = ParserAsm::ReferenceObjectReference;
@@ -343,42 +343,42 @@ namespace XYO::QuantumScript {
 			} else if (token_->type == TokenType::FirstSymbol) {
 				if (token_->is("undefined")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("null")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("this")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("self")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("true")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("false")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("NaN")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("Infinity")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("arguments")) {
 					(functionHint.head)->value |= ParserFunctionHint::Arguments;
 				};
 				if (token_->is("global")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 
 				if (isFunctionArgument(token_->value, index, level)) {
@@ -429,7 +429,7 @@ namespace XYO::QuantumScript {
 				};
 			} else {
 				error = ParserError::Compile;
-				return nullptr;
+				return 0;
 			};
 
 		} else {
@@ -442,42 +442,42 @@ namespace XYO::QuantumScript {
 			} else if (token_->type == TokenType::Symbol) {
 				if (token_->is("undefined")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("null")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("this")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("self")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("true")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("false")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("NaN")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("Infinity")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 				if (token_->is("arguments")) {
 					(functionHint.head)->value |= ParserFunctionHint::Arguments;
 				};
 				if (token_->is("global")) {
 					error = ParserError::Compile;
-					return nullptr;
+					return 0;
 				};
 
 				tokenLastValue = token_->value;
@@ -588,10 +588,10 @@ namespace XYO::QuantumScript {
 				};
 			} else {
 				error = ParserError::Compile;
-				return nullptr;
+				return 0;
 			};
 		};
-		return nullptr;
+		return 0;
 	};
 
 	bool Parser::expressionTermPrefix(Token *backToken) {
@@ -718,6 +718,9 @@ namespace XYO::QuantumScript {
 		if (token.checkIs2("&", "=")) {
 			return true;
 		};
+		if (token.checkIs2("^", "=")) {
+			return true;
+		};
 		if (token.checkIs3("<", "<", "=")) {
 			return true;
 		};
@@ -749,7 +752,7 @@ namespace XYO::QuantumScript {
 
 	bool Parser::expressionTermSelector(Token *backToken, int processBackToken, int level, int isNew) {
 		Token localToken;
-		ProgramCounter *tokenPcForCall = nullptr;
+		AsmLabel tokenPcForCall = 0;
 		int tokenAsmForCall = ParserAsm::Nop;
 		int tokenIndexForCall = 0;
 		int tokenLevelForCall = 0;

@@ -32,6 +32,10 @@ namespace XYO::QuantumScript {
 		return lastId;
 	};
 
+	bool SymbolList::findSymbol(const String &name, Symbol &out) {
+		return symbolList.get(name, out);
+	};
+
 	String SymbolList::getSymbolMirror(Symbol id) {
 		XSymbolListMirror::Node *tmp = symbolListMirror.find(id);
 		if (tmp) {

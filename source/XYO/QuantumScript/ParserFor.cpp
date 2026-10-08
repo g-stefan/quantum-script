@@ -57,12 +57,12 @@ namespace XYO::QuantumScript {
 
 				if (hasSymbol) {
 					if (token.isSymbolX("in")) {
-						ProgramCounter *linkForIn;
-						ProgramCounter *linkForInIf;
-						ProgramCounter *linkForInSkip;
-						ProgramCounter *linkForInInc;
-						ProgramCounter *linkForInBreak;
-						ProgramCounter *linkForInEnd;
+						AsmLabel linkForIn;
+						AsmLabel linkForInIf;
+						AsmLabel linkForInSkip;
+						AsmLabel linkForInInc;
+						AsmLabel linkForInBreak;
+						AsmLabel linkForInEnd;
 						if (isVar) {
 							int index, level;
 							bool found = false;
@@ -98,7 +98,7 @@ namespace XYO::QuantumScript {
 						} else {
 							token.lValue = true;
 							token.type = TokenType::FirstSymbol;
-							if (expressionProcessToken(&token) == nullptr) {
+							if (expressionProcessToken(&token) == 0) {
 								return false;
 							};
 						};
@@ -109,8 +109,8 @@ namespace XYO::QuantumScript {
 						if (expression(0)) {
 							if (token.is1(")")) {
 								assemble(ParserAsm::OperatorSetReferenceIndexKey);
-								linkForInIf = assembleProgramCounter(ParserAsm::IfFalseGoto, nullptr);
-								linkForInSkip = assembleProgramCounter(ParserAsm::Goto, nullptr);
+								linkForInIf = assembleProgramCounter(ParserAsm::IfFalseGoto, 0);
+								linkForInSkip = assembleProgramCounter(ParserAsm::Goto, 0);
 								linkForInInc = assemble(ParserAsm::OperatorNextReferenceIndex);
 								assembleProgramCounter(ParserAsm::Goto, linkForInIf);
 
@@ -122,7 +122,7 @@ namespace XYO::QuantumScript {
 									parserEnterContext();
 									assemble(ParserAsm::EnterContext);
 
-									linkForInBreak = assembleProgramCounter(ParserAsm::ContextSetBreak, nullptr);
+									linkForInBreak = assembleProgramCounter(ParserAsm::ContextSetBreak, 0);
 									assembleProgramCounter(ParserAsm::ContextSetContinue, linkForInInc);
 
 									if (isBlockStatement()) {
@@ -155,12 +155,12 @@ namespace XYO::QuantumScript {
 						return false;
 					};
 					if (token.isSymbolX("of")) {
-						ProgramCounter *linkForIn;
-						ProgramCounter *linkForInIf;
-						ProgramCounter *linkForInSkip;
-						ProgramCounter *linkForInInc;
-						ProgramCounter *linkForInBreak;
-						ProgramCounter *linkForInEnd;
+						AsmLabel linkForIn;
+						AsmLabel linkForInIf;
+						AsmLabel linkForInSkip;
+						AsmLabel linkForInInc;
+						AsmLabel linkForInBreak;
+						AsmLabel linkForInEnd;
 						if (isVar) {
 
 							int index, level;
@@ -198,7 +198,7 @@ namespace XYO::QuantumScript {
 						} else {
 							token.lValue = true;
 							token.type = TokenType::FirstSymbol;
-							if (expressionProcessToken(&token) == nullptr) {
+							if (expressionProcessToken(&token) == 0) {
 								return false;
 							};
 						};
@@ -209,8 +209,8 @@ namespace XYO::QuantumScript {
 						if (expression(0)) {
 							if (token.is1(")")) {
 								assemble(ParserAsm::OperatorSetReferenceIndexValue);
-								linkForInIf = assembleProgramCounter(ParserAsm::IfFalseGoto, nullptr);
-								linkForInSkip = assembleProgramCounter(ParserAsm::Goto, nullptr);
+								linkForInIf = assembleProgramCounter(ParserAsm::IfFalseGoto, 0);
+								linkForInSkip = assembleProgramCounter(ParserAsm::Goto, 0);
 								linkForInInc = assemble(ParserAsm::OperatorNextReferenceIndex);
 								assembleProgramCounter(ParserAsm::Goto, linkForInIf);
 
@@ -222,7 +222,7 @@ namespace XYO::QuantumScript {
 									parserEnterContext();
 									assemble(ParserAsm::EnterContext);
 
-									linkForInBreak = assembleProgramCounter(ParserAsm::ContextSetBreak, nullptr);
+									linkForInBreak = assembleProgramCounter(ParserAsm::ContextSetBreak, 0);
 									assembleProgramCounter(ParserAsm::ContextSetContinue, linkForInInc);
 
 									if (isBlockStatement()) {
@@ -256,12 +256,12 @@ namespace XYO::QuantumScript {
 					};
 				};
 
-				ProgramCounter *linkFor;
-				ProgramCounter *linkForIf;
-				ProgramCounter *linkForSkip;
-				ProgramCounter *linkForInc;
-				ProgramCounter *linkForBreak;
-				ProgramCounter *linkForEnd;
+				AsmLabel linkFor;
+				AsmLabel linkForIf;
+				AsmLabel linkForSkip;
+				AsmLabel linkForInc;
+				AsmLabel linkForBreak;
+				AsmLabel linkForEnd;
 
 				if (isVar) {
 					if (statementVarSub(hasSymbol)) {
@@ -288,8 +288,8 @@ namespace XYO::QuantumScript {
 
 					if (token.is1(";")) {
 
-						linkForIf = assembleProgramCounter(ParserAsm::IfFalseGoto, nullptr);
-						linkForSkip = assembleProgramCounter(ParserAsm::Goto, nullptr);
+						linkForIf = assembleProgramCounter(ParserAsm::IfFalseGoto, 0);
+						linkForSkip = assembleProgramCounter(ParserAsm::Goto, 0);
 						linkForInc = assemble(ParserAsm::Mark);
 
 						do {

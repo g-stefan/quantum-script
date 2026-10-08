@@ -16,20 +16,20 @@ namespace XYO::QuantumScript {
 	bool Parser::statementIf() {
 		if (token.isSymbolX("if")) {
 			if (expressionParentheses()) {
-				ProgramCounter *linkIf;
+				AsmLabel linkIf;
 
-				linkIf = assembleProgramCounter(ParserAsm::IfFalseGoto, nullptr);
+				linkIf = assembleProgramCounter(ParserAsm::IfFalseGoto, 0);
 
 				if (token.checkIs1("{")) {
 
 					if (isBlockStatement()) {
 
 						if (token.isSymbolX("else")) {
-							ProgramCounter *linkElse;
+							AsmLabel linkElse;
 
 							if (token.checkIs1("{")) {
 
-								linkElse = assembleProgramCounter(ParserAsm::Goto, nullptr);
+								linkElse = assembleProgramCounter(ParserAsm::Goto, 0);
 								linkProgramCounter(linkIf,
 								                   assemble(ParserAsm::Mark));
 
@@ -45,7 +45,7 @@ namespace XYO::QuantumScript {
 								return false;
 							};
 
-							linkElse = assembleProgramCounter(ParserAsm::Goto, nullptr);
+							linkElse = assembleProgramCounter(ParserAsm::Goto, 0);
 							linkProgramCounter(linkIf,
 							                   assemble(ParserAsm::Mark));
 

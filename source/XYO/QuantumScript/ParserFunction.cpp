@@ -39,11 +39,11 @@ namespace XYO::QuantumScript {
 
 	bool Parser::statementFunction() {
 		if (token.isSymbolX("function")) {
-			ProgramCounter *linkFunctionBegin;
-			ProgramCounter *linkFunctionEnd;
-			ProgramCounter *linkFunctionDone;
+			AsmLabel linkFunctionBegin;
+			AsmLabel linkFunctionEnd;
+			AsmLabel linkFunctionDone;
 
-			ProgramCounter *sourceFunctionBegin;
+			AsmLabel sourceFunctionBegin;
 			int isAnonymous;
 
 			uint32_t fnBeginSourceSymbol;
@@ -72,9 +72,9 @@ namespace XYO::QuantumScript {
 				};
 			};
 
-			linkFunctionBegin = assembleProgramCounter(ParserAsm::XPushFunction, nullptr);
+			linkFunctionBegin = assembleProgramCounter(ParserAsm::XPushFunction, 0);
 
-			linkFunctionEnd = assembleProgramCounter(ParserAsm::Goto, nullptr);
+			linkFunctionEnd = assembleProgramCounter(ParserAsm::Goto, 0);
 
 			sourceFunctionBegin = assemble(ParserAsm::Nop);
 			linkProgramCounter(linkFunctionBegin, sourceFunctionBegin);
@@ -112,9 +112,6 @@ namespace XYO::QuantumScript {
 
 					parserLeaveContext();
 
-					char buffer1[32];
-					char buffer2[32];
-
 					assemble(ParserAsm::PushUndefined);
 					assemble(ParserAsm::Return);
 
@@ -145,9 +142,7 @@ namespace XYO::QuantumScript {
 					assembler->linkProgramCounterSource(sourceFunctionBegin, fnBeginSourceSymbol, fnBeginSourceLineNumber);
 					assembler->linkProgramCounterSource(linkFunctionDone, sourceSymbol, sourceLineNumber);
 
-					sprintf(buffer1, "%p", linkFunctionBegin);
-					sprintf(buffer2, "%d", (functionHint.head)->value);
-					assembleX(ParserAsm::FunctionHint, buffer1, buffer2);
+					assembler->setFunctionHint(linkFunctionBegin, (functionHint.head)->value);
 
 					functionHint.pop();
 
