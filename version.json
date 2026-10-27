@@ -1,26 +1,26 @@
 {
 	"quantum-script.library": {
-		"version": "7.0.0",
+		"version": "7.1.0",
 		"build": "21",
-		"date": "2026-10-07",
-		"time": "13:53:30"
+		"date": "2026-10-22",
+		"time": "13:42:30"
 	},
 	"quantum-script.native-runtime": {
-		"version": "7.0.0",
+		"version": "7.1.0",
 		"build": "21",
-		"date": "2026-10-07",
-		"time": "13:53:30"
+		"date": "2026-10-22",
+		"time": "13:42:30"
 	},
 	"quantum-script--console": {
-		"version": "7.0.0",
+		"version": "7.1.0",
 		"build": "21",
-		"date": "2026-10-07",
-		"time": "13:53:30"
+		"date": "2026-10-22",
+		"time": "13:42:30"
 	},
 	"quantum-script": {
-		"version": "7.0.0",
+		"version": "7.1.0",
 		"build": "21",
-		"date": "2026-10-07",
-		"time": "13:53:30"
+		"date": "2026-10-22",
+		"time": "13:42:30"
 	}
 }
